@@ -1,0 +1,38 @@
+$BACKGROUND: #292a2b;
+$TEXT: #e6e6e6;
+$PARENTHESES: #bbb;
+$COLON: #19f9d8;
+$SYNTAX1: #f1cc7a;
+$SYNTAX2: #ffaa49;
+$SYNTAX3: #3396f1;
+$SYNTAX4: #ff8c96;
+$SYNTAX5: #b084eb;
+$SYNTAX6: #ff2b3f;
+
+$TABBACKGROUND: #252526;
+
+.tab {
+    height: 0.34rem;
+    line-height: 0.34rem;
+    background: $TABBACKGROUND;
+
+    a {
+        display: inline-block;
+        min-width: 1.2rem;
+        padding: 0 0.2rem;
+        text-align: center;
+
+        .on {
+            color: $COLON;
+            background: $BACKGROUND;
+            border-bottom: 1px solid $COLON;
+        }
+    }
+}
+
+main {
+    padding: 0.6rem;
+    img {
+        display: block;
+    }
+}
