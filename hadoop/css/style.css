@@ -20,15 +20,16 @@
     backface-visibility: #292a2b; }
 
 .tab {
-  height: 0.34rem;
-  line-height: 0.34rem;
   padding-left: 2rem;
   background: #252526; }
   .tab a {
     display: inline-block;
     min-width: 1.2rem;
+    height: 0.34rem;
+    line-height: 0.34rem;
     padding: 0 0.2rem;
-    text-align: center; }
+    text-align: center;
+    background: #252526; }
   .tab [href="javascript:void(0)"] {
     color: #19f9d8;
     background: #292a2b;
