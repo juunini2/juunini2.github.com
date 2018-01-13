@@ -7,10 +7,10 @@
     min-width: 1.2rem;
     padding: 0 0.2rem;
     text-align: center; }
-    .tab a .on {
-      color: #19f9d8;
-      background: #292a2b;
-      border-bottom: 1px solid #19f9d8; }
+  .tab [href="javascript:void(0)"] {
+    color: #19f9d8;
+    background: #292a2b;
+    border-bottom: 1px solid #19f9d8; }
 
 main {
   padding: 0.6rem; }

@@ -21,12 +21,12 @@ $TABBACKGROUND: #252526;
         min-width: 1.2rem;
         padding: 0 0.2rem;
         text-align: center;
+    }
 
-        .on {
-            color: $COLON;
-            background: $BACKGROUND;
-            border-bottom: 1px solid $COLON;
-        }
+    [href="javascript:void(0)"] {
+        color: $COLON;
+        background: $BACKGROUND;
+        border-bottom: 1px solid $COLON;
     }
 }
 
