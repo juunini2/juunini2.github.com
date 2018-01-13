@@ -68,12 +68,18 @@ main {
     }
 }
 
+.terminal {
+    padding: 0.2rem;
+    background: #222223;
+    border-radius: 5px;
+}
+
 @media screen and (max-width: 860px) {
     .side {
         width: 0.8rem;
 
         a {
-            margin-left: 0.2rem;
+            margin-left: 0.1rem;
         }
     }
 
