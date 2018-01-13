@@ -42,7 +42,7 @@ main {
     display: block;
     max-width: 100%; }
 
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 860px) {
   .side {
     width: 0.8rem; }
     .side a {
