@@ -14,9 +14,7 @@
     color: #bbb;
     background: #373838; }
   .side a {
-    display: block;
-    margin-left: 0.4rem;
-    text-decoration: underline; }
+    margin-left: 0.4rem; }
   .side [href="javascript:void(0)"] {
     color: #19f9d8;
     backface-visibility: #292a2b; }
