@@ -459,3 +459,20 @@ template {
 [hidden] {
   display: none;
 }
+
+
+* { margin: 0; padding: 0; -webkit-box-sizing: border-box; box-sizing: border-box; -moz-text-size-adjust: none; -ms-text-size-adjust: none; -webkit-text-size-adjust: none; -webkit-font-smoothing: antialiased; -moz-font-smoothing: antialiased; word-break: break-all; word-wrap: break-word; }
+* {font-family: inherit; font-size: inherit; color: inherit; line-height: inherit;}
+a { text-decoration: none; color: inherit; font-size: inherit; font-family: inherit; line-height: inherit; text-align: inherit; }
+
+table { border-collapse: collapse; table-layout: fixed; }
+
+fieldset { border: none; width: auto; height: auto; margin: 0; padding: 0; display: inline-block; }
+
+ul, li, ol { list-style-type: none; }
+
+legend, caption, .caption { overflow: hidden; width: 1px; height: 1px; font-size: 1px; line-height: 1px; text-indent: -9999px; }
+
+input, select, textarea { -webkit-appearance: none; -moz-appearance: none; appearance: none; border-radius: 0; font-family: inherit; }
+
+select::-ms-expand { display: none; }
