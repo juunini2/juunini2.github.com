@@ -11,13 +11,18 @@
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
+    <div class="side">
+        <p>Part. 1</p>
+        <a href="javascript:void(0)">· Step. 1</a>
+        <a href="1_2.html">· Step. 2</a>
+    </div>
     <div class="tab">
-        <a href="javascript:void(0)" class="on">Part.1</a>
-        <a href="2.html">Part.2</a>
-        <a href="3.html">Part.3</a>
-        <a href="4.html">Part.4</a>
-        <a href="5.html">Part.5</a>
-        <a href="6.html">Part.6</a>
+        <a href="javascript:void(0)">Part. 1</a>
+        <a href="2.html">Part. 2</a>
+        <a href="3.html">Part. 3</a>
+        <a href="4.html">Part. 4</a>
+        <a href="5.html">Part. 5</a>
+        <a href="6.html">Part. 6</a>
     </div>
 
     <main>
@@ -276,12 +281,35 @@
         공통적으로 필요한것만 다 해놨으니 복사하고 호스트 네임이랑 IP만 바꾸면 끝이에요!(아니, 끝은 아닌데...)<br>
         복사 후에는 호스트 네임을 바꾸고 고정IP를 입력하는 과정을 거칠텐데 일단 위에 서술해놨으니...<br>
         <br>
-        <span class="s6">그 과정에 대한 스크린샷은 스킵하도록 하겠습니다 ㅋㅋㅋㅋㅋㅋㅋㅋㅋ</span><br>
+        <span class="s6">그 과정에 대한 스크린샷은 스킵하도록 하겠습니다.</span><br>
         어차피 위에 어떻게 하는지 다 써놨잖아요?<br>
         <br>
         <img src="./img/17.png" alt="">
         <br>
-        자, 다 복사했습니다.
+        자, 다 복사했습니다.<br>
+        <br>
+        <img src="./img/18.jpg" alt="">
+        <br>
+        전부 CLI 환경이라서 4개를 돌려도 전혀 버벅거림이 없습니다. 아 상쾌해라.<br>
+        이제 책에 나온대로 SSH 공개키를 공유하고 잘 되나 확인 할 차례입니다.<br>
+        <br>
+        <span class="s4">
+            ssh-copy-id -i /home/hadoop/.ssh/id_rsa.pub hadoop@SecondaryNameNode<br>
+            ssh SecondaryNameNode<br>
+        </span>
+        <br>
+        이렇게 입력해서 잘 되면 성공한겁니다.<br>
+        <br>
+        <img src="./img/19.png" alt="">
+        <br>
+        패스워드를 입력하지 않고도 SSH 접속이 잘 되는 모습을 볼 수 있습니다.<br>
+        이제 나머지 데이터노드에도 작업합니다.<br>
+        <br>
+        이제 CLI환경에서 할 수 있는 일은 다 끝났습니다.<br>
+        글이 너무 길어져서 다음 글로 넘어갈 예정인데,<br>
+        다음단계는 네임노드를 GUI환경으로 만드는 과정부터 시작하겠습니다.<br>
+        <br>
+        <a href="./1_2.html" class="s3" style="text-decoration: underline;">다음 글 보기</a>
     </main>
 </body>
 </html>

@@ -1,6 +1,29 @@
+.side {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 2rem;
+  height: 100%;
+  padding-top: 0.34rem;
+  background: #222223; }
+  .side p {
+    height: 0.22rem;
+    line-height: 0.22rem;
+    padding-left: 0.2rem;
+    color: #bbb;
+    background: #373838; }
+  .side a {
+    display: block;
+    margin-left: 0.4rem;
+    text-decoration: underline; }
+  .side [href="javascript:void(0)"] {
+    color: #19f9d8;
+    backface-visibility: #292a2b; }
+
 .tab {
   height: 0.34rem;
   line-height: 0.34rem;
+  padding-left: 2rem;
   background: #252526; }
   .tab a {
     display: inline-block;
@@ -13,6 +36,8 @@
     border-bottom: 1px solid #19f9d8; }
 
 main {
-  padding: 0.6rem; }
+  padding: 0.6rem;
+  padding-left: 2.6rem; }
   main img {
-    display: block; }
+    display: block;
+    max-width: 100%; }
