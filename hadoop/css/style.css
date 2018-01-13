@@ -41,3 +41,16 @@ main {
   main img {
     display: block;
     max-width: 100%; }
+
+@media screen and (max-width: 640px) {
+  .side {
+    width: 0.8rem; }
+    .side a {
+      margin-left: 0.2rem; }
+
+  .tab {
+    padding-left: 0.8rem; }
+
+  main {
+    padding: 0.2rem;
+    padding-left: 1rem; } }
