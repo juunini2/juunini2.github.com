@@ -21,3 +21,7 @@ class Spa {
     }
 
 }
+
+const spa = new Spa();
+spa.header();
+spa.side();

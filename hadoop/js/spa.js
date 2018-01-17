@@ -21,3 +21,6 @@ var Spa = /** @class */ (function () {
     };
     return Spa;
 }());
+var spa = new Spa();
+spa.header();
+spa.side();
