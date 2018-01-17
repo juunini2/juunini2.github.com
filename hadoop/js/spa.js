@@ -1,7 +1,7 @@
 function header() {
     var _this = this;
     var xhttp = new XMLHttpRequest;
-    var header = document.querySelector("header")[0];
+    var header = document.getElementById("header");
     xhttp.onreadystatechange = function () {
         if (_this.readyState == 4 && _this.status == 200) {
             header.innerHTML = _this.responseText;
@@ -13,7 +13,7 @@ function header() {
 function side() {
     var _this = this;
     var xhttp = new XMLHttpRequest;
-    var header = document.querySelector("aside")[0];
+    var header = document.getElementById("side");
     xhttp.onreadystatechange = function () {
         if (_this.readyState == 4 && _this.status == 200) {
             header.innerHTML = _this.responseText;
