@@ -5,7 +5,7 @@ var Spa = /** @class */ (function () {
         var xhttp = new XMLHttpRequest;
         var header = document.querySelector("header")[0];
         xhttp.onreadystatechange = function () {
-            header.innerHTML = xhttp.responseXML;
+            header.innerHTML = xhttp.responseText;
         };
         xhttp.open("GET", "./header.html", true);
         xhttp.send();
@@ -14,7 +14,7 @@ var Spa = /** @class */ (function () {
         var xhttp = new XMLHttpRequest;
         var header = document.querySelector("aside")[0];
         xhttp.onreadystatechange = function () {
-            header.innerHTML = xhttp.responseXML;
+            header.innerHTML = xhttp.responseText;
         };
         xhttp.open("GET", "./side.html", true);
         xhttp.send();
