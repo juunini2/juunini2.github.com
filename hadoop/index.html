@@ -23,8 +23,17 @@
         xhttp.send();
     }
 
+    function addOn(selector) {
+        document.querySelector(selector).classList.add("on");
+    }
+
     loading("header", "header.html");
     loading("side", "side.html");
+
+    if (window.location.pathname == "/hadoop/#1") {
+        loading("main", "1.html");
+        addOn("header a:first-child");
+    }
 
 </script>
 </html>
