@@ -1,6 +1,6 @@
 function header() {
     let xhttp = new XMLHttpRequest;
-    let header = document.getElementById("header");
+    let header = document.querySelector("header");
     xhttp.onreadystatechange = () => {
         if (this.readyState == 4 && this.status == 200) {
             header.innerHTML = this.responseText;
@@ -12,7 +12,7 @@ function header() {
 
 function side() {
     let xhttp = new XMLHttpRequest;
-    let header = document.getElementById("side");
+    let header = document.querySelector("aside");
     xhttp.onreadystatechange = () => {
         if (this.readyState == 4 && this.status == 200) {
             header.innerHTML = this.responseText;
