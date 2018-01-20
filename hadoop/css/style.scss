@@ -11,7 +11,11 @@ $SYNTAX6: #ff2b3f;
 
 $TABBACKGROUND: #252526;
 
-.side {
+a, button {
+    cursor: pointer;
+}
+
+side {
     position: fixed;
     top: 0;
     left: 0;
@@ -19,29 +23,66 @@ $TABBACKGROUND: #252526;
     height: 100%;
     padding-top: 0.34rem;
     background: #222223;
-    p {
+    overflow: auto;
+
+    part {
+        display: block;
+        max-height: 0.22rem;
+        margin-bottom: 0.2rem;
+        overflow: hidden;
+        transition: max-height 1s;
+
+        &.on {
+            max-height: 3rem;
+        }
+    }
+
+    part-title {
+        position: relative;
+        display: block;
         height: 0.22rem;
         line-height: 0.22rem;
         margin-bottom: 0.1rem;
         padding-left: 0.2rem;
         color: $PARENTHESES;
         background: #373838;
+        cursor: pointer;
+
+        &:after {
+            content: "";
+            position: absolute;
+            right: 0.1rem;
+            bottom: 0.05rem;
+            display: inline-block;
+            width: 0;
+            height: 0;
+            border-top: 0.04rem solid transparent;
+            border-right: 0.04rem solid #e6e6e6;
+            border-left: 0.04rem solid transparent;
+            border-bottom: 0.04rem solid #e6e6e6;
+        }
     }
 
     a {
         margin-left: 0.4rem;
-    }
 
-    [href="javascript:void(0)"] {
-        color: $COLON;
-        backface-visibility: $BACKGROUND;
+        &:after {
+            content:  "";
+            display: block;
+        }
+
+        &.on {
+            color: $COLON;
+        }
     }
 }
-
-.tab {
-    padding-left: 2rem;
+header {
+    position: fixed;
+    top: 0;
+    left: 2rem;
+    width: calc(100% - 2rem);
+    height: 0.34rem;
     background: $TABBACKGROUND;
-
     a {
         display: inline-block;
         min-width: 1.2rem;
@@ -51,45 +92,115 @@ $TABBACKGROUND: #252526;
         text-align: center;
         background: $TABBACKGROUND;
     }
-
-    [href="javascript:void(0)"] {
+    .on {
         color: $COLON;
         background: $BACKGROUND;
         border-bottom: 1px solid $COLON;
     }
 }
-
 main {
     padding: 0.6rem;
     padding-left: 2.6rem;
     img {
         display: block;
         max-width: 100%;
+        margin: 0.2rem 0;
     }
 }
 
-.terminal {
-    margin: 0.2rem 0;
+hello {
+    display: block;
+    text-align: center;
+    font-size: 0.3rem;
+    font-weight: bold;
+    line-height: 0.34rem;
+
+    img {
+        display: inline-block;
+    }
+}
+
+.button{
+    display: inline-block;
+    padding: 0.2rem;
+    font-weight: bold;
+    color: #222223;
+    border: 1px solid #bbb;
+    border-radius: 0.1rem;
+    background: #e6e6e6;
+}
+
+.link {
+    color: #19f9d8;
+    text-decoration: underline;
+}
+
+cursor {
+    display: inline-block;
+    width: 0.1rem;
+    height: 0.3rem;
+    animation-name: cursor;
+    animation-iteration-count: infinite;
+    animation-duration: 1.5s;
+}
+
+@keyframes cursor {
+    0% {background: $PARENTHESES;}
+    49% {background: $PARENTHESES;}
+    50% {background: none;}
+    99% {background: none;}
+}
+
+.terminal, terminal {
+    margin: 0.2rem;
     padding: 0.2rem;
     background: #222223;
     border-radius: 5px;
 }
 
-@media screen and (max-width: 860px) {
-    .side {
-        width: 0.8rem;
+tab1 {
+    display: block;
+    margin-left: 0.4rem;
+}
+tab2 {
+    display: block;
+    margin-left: 0.8rem;
+}
+tab3 {
+    display: block;
+    margin-left: 1.2rem;
+}
+tab4 {
+    display: block;
+    margin-left: 1.6rem;
+}
 
+@media screen and (max-width: 860px) {
+    side {
+        width: 1rem;
         a {
             margin-left: 0.1rem;
         }
     }
-
-    .tab {
-        padding-left: 0.8rem;
+    header {
+        display: none;
     }
-
     main {
         padding: 0.2rem;
-        padding-left: 1rem;
+        padding-left: 1.2rem;
+    }
+
+    hello {
+        font-size: 0.3rem * 0.6;
+        line-height: 0.34rem * 0.6;
+
+        button, img{
+            zoom: 0.6;
+        }
+    }
+
+    cursor {
+        width: 0.1rem * 0.6;
+        height: 0.3rem * 0.6;
     }
 }

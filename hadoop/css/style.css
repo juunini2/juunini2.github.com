@@ -1,28 +1,61 @@
-.side {
+a, button {
+  cursor: pointer; }
+
+side {
   position: fixed;
   top: 0;
   left: 0;
   width: 2rem;
   height: 100%;
   padding-top: 0.34rem;
-  background: #222223; }
-  .side p {
+  background: #222223;
+  overflow: auto; }
+  side part {
+    display: block;
+    max-height: 0.22rem;
+    margin-bottom: 0.2rem;
+    overflow: hidden;
+    transition: max-height 1s; }
+    side part.on {
+      max-height: 3rem; }
+  side part-title {
+    position: relative;
+    display: block;
     height: 0.22rem;
     line-height: 0.22rem;
     margin-bottom: 0.1rem;
     padding-left: 0.2rem;
     color: #bbb;
-    background: #373838; }
-  .side a {
+    background: #373838;
+    cursor: pointer; }
+    side part-title:after {
+      content: "";
+      position: absolute;
+      right: 0.1rem;
+      bottom: 0.05rem;
+      display: inline-block;
+      width: 0;
+      height: 0;
+      border-top: 0.04rem solid transparent;
+      border-right: 0.04rem solid #e6e6e6;
+      border-left: 0.04rem solid transparent;
+      border-bottom: 0.04rem solid #e6e6e6; }
+  side a {
     margin-left: 0.4rem; }
-  .side [href="javascript:void(0)"] {
-    color: #19f9d8;
-    backface-visibility: #292a2b; }
+    side a:after {
+      content: "";
+      display: block; }
+    side a.on {
+      color: #19f9d8; }
 
-.tab {
-  padding-left: 2rem;
+header {
+  position: fixed;
+  top: 0;
+  left: 2rem;
+  width: calc(100% - 2rem);
+  height: 0.34rem;
   background: #252526; }
-  .tab a {
+  header a {
     display: inline-block;
     min-width: 1.2rem;
     height: 0.34rem;
@@ -30,7 +63,7 @@
     padding: 0 0.2rem;
     text-align: center;
     background: #252526; }
-  .tab [href="javascript:void(0)"] {
+  header .on {
     color: #19f9d8;
     background: #292a2b;
     border-bottom: 1px solid #19f9d8; }
@@ -40,23 +73,89 @@ main {
   padding-left: 2.6rem; }
   main img {
     display: block;
-    max-width: 100%; }
+    max-width: 100%;
+    margin: 0.2rem 0; }
 
-.terminal {
-  margin: 0.2rem 0;
+hello {
+  display: block;
+  text-align: center;
+  font-size: 0.3rem;
+  font-weight: bold;
+  line-height: 0.34rem; }
+  hello img {
+    display: inline-block; }
+
+.button {
+  display: inline-block;
+  padding: 0.2rem;
+  font-weight: bold;
+  color: #222223;
+  border: 1px solid #bbb;
+  border-radius: 0.1rem;
+  background: #e6e6e6; }
+
+.link {
+  color: #19f9d8;
+  text-decoration: underline; }
+
+cursor {
+  display: inline-block;
+  width: 0.1rem;
+  height: 0.3rem;
+  animation-name: cursor;
+  animation-iteration-count: infinite;
+  animation-duration: 1.5s; }
+
+@keyframes cursor {
+  0% {
+    background: #bbb; }
+  49% {
+    background: #bbb; }
+  50% {
+    background: none; }
+  99% {
+    background: none; } }
+.terminal, terminal {
+  margin: 0.2rem;
   padding: 0.2rem;
   background: #222223;
   border-radius: 5px; }
 
+tab1 {
+  display: block;
+  margin-left: 0.4rem; }
+
+tab2 {
+  display: block;
+  margin-left: 0.8rem; }
+
+tab3 {
+  display: block;
+  margin-left: 1.2rem; }
+
+tab4 {
+  display: block;
+  margin-left: 1.6rem; }
+
 @media screen and (max-width: 860px) {
-  .side {
-    width: 0.8rem; }
-    .side a {
+  side {
+    width: 1rem; }
+    side a {
       margin-left: 0.1rem; }
 
-  .tab {
-    padding-left: 0.8rem; }
+  header {
+    display: none; }
 
   main {
     padding: 0.2rem;
-    padding-left: 1rem; } }
+    padding-left: 1.2rem; }
+
+  hello {
+    font-size: 0.18rem;
+    line-height: 0.204rem; }
+    hello button, hello img {
+      zoom: 0.6; }
+
+  cursor {
+    width: 0.06rem;
+    height: 0.18rem; } }
