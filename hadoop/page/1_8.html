@@ -9,23 +9,23 @@ SingleFileWriteRead.java 라는 파일을 생성해서 내용을 입력하도록
 내용은 제가 밑에 써드릴게요. 붙여넣기 하세요.<br>
 
 <pre class="terminal">
-<color4>import</color4> <color2>org.apache.hadoop.conf.Configuration</color2>;
-<color4>import</color4> <color2>org.apache.hadoop.fs.FSDataInputStream</color2>;
-<color4>import</color4> <color2>org.apache.hadoop.fs.FSDataOutputStream</color2>;
-<color4>import</color4> <color2>org.apache.hadoop.fs.FileSystem</color2>;
-<color4>import</color4> <color2>org.apache.hadoop.fs.Path</color2>;
+<color6>import</color6> <color2>org.apache.hadoop.conf.Configuration</color2>;
+<color6>import</color6> <color2>org.apache.hadoop.fs.FSDataInputStream</color2>;
+<color6>import</color6> <color2>org.apache.hadoop.fs.FSDataOutputStream</color2>;
+<color6>import</color6> <color2>org.apache.hadoop.fs.FileSystem</color2>;
+<color6>import</color6> <color2>org.apache.hadoop.fs.Path</color2>;
 
 <color2>public class</color2> SingleFileWriteRead { <blur><i>// 자바는 파일명과 퍼블릭 클래스가 무조건 같아야합니다.</i></blur>
     <color2>public static void</color2> <color3>main</color3>(<color2>String</color2>[] args) {
 
-        <color4>if</color4> (<color4>args</color4>.length <color2>!= 2</color2>) { <blur><i>// 자바 파일을 실행할 때 그냥 실행하는게 아니라 뒤에 문자열을 붙이면 args에 배열로 저장됨.</i></blur>
+        <color6>if</color6> (<color4>args</color4>.length <color2>!= 2</color2>) { <blur><i>// 자바 파일을 실행할 때 그냥 실행하는게 아니라 뒤에 문자열을 붙이면 args에 배열로 저장됨.</i></blur>
                                 <blur><i>// 그러니까, 2개의 배열이 들어오지 않으면 에러로 취급하겠다는 뜻</i></blur>
             <color4>System</color4>.<color4>err</color4>.<color3>println</color3>(<color7>"Usage: SingleFileWriteRead &lt;filename&gt; &lt;contents&gt;"</color7>); <blur><i>// 파일이름 파일내용 으로 넣어달라는 에러메시지</i></blur>
             <color4>System</color4>.<color3>exit</color3>(<color2>2</color2>);
         }
 
-        <color4>try</color4> {   <blur><i>// 정상 실행</i></blur>
-            <color2>Configuration</color2> conf = <color4>new</color4> <color3>Configuration</color3>();   <blur><i>// core-default.xml 과 core-site.xml의 값을 받아옴</i></blur>
+        <color6>try</color6> {   <blur><i>// 정상 실행</i></blur>
+            <color2>Configuration</color2> conf = <color6>new</color6> <color3>Configuration</color3>();   <blur><i>// core-default.xml 과 core-site.xml의 값을 받아옴</i></blur>
             <color2>FileSystem</color2> hdfs = <color4>FileSystem</color4>.<color3>get</color3>(conf);     <blur><i>// 하둡 파일 시스템 객체를 위의 값에서 받아옴</i></blur>
 
             <color2>Path</color2> path = <color4>new</color4> <color3>Path</color3>(args[<color2>0</color2>]);  <blur><i>// 자바 파일을 실행할 때 첫번 쨰 배열은 파일이름 입니다.</i></blur>
