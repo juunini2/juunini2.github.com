@@ -93,65 +93,65 @@ hadoop 폴더를 한번만 클릭한 뒤 아래의 확인 버튼을 클릭합니
 hadoop-env.sh 파일로 들어왔습니다. 이제 필요한 부분을 수정하겠습니다.<br>
 
 <pre class="terminal">
-    <blur><i># Set Hadoop-specific environment variables here.
+<blur><i># Set Hadoop-specific environment variables here.
 
-    # The only required environment variable is JAVA_HOME. All others are
-    # optional. When running a distributed configuration it is best to
-    # set JAVA_HOME in this file, so that it is correctly defined on
-    # remote nodes.
+# The only required environment variable is JAVA_HOME. All others are
+# optional. When running a distributed configuration it is best to
+# set JAVA_HOME in this file, so that it is correctly defined on
+# remote nodes.
 
-    # The java implementation to use. Required.</i></blur>
-    <color2>export</color2> JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-0.b14.el7_4.x86_64
-    
-    <blur><i># Extra Java CLASSPATH elements. Optional.
-    # export HADOOP_CLASSPATH=
+# The java implementation to use. Required.</i></blur>
+<color2>export</color2> JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-0.b14.el7_4.x86_64
 
-    # The maximum amount of heap to use, in MB. Default is 1000.
-    # export HADOOP_HEAPSIZE=2000
-    
-    # Extra Java runtime options. Empty by default.
-    # export HADOOP_OPTS=-server
-    
-    # Command specific options appended to HADOOP_OPTS when specified</i></blur>
-    <color2>export</color2> HADOOP_NAMENODE_OPTS=<color7>"-Dcom.sun.management.jmxremote</color7> $HADOOP_NAMENODE_OPTS<color7>"</color7>
-    <color2>export</color2> HADOOP_SECONDARYNAMENODE_OPTS=<color7>"-Dcom.sun.management.jmxremote</color7> $HADOOP_SECONDARYNAMENODE_OPTS<color7>"</color7>
-    <color2>export</color2> HADOOP_DATANODE_OPTS=<color7>"-Dcom.sun.management.jmxremote</color7> $HADOOP_DATANODE_OPTS<color7>"</color7>
-    <color2>export</color2> HADOOP_BALANCER_OPTS=<color7>"-Dcom.sun.management.jmxremote</color7> $HADOOP_BALANCER_OPTS<color7>"</color7>
-    <color2>export</color2> HADOOP_JOBTRACKER_OPTS=<color7>"-Dcom.sun.management.jmxremote</color7> $HADOOP_JOBTRACKER_OPTS<color7>"</color7>
-    <blur><i># export HADOOP_TASKTRACKER_OPTS=
-    # The following applies to multiple commands (fs, dfs, fsck, distcp etc)
-    # export HADOOP_CLIENT_OPTS
-    
-    # Extra ssh options. Empty by default.
-    # export HADOOP_SSH_OPTS="-o ConnectTimeout=1 -o SendEnv=HADOOP_CONF_DIR"
+<blur><i># Extra Java CLASSPATH elements. Optional.
+# export HADOOP_CLASSPATH=
 
-    # Where log files are stored. $HADOOP_HOME/logs by default.
-    # export HADOOP_LOG_DIR=${HADOOP_HOME}/logs
+# The maximum amount of heap to use, in MB. Default is 1000.
+# export HADOOP_HEAPSIZE=2000
 
-    # File naming remote slave hosts. $HADOOP_HOME/conf/slaves by default.
-    # export HADOOP_SLAVES=${HADOOP_HOME}/conf/slaves
+# Extra Java runtime options. Empty by default.
+# export HADOOP_OPTS=-server
 
-    # host:path where hadoop code should be rsync'd from. Unset by default.
-    # export HADOOP_MASTER=master:/home/$USER/src/hadoop
+# Command specific options appended to HADOOP_OPTS when specified</i></blur>
+<color2>export</color2> HADOOP_NAMENODE_OPTS=<color7>"-Dcom.sun.management.jmxremote</color7> $HADOOP_NAMENODE_OPTS<color7>"</color7>
+<color2>export</color2> HADOOP_SECONDARYNAMENODE_OPTS=<color7>"-Dcom.sun.management.jmxremote</color7> $HADOOP_SECONDARYNAMENODE_OPTS<color7>"</color7>
+<color2>export</color2> HADOOP_DATANODE_OPTS=<color7>"-Dcom.sun.management.jmxremote</color7> $HADOOP_DATANODE_OPTS<color7>"</color7>
+<color2>export</color2> HADOOP_BALANCER_OPTS=<color7>"-Dcom.sun.management.jmxremote</color7> $HADOOP_BALANCER_OPTS<color7>"</color7>
+<color2>export</color2> HADOOP_JOBTRACKER_OPTS=<color7>"-Dcom.sun.management.jmxremote</color7> $HADOOP_JOBTRACKER_OPTS<color7>"</color7>
+<blur><i># export HADOOP_TASKTRACKER_OPTS=
+# The following applies to multiple commands (fs, dfs, fsck, distcp etc)
+# export HADOOP_CLIENT_OPTS
 
-    # Seconds to sleep between slave commands. Unset by default. This
-    # can be useful in large clusters, where, e.g., slave rsyncs can
-    # otherwise arrive faster than the master can service them.
-    # export HADOOP_SLAVE_SLEEP=0.1
+# Extra ssh options. Empty by default.
+# export HADOOP_SSH_OPTS="-o ConnectTimeout=1 -o SendEnv=HADOOP_CONF_DIR"
 
-    # The directory where pid files are stored. /tmp by default.
-    # NOTE: this should be set to a directory that can only be written to by
-    #   the users that are going to run the hadoop daemons. Otherwise there is
-    #   the potential for a symlink attack.</i></blur>
-    <color2>export</color2> HADOOP_PID_DIR=/home/hadoop/hadoop/pids
+# Where log files are stored. $HADOOP_HOME/logs by default.
+# export HADOOP_LOG_DIR=${HADOOP_HOME}/logs
 
-    <blur><i># A string representing this instance of hadoop. $USER by default.
-    # export HADOOP_IDENT_STRING=$USER
+# File naming remote slave hosts. $HADOOP_HOME/conf/slaves by default.
+# export HADOOP_SLAVES=${HADOOP_HOME}/conf/slaves
 
-    # The scheduling priority for daemon processes. See 'man nice'.
-    # export HADOOP_NICENESS=10</i></blur>
+# host:path where hadoop code should be rsync'd from. Unset by default.
+# export HADOOP_MASTER=master:/home/$USER/src/hadoop
 
-    <color2>export</color2> HADOOP_HOME_WARN_SUPPRESS=<color7>"TRUE"</color7>
+# Seconds to sleep between slave commands. Unset by default. This
+# can be useful in large clusters, where, e.g., slave rsyncs can
+# otherwise arrive faster than the master can service them.
+# export HADOOP_SLAVE_SLEEP=0.1
+
+# The directory where pid files are stored. /tmp by default.
+# NOTE: this should be set to a directory that can only be written to by
+#   the users that are going to run the hadoop daemons. Otherwise there is
+#   the potential for a symlink attack.</i></blur>
+<color2>export</color2> HADOOP_PID_DIR=/home/hadoop/hadoop/pids
+
+<blur><i># A string representing this instance of hadoop. $USER by default.
+# export HADOOP_IDENT_STRING=$USER
+
+# The scheduling priority for daemon processes. See 'man nice'.
+# export HADOOP_NICENESS=10</i></blur>
+
+<color2>export</color2> HADOOP_HOME_WARN_SUPPRESS=<color7>"TRUE"</color7>
 </pre>
 
 일단 여러분의 파일과 비교해보시면 눈에 들어오실겁니다.<br>
@@ -189,72 +189,72 @@ slaves 파일에 들어가는 내용은 데이터노드이구요.<br>
 3파일이 전부 내용이 똑같죠?<br>
 
 <pre class="terminal">
-    <color2>&lt;?</color2>xml version=<color7>"1.0"</color7><color2>?&gt;</color2>
-    <color2>&lt;?</color2>xml-stylesheet <color2>type</color2>=<color7>"text/xsl"</color7> <color2>href</color2>=<color7>"configuration.xsl"</color7><color2>?&gt;</color2>
-    
-    <blur><i>&lt;!-- Put site-specific property overrides in this file. --&gt;</i></blur>
-    
-    <color2>&lt;</color2>configuration<color2>&gt;</color2>
+<color2>&lt;?</color2>xml version=<color7>"1.0"</color7><color2>?&gt;</color2>
+<color2>&lt;?</color2>xml-stylesheet <color2>type</color2>=<color7>"text/xsl"</color7> <color2>href</color2>=<color7>"configuration.xsl"</color7><color2>?&gt;</color2>
 
-    <color2>&lt;</color2>/configuration<color2>&gt;</color2>
+<blur><i>&lt;!-- Put site-specific property overrides in this file. --&gt;</i></blur>
+
+<color2>&lt;</color2>configuration<color2>&gt;</color2>
+
+<color2>&lt;</color2>/configuration<color2>&gt;</color2>
 </pre>
 
 전부 다 이렇게 생겼습니다.<br>
 그럼 <color2>core-site.xml</color2> 부터 수정하겠습니다.<br>
 
 <pre class="terminal">
-    <color2>&lt;?</color2>xml version=<color7>"1.0"</color7><color2>?&gt;</color2>
-    <color2>&lt;?</color2>xml-stylesheet <color2>type</color2>=<color7>"text/xsl"</color7> <color2>href</color2>=<color7>"configuration.xsl"</color7><color2>?&gt;</color2>
-        
-    <color2>&lt;</color2>configuration<color2>&gt;</color2>
-        <color2>&lt;</color2>property<color2>&gt;</color2>
-            <color2>&lt;</color2>name<color2>&gt;</color2>fs.default.name<color2>&lt;/</color2>name<color2>&gt;</color2>
-            <color2>&lt;</color2>value<color2>&gt;</color2>hdfs://namenode:9000<color2>&lt;/</color2>value<color2>&gt;</color2>
-        <color2>&lt;/</color2>property<color2>&gt;</color2>
-        
-        <color2>&lt;</color2>property<color2>&gt;</color2>
-            <color2>&lt;</color2>name<color2>&gt;</color2>hadoop.tmp.dir<color2>&lt;/</color2>name<color2>&gt;</color2>
-            <color2>&lt;</color2>value<color2>&gt;</color2>/home/hadoop/hadoop-data<color2>&lt;/</color2>value<color2>&gt;</color2>
-        <color2>&lt;/</color2>property<color2>&gt;</color2>
-    <color2>&lt;/</color2>configuration<color2>&gt;</color2>
+<color2>&lt;?</color2>xml version=<color7>"1.0"</color7><color2>?&gt;</color2>
+<color2>&lt;?</color2>xml-stylesheet <color2>type</color2>=<color7>"text/xsl"</color7> <color2>href</color2>=<color7>"configuration.xsl"</color7><color2>?&gt;</color2>
+    
+<color2>&lt;</color2>configuration<color2>&gt;</color2>
+    <color2>&lt;</color2>property<color2>&gt;</color2>
+        <color2>&lt;</color2>name<color2>&gt;</color2>fs.default.name<color2>&lt;/</color2>name<color2>&gt;</color2>
+        <color2>&lt;</color2>value<color2>&gt;</color2>hdfs://namenode:9000<color2>&lt;/</color2>value<color2>&gt;</color2>
+    <color2>&lt;/</color2>property<color2>&gt;</color2>
+    
+    <color2>&lt;</color2>property<color2>&gt;</color2>
+        <color2>&lt;</color2>name<color2>&gt;</color2>hadoop.tmp.dir<color2>&lt;/</color2>name<color2>&gt;</color2>
+        <color2>&lt;</color2>value<color2>&gt;</color2>/home/hadoop/hadoop-data<color2>&lt;/</color2>value<color2>&gt;</color2>
+    <color2>&lt;/</color2>property<color2>&gt;</color2>
+<color2>&lt;/</color2>configuration<color2>&gt;</color2>
 </pre>
 
 그 다음은 <color2>hdfs-site.xml</color2> 입니다.<br>
 
 <pre class="terminal">
-    <color2>&lt;?</color2>xml version=<color7>"1.0"</color7><color2>?&gt;</color2>
-    <color2>&lt;?</color2>xml-stylesheet <color2>type</color2>=<color7>"text/xsl"</color7> <color2>href</color2>=<color7>"configuration.xsl"</color7><color2>?&gt;</color2>
-        
-    <color2>&lt;</color2>configuration<color2>&gt;</color2>
-        <color2>&lt;</color2>property<color2>&gt;</color2>
-            <color2>&lt;</color2>name<color2>&gt;</color2>dfs.replication<color2>&lt;/</color2>name<color2>&gt;</color2>
-            <color2>&lt;</color2>value<color2>&gt;</color2>3<color2>&lt;/</color2>value<color2>&gt;</color2>
-        <color2>&lt;/</color2>property<color2>&gt;</color2>
-        
-        <color2>&lt;</color2>property<color2>&gt;</color2>
-            <color2>&lt;</color2>name<color2>&gt;</color2>dfs.http.address<color2>&lt;/</color2>name<color2>&gt;</color2>
-            <color2>&lt;</color2>value<color2>&gt;</color2>namenode:50070<color2>&lt;/</color2>value<color2>&gt;</color2>
-        <color2>&lt;/</color2>property<color2>&gt;</color2>
+<color2>&lt;?</color2>xml version=<color7>"1.0"</color7><color2>?&gt;</color2>
+<color2>&lt;?</color2>xml-stylesheet <color2>type</color2>=<color7>"text/xsl"</color7> <color2>href</color2>=<color7>"configuration.xsl"</color7><color2>?&gt;</color2>
+    
+<color2>&lt;</color2>configuration<color2>&gt;</color2>
+    <color2>&lt;</color2>property<color2>&gt;</color2>
+        <color2>&lt;</color2>name<color2>&gt;</color2>dfs.replication<color2>&lt;/</color2>name<color2>&gt;</color2>
+        <color2>&lt;</color2>value<color2>&gt;</color2>3<color2>&lt;/</color2>value<color2>&gt;</color2>
+    <color2>&lt;/</color2>property<color2>&gt;</color2>
+    
+    <color2>&lt;</color2>property<color2>&gt;</color2>
+        <color2>&lt;</color2>name<color2>&gt;</color2>dfs.http.address<color2>&lt;/</color2>name<color2>&gt;</color2>
+        <color2>&lt;</color2>value<color2>&gt;</color2>namenode:50070<color2>&lt;/</color2>value<color2>&gt;</color2>
+    <color2>&lt;/</color2>property<color2>&gt;</color2>
 
-        <color2>&lt;</color2>property<color2>&gt;</color2>
-            <color2>&lt;</color2>name<color2>&gt;</color2>dfs.secondary.http.address<color2>&lt;/</color2>name<color2>&gt;</color2>
-            <color2>&lt;</color2>value<color2>&gt;</color2>snamenode:50090<color2>&lt;/</color2>value<color2>&gt;</color2>
-        <color2>&lt;/</color2>property<color2>&gt;</color2>
-    <color2>&lt;/</color2>configuration<color2>&gt;</color2>
+    <color2>&lt;</color2>property<color2>&gt;</color2>
+        <color2>&lt;</color2>name<color2>&gt;</color2>dfs.secondary.http.address<color2>&lt;/</color2>name<color2>&gt;</color2>
+        <color2>&lt;</color2>value<color2>&gt;</color2>snamenode:50090<color2>&lt;/</color2>value<color2>&gt;</color2>
+    <color2>&lt;/</color2>property<color2>&gt;</color2>
+<color2>&lt;/</color2>configuration<color2>&gt;</color2>
 </pre>
 
 그 다음은 <color2>mapred-site.xml</color2>을 수정하겠습니다.<br>
 
 <pre class="terminal">
-    <color2>&lt;?</color2>xml version=<color7>"1.0"</color7><color2>?&gt;</color2>
-    <color2>&lt;?</color2>xml-stylesheet <color2>type</color2>=<color7>"text/xsl"</color7> <color2>href</color2>=<color7>"configuration.xsl"</color7><color2>?&gt;</color2>
-        
-    <color2>&lt;</color2>configuration<color2>&gt;</color2>
-        <color2>&lt;</color2>property<color2>&gt;</color2>
-            <color2>&lt;</color2>name<color2>&gt;</color2>mapred.job.tracker<color2>&lt;/</color2>name<color2>&gt;</color2>
-            <color2>&lt;</color2>value<color2>&gt;</color2>namenode:9001<color2>&lt;/</color2>value<color2>&gt;</color2>
-        <color2>&lt;/</color2>property<color2>&gt;</color2>
-    <color2>&lt;/</color2>configuration<color2>&gt;</color2>
+<color2>&lt;?</color2>xml version=<color7>"1.0"</color7><color2>?&gt;</color2>
+<color2>&lt;?</color2>xml-stylesheet <color2>type</color2>=<color7>"text/xsl"</color7> <color2>href</color2>=<color7>"configuration.xsl"</color7><color2>?&gt;</color2>
+    
+<color2>&lt;</color2>configuration<color2>&gt;</color2>
+    <color2>&lt;</color2>property<color2>&gt;</color2>
+        <color2>&lt;</color2>name<color2>&gt;</color2>mapred.job.tracker<color2>&lt;/</color2>name<color2>&gt;</color2>
+        <color2>&lt;</color2>value<color2>&gt;</color2>namenode:9001<color2>&lt;/</color2>value<color2>&gt;</color2>
+    <color2>&lt;/</color2>property<color2>&gt;</color2>
+<color2>&lt;/</color2>configuration<color2>&gt;</color2>
 </pre>
 
 그대로 붙여넣기 하시면 됩니다.<br>
