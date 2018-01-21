@@ -144,6 +144,10 @@ tab4 {
   display: block;
   margin-left: 1.6rem; }
 
+.link {
+  color: #19f9d8;
+  text-decoration: underline; }
+
 @media screen and (max-width: 860px) {
   side {
     width: 1rem; }
