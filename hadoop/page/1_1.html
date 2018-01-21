@@ -1,1 +1,63 @@
-not ready
+안녕하세요, 하둡 가이드를 시작하겠습니다.<br>
+<br>
+이번 단계에선 실습에 필요한 환경을 구성하도록 하겠습니다.<br>
+잘 따라오세요!<br>
+<br>
+실습 환경은 리눅스 운영체제인 CentOs를 이용하겠습니다.<br>
+먼저, <a href="https://www.centos.org/" target="_new">https://www.centos.org/</a> 사이트에 들어갑니다.<br>
+<img src="/hadoop/img/1_1.jpg" alt="">
+그럼 위의 사이트가 나오는데, 빨간 네모안의 버튼을 눌러주세요.<br>
+<img src="/hadoop/img/1_2.jpg" alt="">
+그럼 위와 같은 화면이 나오는데, 빨간 네모 안의 버튼을 눌러주세요.<br>
+<img src="/hadoop/img/1_3.jpg" alt="">
+버튼을 누르고 들어가면 다운로드 링크들이 나오는데, 빨간 네모 안의 링크 중 마음에 드는 곳을 하나 선택하여 다운로드 받습니다.<br>
+<br>
+그리고, 실습환경에 이용할 vmware라는 가상의 컴퓨터를 만들어주는 프로그램을 다운로드 받겠습니다.<br>
+<a href="https://www.vmware.com/kr.html" target="_new">https://www.vmware.com/kr.html</a> 링크로 들어갑니다.<br>
+<img src="/hadoop/img/1_4.jpg" alt="">
+그럼 위와 같은 사이트에 들어가게 되는데, 빨간 네모 부분을 클릭해주세요<br>
+<img src="/hadoop/img/1_5.jpg" alt="">
+클릭 후에 빨간 네모에 있는 텍스트를 클릭해주세요.<br>
+<img src="/hadoop/img/1_6.jpg" alt="">
+다운로드 페이지에 들어가면 자신의 운영체제에 맞는 것을 다운로드 받는데, 범용적으로 Windows를 사용하기 때문에<br>
+일단 Windows용 프로그램 부분에 빨간 네모 표시를 했습니다.<br>
+눌러서 다운로드 받고 실행시킵니다.<br>
+<img src="/hadoop/img/1_7.jpg" alt="">
+vmware 설치파일을 실행하고 기다리면 위의 화면을 보게 됩니다. Next 버튼을 누르고 넘어갑니다.<br>
+<img src="/hadoop/img/1_8.jpg" alt="">
+그 다음은 위의 화면이 나오는데, 왼쪽의 빨간 네모 안의 부분을 누르면 체크 표시가 생깁니다.<br>
+그러고나면, 오른쪽 네모 안의 Next 버튼이 누를 수 있게 활성화 됩니다. Next 버튼을 누르고 넘어갑니다.<br>
+<img src="/hadoop/img/1_9.jpg" alt="">
+Next 버튼을 누르고 넘어갑니다.<br>
+<img src="/hadoop/img/1_10.jpg" alt="">
+Next 버튼을 누르고 넘어갑니다.<br>
+<img src="/hadoop/img/1_11.jpg" alt="">
+Next 버튼을 누르고 넘어갑니다.<br>
+<img src="/hadoop/img/1_12.jpg" alt="">
+Install 버튼을 누릅니다.<br>
+<img src="/hadoop/img/1_13.jpg" alt="">
+이런 화면이 나오는데, 설치가 완료될 때 까지 기다립니다.<br>
+<img src="/hadoop/img/1_14.jpg" alt="">
+설치가 완료되면 이런 화면이 나옵니다. 우리가 다운로드받은 VMware WorkStation Player는 무료버전이므로 Lisense를 입력 할 필요가 없습니다.<br>
+Finish를 클릭합니다.<br>
+<img src="/hadoop/img/1_15.jpg" alt="">
+Finish를 클릭하면 재부팅을 해야된다는 정보 창이 나옵니다. Yes를 클릭해서 재부팅을 합니다.<br>
+<br>
+<a href="/hadoop/page/1_2.html" onclick="function(){
+    e.preventDefault();
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = () => {
+        document.querySelector(selector).innerHTML = xhttp.responseText;
+    }
+
+    xhttp.open('GET', '/hadoop/page/1_2.html', true);
+    xhttp.send();
+
+    document.title = 'Hadoop Guide Part. 1 - Step. 2';
+    history.pushState('/hadoop/page/1_2.html' + ' ' + 'Part. 1 - Step. 2', null, '#1_2');
+
+    document.querySelector('side').children[0].children[1].classList.remove('on');
+    document.querySelector('side').children[0].children[2].classList.add('on');
+};"></a>
