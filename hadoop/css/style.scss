@@ -152,10 +152,16 @@ cursor {
 }
 
 .terminal, terminal {
+    display: blick;
     margin: 0.2rem;
     padding: 0.2rem;
     background: #222223;
     border-radius: 5px;
+}
+
+key {
+    background: $TEXT;
+    color: $BACKGROUND;
 }
 
 tab1 {
