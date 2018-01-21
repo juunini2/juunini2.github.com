@@ -1,1 +1,79 @@
-not ready
+vmware까지 설치했으니 이제 CentOs를 설치해보도록 하겠습니다.<br>
+재부팅을 다 하셨으면 바탕화면에<br>
+<img src="/hadoop/img/2_1.jpg" alt="">
+이런 아이콘이 생겼을겁니다. 더블클릭해서 실행시켜주세요.<br>
+<img src="/hadoop/img/2_2.jpg" alt="">
+실행시키면 이런 창이 하나 나옵니다.<br>
+빨간 네모 안의 파란색 텍스트를 클릭해주세요.<br>
+<img src="/hadoop/img/2_3.jpg" alt="">
+클릭하면 이런 창이 뜨는데, 빨간 네모 부분을 클릭하고 Next버튼을 클릭해주세요.<br>
+<img src="/hadoop/img/2_4.jpg" alt="">
+우리가 사용할 실습 환경의 운영체제는 Linux CentOs7 64-bit 입니다.<br>
+위의 빨간 네모 부분을 클릭해서 [Linux]를 선택해주시고, 아래 네모 부분을 클릭해서 [CentOs 7 64-bit] 를 선택해주세요.<br>
+Next 버튼을 클릭합니다.<br>
+<img src="/hadoop/img/2_5.jpg" alt="">
+다음 화면에서는 가상 머신의 이름과 만들 위치를 선택하게 됩니다.<br>
+위의 빨간 네모 안에는 [hadoop - namenode] 라고 입력해주시고,<br>
+아래 빨간 네모(Browse) 버튼을 클릭합니다.<br>
+<img src="/hadoop/img/2_6.jpg" alt="">
+폴더를 지정하는 화면이 나오는데, [바탕화면] 을 찾아서 클릭하고 아래 빨간 네모 안에 있는 [새 폴더 만들기] 버튼을 클릭합니다.<br>
+그리고 새로 만들어진 폴더를 우클릭 해서 [이름 바꾸기]를 클릭해서 [vmware]라고 바꿔주세요.<br>
+그리고 새로 만든 [vmware]폴더를 한번 클릭하고 다시 [새 폴더 만들기] 버튼을 클릭합니다.<br>
+그리고 새로 만들어진 폴더를 우클릭 해서 [이름 바꾸기]를 클릭해서 [hadoop - namenode]라고 바꿔주세요.<br>
+[확인] 버튼을 누른 뒤 [Next] 버튼을 클릭해주세요.
+<img src="/hadoop/img/2_7.jpg" alt="">
+다음 단계에는 이런 화면이 나옵니다.<br>
+위의 빨간 네모 안의 숫자를 100으로 바꿔주시고, 아래 네모 안의 선택영역을 클릭한 뒤 [Next] 버튼을 클릭해주세요.<br>
+<img src="/hadoop/img/2_8.jpg" alt="">
+빨간 네모 안의 버튼을 클릭해주세요.<br>
+<img src="/hadoop/img/2_9.jpg" alt="">
+누르면 바로 나오는 화면의 위의 화면입니다.<br>
+오른쪽의 빨간 네모 부분을 클릭해서 Memory를 2048로 만들어주시고, 왼쪽의 빨간 네모 안에 있는것들을 누르면<br>
+아래 빨간 네모 안의 버튼인 [Remove] 버튼이 활성화 되는데 눌러서 없애주세요. 필요 없는 것들입니다.<br>
+<img src="/hadoop/img/2_10.jpg" alt="">
+왼쪽 빨간 네모 부분을 클릭하면 오른쪽 부분의 화면이 위 처럼 바뀝니다.<br>
+오른쪽 빨간 네모를 클릭하면 아래에 빨간 네모 부분이 활성화 되는데, 눌러서 [VMnet8 (NAT)] 을 선택해주세요.<br>
+<img src="/hadoop/img/2_11.jpg" alt="">
+다음은 위의 화면에 나오는 부분을 선택합니다.<br>
+오른쪽의 빨간 네모 안에 있는 [Use ISO Image file] 을 클릭하면 아래 빨간 네모 안에 있는 [Browse...] 버튼이 활성화 됩니다.<br>
+클릭해주세요.<br>
+그 뒤에 다운로드 받은 [CentOS-7-x86_64-Minimal-1708] 파일을 선택해주세요.(시간이 지나서 버전이 달라지면 이름이 약간 바뀔수도 있습니다.)<br>
+<img src="/hadoop/img/2_12.jpg" alt="">
+설정이 다 되었습니다.<br>
+[Close] 버튼을 누릅니다.<br>
+<img src="/hadoop/img/2_13.jpg" alt="">
+그러면 다시 이 화면으로 돌아오는데, [Finish] 버튼을 클릭해주세요.<br>
+<img src="/hadoop/img/2_14.jpg" alt="">
+가상머신이 하나 만들어졌습니다!<br>
+<br>
+책을 갖고 계신 분이라면 [네임노드], [보조네임노드], [데이터노드]2개가 필요하다는걸 보셨을겁니다.<br>
+그러나 저는 방금 만든 [네임노드]와 [보조네임노드] 그리고 [데이터노드] 1개... 총 3개만 사용하겠습니다.<br>
+<img src="/hadoop/img/2_15.jpg" alt="">
+위에 [Home]을 클릭하면 맨 처음 화면이 나오고, 오른쪽의 빨간 네모 안의 텍스트를 클릭해서<br>
+방금까지 했던 과정을 2번 더 반복해주세요.<br>
+<br>
+[보조네임노드]의 가상머신 이름은 [hadoop - snamenode] 그리고 폴더는 아까 네임노드와 같은 폴더에 [hadoop - snamenode] 라는 폴더를 생성해서 저장해주시고<br>
+[데이터노드]의 가상머신 이름은 [hadoop - datanode] 그리고 폴더는 아까 네임노드와 같은 폴더에 [hadoop - datanode] 라는 폴더를 생성해서 저장해주세요.<br>
+이름만 다르고 설정은 모두 똑같은 3개의 가상머신을 만드는겁니다.<br>
+<img src="/hadoop/img/2_16.jpg" alt="">
+다 만들면 이렇게 됩니다.<br>
+수고하셨습니다. 다음 글에서 계속 진행하겠습니다.<br>
+<br>
+<a href="/hadoop/page/1_3.html" onclick="
+    event.preventDefault();
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = () => {
+        document.querySelector('main').innerHTML = xhttp.responseText;
+    }
+
+    xhttp.open('GET', '/hadoop/page/1_3.html', true);
+    xhttp.send();
+
+    document.title = 'Hadoop Guide Part. 1 - Step. 3';
+    history.pushState('/hadoop/page/1_3.html' + ' ' + 'Part. 1 - Step. 3', null, '#1_3');
+
+    document.querySelector('side').children[0].children[2].classList.remove('on');
+    document.querySelector('side').children[0].children[3].classList.add('on');
+" class="button">다음단계로 가기</a>
