@@ -43,8 +43,8 @@ Finish를 클릭합니다.<br>
 <img src="/hadoop/img/1_15.jpg" alt="">
 Finish를 클릭하면 재부팅을 해야된다는 정보 창이 나옵니다. Yes를 클릭해서 재부팅을 합니다.<br>
 <br>
-<a href="#1_2" onclick="function(e){
-    e.preventDefault();
+<a href="#1_2" onclick="
+    event.preventDefault();
 
     let xhttp = new XMLHttpRequest();
 
@@ -60,4 +60,4 @@ Finish를 클릭하면 재부팅을 해야된다는 정보 창이 나옵니다. 
 
     document.querySelector('side').children[0].children[1].classList.remove('on');
     document.querySelector('side').children[0].children[2].classList.add('on');
-}" class="button">다음단계로 가기</a>
+" class="button">다음단계로 가기</a>
