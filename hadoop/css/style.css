@@ -116,13 +116,15 @@ cursor {
   99% {
     background: none; } }
 .terminal, terminal {
-  display: blick;
+  display: block;
   margin: 0.2rem;
   padding: 0.2rem;
   background: #222223;
   border-radius: 5px; }
 
 key {
+  display: inline-block;
+  padding: 0.05rem;
   background: #e6e6e6;
   color: #292a2b; }
 
