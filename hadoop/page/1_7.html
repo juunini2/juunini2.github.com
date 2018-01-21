@@ -1,0 +1,70 @@
+이번 글에서는 HDFS 명령어에 대해 알아보겠습니다.<br>
+<br>
+HDFS명령어는 대부분 리눅스 명령어와 유사한점이 많습니다.<br>
+사용법은 터미널에서 하둡 폴더 내에서<br>
+<color4>./bin/hadoop fs -명령어 [옵션]</color4><br>
+이런식으로 사용하게 됩니다.<br>
+<br>
+<color4>./bin/hadoop fs -ls [디렉터리 or 파일]</color4><br>
+해당 파일이나 디렉터리 내의 파일 정보를 봅니다.<br>
+<br>
+<color4>./bin/hadoop fs -lsr [디렉터리]</color4><br>
+해당 디렉터리 내의 하위 디렉터리들의 정보까지 다 봅니다.<br>
+<br>
+<color4>./bin/hadoop fs -du [디렉터리 or 파일]</color4><br>
+해당 파일이나 디렉터리의 사용량을 확인합니다.<br>
+<br>
+<color4>./bin/hadoop fs -dus [디렉터리]</color4><br>
+해당 디렉터리의 사용량 합계를 봅니다.<br>
+<br>
+<color4>./bin/hadoop fs -cat [파일]</color4><br>
+파일의 내용을 읽어옵니다.<br>
+<br>
+<color4>./bin/hadoop fs -text [파일]</color4><br>
+cat 명령어는 압축된 파일은 못읽어오지만 text 명령어는 압축된 파일도 읽어옵니다.<br>
+<br>
+<color4>./bin/hadoop fs -mkdir [폴더이름]</color4><br>
+폴더를 만듭니다.<br>
+<color4>./bin/hadoop fs -put [디렉터리 or 파일] [디렉터리 or 파일]</color4><br>
+$HADOOP_HOME에 있는 파일 또는 폴더를 hadoop-data 폴더로 복사합니다.<br>
+<br>
+<color4>./bin/hadoop fs -get [디렉터리 or 파일] [디렉터리 or 파일]</color4><br>
+hadoop-data 폴더에 있는 파일 또는 폴더를 $HADOOP_HOME으로 복사합니다.<br>
+<br>
+<color4>./bin/hadoop fs -getmerge [디렉터리] [생성할 파일 이름]</color4><br>
+디렉터리 내의 모든 파일의 내용을 합쳐서 하나의 파일로 복사한다.<br>
+<br>
+<color4>./bin/hadoop fs -cp [출발지 디렉터리, 파일] [목적지 디렉터리, 파일]</color4><br>
+출발지 디렉터리나 파일을 목적지로 복사합니다.<br>
+<br>
+<color4>./bin/hadoop fs -mv [출발지 디렉터리, 파일] [목적지 디렉터리, 파일]</color4><br>
+출발지 디렉터리나 파일을 목적지로 이동합니다.<br>
+<br>
+<color4>./bin/hadoop fs -rm [파일]</color4><br>
+파일을 삭제합니다.<br>
+<color4>./bin/hadoop fs -rmr [디렉터리]</color4><br>
+디렉터리를 삭제합니다.<br>
+<br>
+<br>
+자주 사용하는 것 위주로 적었습니다. 이것만 알아도 특별히 막히거나 하진 않을 것 입니다.<br>
+<br>
+다음 글에서는 HDFS 입출력 예제를 다루도록 하겠습니다.<br>
+<br>
+<a href="/hadoop/page/1_8.html" onclick="
+    event.preventDefault();
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = () => {
+        document.querySelector('main').innerHTML = xhttp.responseText;
+    }
+
+    xhttp.open('GET', '/hadoop/page/1_8.html', true);
+    xhttp.send();
+
+    document.title = 'Hadoop Guide Part. 1 - Step. 8';
+    history.pushState('/hadoop/page/1_8.html' + ' ' + 'Part. 1 - Step. 8', null, '#1_8');
+
+    document.querySelector('side').children[0].children[7].classList.remove('on');
+    document.querySelector('side').children[0].children[8].classList.add('on');
+" class="button">다음단계로 가기</a>

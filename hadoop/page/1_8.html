@@ -1,0 +1,115 @@
+이번장에서는 97페이지에 있는 HDFS 입출력 예제를 다뤄보겠습니다.<br>
+<br>
+SingleFileWriteRead.java 라는 파일을 생성해서 내용을 입력하도록 되어있습니다.<br>
+그런데 어디 만드는지 설명을 안해주네요? 제가 직접 해본 결과는 $HADOOP_HOME에 만들어야 합니다.<br>
+
+<img src="/hadoop/img/8_1.jpg" alt="">
+
+여기에 만듭니다.<br>
+내용은 제가 밑에 써드릴게요. 붙여넣기 하세요.<br>
+
+<pre class="terminal">
+<color4>import</color4> <color2>org.apache.hadoop.conf.Configuration</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.fs.FSDataInputStream</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.fs.FSDataOutputStream</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.fs.FileSystem</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.fs.Path</color2>;
+
+<color2>public class</color2> SingleFileWriteRead { <blur><i>// 자바는 파일명과 퍼블릭 클래스가 무조건 같아야합니다.</i></blur>
+    <color2>public static void</color2> <color3>main</color3>(<color2>String</color2>[] args) {
+
+        <color4>if</color4> (<color4>args</color4>.length <color2>!= 2</color2>) { <blur><i>// 자바 파일을 실행할 때 그냥 실행하는게 아니라 뒤에 문자열을 붙이면 args에 배열로 저장됨.</i></blur>
+                                <blur><i>// 그러니까, 2개의 배열이 들어오지 않으면 에러로 취급하겠다는 뜻</i></blur>
+            <color4>System</color4>.<color4>err</color4>.<color3>println</color3>(<color7>"Usage: SingleFileWriteRead &lt;filename&gt; &lt;contents&gt;"</color7>); <blur><i>// 파일이름 파일내용 으로 넣어달라는 에러메시지</i></blur>
+            <color4>System</color4>.<color3>exit</color3>(<color2>2</color2>);
+        }
+
+        <color4>try</color4> {   <blur><i>// 정상 실행</i></blur>
+            <color2>Configuration</color2> conf = <color4>new</color4> <color3>Configuration</color3>();   <blur><i>// core-default.xml 과 core-site.xml의 값을 받아옴</i></blur>
+            <color2>FileSystem</color2> hdfs = <color4>FileSystem</color4>.<color3>get</color3>(conf);     <blur><i>// 하둡 파일 시스템 객체를 위의 값에서 받아옴</i></blur>
+
+            <color2>Path</color2> path = <color4>new</color4> <color3>Path</color3>(args[<color2>0</color2>]);  <blur><i>// 자바 파일을 실행할 때 첫번 쨰 배열은 파일이름 입니다.</i></blur>
+            <color2>if</color2> (<color4>hdfs</color4>.<color3>exists</color3>(path)) {        <blur><i>// 만약에 만들려는 파일의 이름이 존재하면 삭제하고 새로 만듦.</i></blur>
+                <color4>hdfs</color4>.<color3>delete</color3>(path, <color2>true</color2>);
+            }
+
+            <color2>FSDataOutputStream</color2> outStream = <color4>hdfs</color4>.<color3>create</color3>(path);   <blur><i>// hadoop-data 폴더에서 방금 만든 파일을 읽어옴</i></blur>
+            <color4>outStream</color4>.<color3>writeUTF</color3>(args[<color2>1</color2>]);                        <blur><i>// 자바 파일을 실행할 때 두번 째 배열은 파일 내용이고 UTF형식으로 저장함.</i></blur>
+            <color4>outStream</color4>.<color3>close</color3>();                                  <blur><i>// 저장종료</i></blur>
+
+            <color2>FSDataInputStream</color2> inputStream = <color4>hdfs</color4>.<color3>open</color3>(path);    <blur><i>// hadoop-data 폴더에 첫번 째 배열인 파일을 연다.</i></blur>
+            <color2>String</color2> inputString = <color4>inputStream</color4>.<color3>readUTF</color3>();         <blur><i>// UTF 형식으로 읽어옴. inputString라는 이름의 변수에 값 저장</i></blur>
+            <color4>inputStream</color4>.close();                                <blur><i>// 읽기 종료.</i></blur>
+
+            <color4>System</color4>.<color4>out</color4>.<color3>println</color3>(<color7>"## inputString : "</color7> + inputString);  <blur><i>// inputString변수에 저장된 값을 출력.</i></blur>
+        } <color6>catch</color6> (<color2>Exception</color2> e) {     <blur><i>// 에러가 났을 경우</i></blur>
+            <color4>e</color4>.<color3>printStackTrace</color3>();    <blur><i>// 에러문구 출력</i></blur>
+        }
+    }
+}
+</pre>
+
+붙여넣기는 하시되 주석 내용들은 좀 읽어주세요. 열심히 해석해서 알기쉽게 써놓았습니다.<br>
+<br>
+그럼 컴파일을 해야겠죠? 자바를 써보신 분들은 아시겠지만, 자바를 컴파일 하는 방법은<br>
+<color4>javac SingleFileWriteRead.java</color4> 입니다.<br>
+그런데, 이대로 컴파일을 하면 에러가 납니다.<br>
+책에도 나와있지 않고 인터넷을 아무리 뒤져도 좀처럼 쓸만한 정보를 찾기 힘듭니다.<br>
+그래서 제가 직접 알아낸 방법을 알려드리겠습니다.<br>
+<br>
+아래 방법처럼 해주세요.<br>
+
+<terminal>
+    [hadoop@namenode hadoop]$ javac -cp ./hadoop-core* SingleFileWriteRead.java<br>
+    [hadoop@namenode hadoop]$ jar -cvf SingleFileWriteRead.jar SingleFileWriteRead.class<br>
+    Manifest를 추가함 <br>
+    추가하는 중: SingleFileWriteRead.class(입력 = 1681) (출력 = 891)(46%를 감소함)<br>
+</terminal>
+
+이렇게 해야 컴파일이 가능합니다. javac -cp 옵션은 classpath옵션으로 그 다음에 쓰는 파일을 포함해서 컴파일 하는겁니다.<br>
+그리고 jar -cvf 는 jar파일을 만들고, class파일을 포함하고, 이름을 짓는 명령어입니다.<br>
+<br>
+컴파일을 끝마쳤으니 방금 만든 예제를 실행시켜보겠습니다.<br>
+
+<terminal>
+    [hadoop@namenode hadoop]$ ./bin/hadoop jar SingleFileWriteRead.jar SingleFileWriteRead input.txt Hello,HDFS<br>
+    ## inputString:Hello,HDFS<br>
+</terminal>
+
+이렇게 나옵니다. SingleFileWriteRead 뒤에 input.txt가 첫번째 배열(파일 이름), Hello,HDFS가 두번째 배열(파일 내용)입니다.<br>
+"## inputString:" + 파일 내용<br>
+이니까 맞게 출력되었습니다.<br>
+<br>
+파일이 잘 만들어졌는지 확인해보겠습니다.<br>
+
+<terminal>
+    [hadoop@namenode hadoop]$ ./bin/hadoop fs -ls input.txt<br>
+    Found 1 items <br>
+    -rw-r--r-- 3 hadoop supergroup 12 2018-01-21 07:19 /user/hadoop/input.txt<br>
+    [hadoop@namenode hadoop]$ ./bin/hadoop fs -cat input.txt<br>
+    <br>
+    Hello,HDFS[hadoop@namenode hadoop]$
+</terminal>
+
+이렇게 출력됩니다. 정상적으로 파일이 만들어졌고, 정상적으로 내용이 출력됨을 알 수 있습니다.<br>
+<br>
+이번에는 여기까지만 하고, 이번 파트의 마지막 예제인 다음 예제는 다음 글에서 계속하겠습니다.<br>
+<br>
+<a href="/hadoop/page/1_9.html" onclick="
+    event.preventDefault();
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = () => {
+        document.querySelector('main').innerHTML = xhttp.responseText;
+    }
+
+    xhttp.open('GET', '/hadoop/page/1_9.html', true);
+    xhttp.send();
+
+    document.title = 'Hadoop Guide Part. 1 - Step. 9';
+    history.pushState('/hadoop/page/1_9.html' + ' ' + 'Part. 1 - Step. 9', null, '#1_9');
+
+    document.querySelector('side').children[0].children[8].classList.remove('on');
+    document.querySelector('side').children[0].children[9].classList.add('on');
+" class="button">다음단계로 가기</a>
