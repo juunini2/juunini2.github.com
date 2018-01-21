@@ -1,0 +1,213 @@
+이전 글에서는 운영체제 설치를 하였습니다.<br>
+이번 글에서는 필요한 구성 요소를 설치하도록 하겠습니다.<br>
+네임노드에는 GUI(Graphic User Interface)가 필요하지만, 데이터노드에는 필요하지 않습니다.<br>
+<br>
+그래서, 네임노드에만 GUI환경을 구축하도록 하겠습니다.<br>
+
+<img src="/hadoop/img/4_1.jpg" alt="">
+
+저번 글에 이어서 진행하자면 이런 화면일 것입니다. 명령창 모드인 CLI(Command Line Interface) 환경입니다.<br>
+그럼, 필요한 명령어를 써드릴테니 따라해주세요.<br>
+아직 복사 붙여넣기가 불가능한 단계이니 손으로 직접 입력해주세요. 오타 안나게 조심해서요.<br>
+
+<terminal>
+    [root@namenode ~]# yum install -y epel-release && yum groupinstall -y "X Window System" "MATE Desktop"<br>
+    <blur>(설치과정 로그 생략></blur><br>
+</terminal>
+
+이렇게 하면 꽤 오랫동안 설치할텐데요, 그 동안 보조네임노드와 데이터노드에 필요한 작업을 수행하도록 하겠습니다.<br>
+<br>
+아래 명령어를 따라 입력해주세요.<br>
+일단 보조네임노드부터 시작하겠습니다.<br>
+
+<terminal>
+    [root@snamenode ~]# yum install -y openssh*<br>
+</terminal>
+
+다음은 데이터노드도 동일하게 입력해주세요<br>
+
+<terminal>
+    [root@datanode ~]# yum install -y openssh*<br>
+</terminal>
+
+설치가 완료되고나면 보조네임노드와 데이터노드에 아래에 써진 글 대로 입력해주세요.<br>
+
+<terminal>
+    [root@snamenode ~]# systemctl restart network && vi /etc/ssh/sshd_config<br>
+</terminal>
+
+<img src="/hadoop/img/4_2.jpg" alt="">
+
+위 대로 입력하면 이런 화면이 나올 것 입니다.<br>
+vi 에디터를 처음 써보시는분이 많으실텐데요, 일단 지금은 필요한것만 설명하고 넘어가겠습니다.<br>
+아래 화살표를 눌러서 저기 빨간 네모 부분까지 커서를 내리세요.<br>
+그 뒤에 키보드에 x 버튼을 누르면 글자가 하나씩 사라지는데요,<br>
+#Port 22 라고 되어있는 부분에 #부분을 x로 지우면 됩니다.<br>
+혹시나 실수로 다른게 지워졌으면 u를 눌러주세요. Undo 키 입니다. 이전 상태로 돌아가요.<br>
+
+<img src="/hadoop/img/4_3.jpg" alt="">
+
+지우고 나면 이런 상태가 되겠지요?
+그 뒤엔<br>
+<br>
+:wq<br>
+<br>
+라고 입력하고 엔터를 눌러주세요. 저장하고 종료하는 명령어입니다.<br>
+
+<img src="/hadoop/img/4_4.jpg" alt="">
+
+아래에 이렇게 나오고 엔터키를 누르면 저장하고 종료됩니다.<br>
+그 뒤에 아래처럼 입력해주세요.<br>
+
+<terminal>
+    [root@snamenode ~]# systemctl start sshd.service<br>
+</terminal>
+
+이렇게 입력하면 ssh포트가 열린것입니다.<br>
+이제 보조네임노드와 데이터노드는 직접 손 댈 일이 없습니다.<br>
+절대로 끄지 마시고! 절대로! 그냥 최소화 시켜두고 손 대지 마세요.<br>
+절대로 끄면 안됩니다! 절대요! 절대로 끄지 말라고 지금 5번째 강조하고 있습니다.<br>
+절대로 끄지 마세요!<br>
+<br>
+아마 이 작업을 하는 사이에 네임노드의 GUI환경 설치 작업이 끝났을지도 모르겠군요.<br>
+
+<img src="/hadoop/img/4_5.jpg" alt="">
+
+설치가 끝나면 이렇게 설치 로그들이 가득 나온 뒤에 Complete! 라고 나오고 끝이 나있습니다.<br>
+설치가 끝났으니 설치를 적용시킬 차례입니다.<br>
+아래에 입력해야 할 명령어를 써드릴테니 따라 입력해주세요.<br>
+
+<terminal>
+    [root@namenode ~]# systemctl set-default graphical.target && systemctl isolate graphical.target<br>
+</terminal>
+
+<img src="/hadoop/img/4_6.jpg" alt="">
+
+그럼 이런 창이 나올겁니다.<br>
+빨간 네모로 표시해둔 부분을 클릭해주세요.<br>
+
+<img src="/hadoop/img/4_7.jpg" alt="">
+
+라이선스 동의 화면입니다.<br>
+아래에 빨간 네모 안에 있는 체크박스를 체크해주시고 위에 있는 Done 버튼을 클릭해주세요<br>
+
+<img src="/hadoop/img/4_8.jpg" alt="">
+
+그럼 라이선스 동의 부분에 느낌표가 사라졌습니다. 아래 빨간 네모 안에 있는 [FINISH CONFIGURATION] 버튼을 눌러주세요.<br>
+
+<img src="/hadoop/img/4_9.jpg" alt="">
+
+그럼 로그인 창이 뜹니다.<br>
+여기서 살펴보고 갈 부분이 있어요.<br>
+일단 표시해둔 부분을 클릭해주세요.<br>
+
+<img src="/hadoop/img/4_10.jpg" alt="">
+
+화면에는 MATE 하나만 있지만 혹시나 다른것도 같이 있고 MATE가 체크되어있지 않다면 MATE를 체크해주세요.<br>
+그 다음 단계입니다.<br>
+
+<img src="/hadoop/img/4_11.jpg" alt="">
+
+표시해둔 부분을 클릭해주세요. 언어세팅을 할 차례입니다.<br>
+
+<img src="/hadoop/img/4_12.jpg" alt="">
+
+아래로 쭈욱 휠스크롤 해서 내리면 화면처럼 [Korean - Republic of Korea] 을 찾으실 수 있을겁니다.<br>
+찾으셨으면 클릭해주세요.<br>
+
+<img src="/hadoop/img/4_13.jpg" alt="">
+
+로그인 화면에서의 설정을 마쳤으니 로그인 합시다. 처음에 설정했던 비밀번호인 1234를 넣고 로그인 하세요.<br>
+아, [Log in] 버튼을 눌러주세요.<br>
+
+<img src="/hadoop/img/4_14.jpg" alt="">
+
+이렇게 화면이 나오면 잘 로그인이 된겁니다.<br>
+다음은 이 가상의 컴퓨터를 편하게 쓰기위한 vmware tool을 설치하겠습니다.<br>
+그 뒤에는 복사 붙여넣기가 가능해져서 편하게 작업이 가능해지거든요.<br>
+<br>
+상단에 빨간 네모 부분을 클릭해주세요.<br>
+
+<img src="/hadoop/img/4_15.jpg" alt="">
+
+그리고 위 사진에 보이는대로 따라가서 저 부분을 클릭해주세요.<br>
+
+<img src="/hadoop/img/4_16.jpg" alt="">
+
+아, 업데이트 하지 않아서 이 창이 다시 뜨는군요. Download and Install 버튼을 클릭해주세요.<br>
+
+<img src="/hadoop/img/4_17.jpg" alt="">
+
+그리고 이런 창이 나오면 성공입니다. 재부팅만 하면 vmware tool이 설치되서 앞으로 복사 붙여넣기가 가능해져 편하게 작업이 가능해집니다.<br>
+
+<img src="/hadoop/img/4_18.jpg" alt="">
+
+저 부분을 클릭해주세요.<br>
+
+<img src="/hadoop/img/4_19.jpg" alt="">
+
+그리고 Reboot 버튼을 클릭해주세요. 그러면 재부팅 됩니다.<br>
+<br>
+자, 그럼 복사 붙여넣기가 가능한지 실험해봐야겠죠?<br>
+
+<img src="/hadoop/img/4_20.jpg" alt="">
+
+저기 빨간 네모 부분의 아이콘을 클릭하면 '터미널' 이라는게 실행됩니다.<br>
+아까 맨 처음에 봤던 명령창 모드와 같다고 생각하시면 됩니다.<br>
+
+<img src="/hadoop/img/4_21.jpg" alt="">
+
+su 라고 입력하고 비밀번호인 1234를 입력하면 사용자 권한에서 루트권한으로 넘어갑니다.<br>
+이제 복사 붙여넣기 할 명령어를 밑에 적어드리겠습니다.<br>
+
+<terminal>
+    [root@namenode hadoop]# yum install -y im-chooser
+</terminal>
+
+복사는 # 뒷부분을 드래그 한 뒤에 <key>Ctrl</key> + <key>C</key><br>
+터미널 안에 붙여넣기 할 땐 방법이 약간 다른데요, <key>Ctrl</key> + <key>Shift</key> + <key>V</key> 또는 마우스 우클릭 한 뒤 붙여넣기를 선택하면 됩니다.<br>
+지금 한번 해보세요.<br>
+<br>
+잘 되시나요?<br>
+<br>
+방금 설치한 패키지들은 한글 입력을 위한 입력기입니다.<br>
+그럼 한글 입력 세팅을 시작해봅시다.<br>
+
+<terminal>
+    [root@namenode hadoop]# su hadoop
+    [root@namenode ~]$ im-chooser
+</terminal>
+
+<img src="/hadoop/img/4_22.jpg" alt="">
+
+이런 창이 뜰겁니다.<br>
+권장사항 되어있는 IBus를 더블클릭 해주세요.<br>
+그러면 밑에 [로그아웃] 버튼이 활성화 되는데 클릭해주세요<br>
+로그아웃 후 다시 로그인 하면 한글 입력이 가능해집니다.<br>
+혹시나 로그아웃 버튼이 활성화 안되면 닫기 누른 뒤에 다시시작 해주세요.<br>
+<br>
+터미널 창을 열고 키보드를 아무거나 입력해보세요. 영어가 나올겁니다.<br>
+<key>Windows key</key> + <key>Space</key> 를 누르면 한글을 입력할 수 있습니다.<br>
+윈도우랑은 다르게 약간은 불편하지만 이런식으로 한영전환을 하게 됩니다.<br>
+<br>
+자, 네임노드에 GUI환경도 구축했고 복사 붙여넣기 및 한글입력도 가능한 상태가 되었습니다.<br>
+다음 단계는 다음 글에서 계속 하도록 하겠습니다.<br>
+<br>
+<a href="/hadoop/page/1_5.html" onclick="
+    event.preventDefault();
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = () => {
+        document.querySelector('main').innerHTML = xhttp.responseText;
+    }
+
+    xhttp.open('GET', '/hadoop/page/1_5.html', true);
+    xhttp.send();
+
+    document.title = 'Hadoop Guide Part. 1 - Step. 5';
+    history.pushState('/hadoop/page/1_5.html' + ' ' + 'Part. 1 - Step. 5', null, '#1_5');
+
+    document.querySelector('side').children[0].children[4].classList.remove('on');
+    document.querySelector('side').children[0].children[5].classList.add('on');
+" class="button">다음단계로 가기</a>
