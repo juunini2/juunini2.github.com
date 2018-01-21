@@ -1,0 +1,458 @@
+이전 글에서는 ssh통신과 자바 설치, 환경변수 등록, 하둡 설치까지 했었습니다.<br>
+이번 글에서는 하둡 설정과 실행예제까지 해보도록 하겠습니다.<br>
+<br>
+하둡에 이것저것 직접 설정해야 하는것들이 있는데, 계속 vi에디터를 쓰기에는 여러분도 저도 힘드니,<br>
+적절한 에디터를 하나 설치하고 진행하겠습니다.<br>
+
+<img src="/hadoop/img/6_1.jpg" alt="">
+
+표시해둔 부분의 아이콘을 누르면 인터넷에 접속하실 수 있습니다.<br>
+<a href="https://code.visualstudio.com/Download">https://code.visualstudio.com/Download</a> 이 쪽으로 url을 입력하여 들어갑니다.<br>
+
+<img src="/hadoop/img/6_2.jpg" alt="">
+
+그럼 이쪽으로 접속되는데, CentOs 리눅스는 레드햇 계열이라 rpm<color2>(redhat package manager)</color2>을 사용합니다.<br>
+표시해둔 부분을 클릭해서 다운로드 해주세요.<br>
+
+<img src="/hadoop/img/6_3.jpg" alt="">
+
+그럼 이런 창이 뜨는데 아무생각 없이 확인 누르지 마시고, 제가 표시해둔 부분을 클릭해서<br>
+열기 말고 저장으로 한 뒤에 다운로드 해주세요.<br>
+다운로드가 다 되셨으면<br>
+
+<img src="/hadoop/img/6_4.jpg" alt="">
+
+표시해둔 아이콘을 클릭해주세요.<br>
+
+<img src="/hadoop/img/6_5.jpg" alt="">
+
+그럼 파일탐색기 창이 뜨는데, 제가 표시해둔 부분 중 어느곳을 누르시던 상관없습니다. 다운로드 폴더로 들어가주세요.<br>
+
+<img src="/hadoop/img/6_6.jpg" alt="">
+
+폴더 내에서 빈공간에 우클릭을 하면 제가 표시해둔 [터미널 열기] 가 보일텐데, 그걸 클릭해주세요.<br>
+그러면 터미널에 표시되는 경로가 현재 폴더의 경로가 되어 터미널이 실행됩니다.<br>
+아래 명령어를 따라 입력해주세요.<br>
+
+<terminal>
+    [hadoop@namenode Downloads]$ sudo rpm -Uvh code<blur>(<key>tab</key> 키를 눌러주세요.)</blur><br>
+</terminal>
+
+tab 키를 눌러주세요 부분에서 code 까지만 치고 <key>tab</key> 키를 누르면 자동완성이 됩니다.<br>
+아래를 봐주세요.
+
+<terminal>
+    [hadoop@namenode Downloads]$ sudo rpm -Uvh code-1.19.2-1515600099.el7.x86_64.rpm<br>
+</terminal>
+
+이런식으로 알아서 code 뒷부분을 자동완성 시켜줍니다.<br>
+엔터키를 눌러서 실행해주세요.<br>
+다 되고나면 여기서 실행이 가능합니다.<br>
+
+<img src="/hadoop/img/6_7.jpg" alt="">
+
+여기 있죠?<br>
+실행시켜보세요.<br>
+
+<img src="/hadoop/img/6_8.jpg" alt="">
+
+이런 창이 뜹니다.<br>
+제가 체크해둔 부분을 클릭해주세요.<br>
+
+<img src="/hadoop/img/6_9.jpg" alt="">
+
+그럼 위에 다시 시작하겠다는 창이 뜹니다.<br>
+먼저 아래에 체크박스의 체크를 먼저 풀고 다시 로드한다는 알림에 확인을 눌러주세요.<br>
+
+<img src="/hadoop/img/6_10.jpg" alt="">
+
+표시해둔 부분을 오른쪽부터 왼쪽 순으로 순서대로 클릭해주세요.<br>
+
+<img src="/hadoop/img/6_11.jpg" alt="">
+
+그러면 이렇게 되는데 체크해둔 폴더 열기 버튼을 클릭해주세요.<br>
+
+<img src="/hadoop/img/6_12.jpg" alt="">
+
+체크해둔 부분 클릭<br>
+
+<img src="/hadoop/img/6_13.jpg" alt="">
+
+hadoop 폴더를 한번만 클릭한 뒤 아래의 확인 버튼을 클릭합니다.<br>
+
+<img src="/hadoop/img/6_14.jpg" alt="">
+
+표시해둔 부분을 클릭해주세요.<br>
+
+<img src="/hadoop/img/6_15.jpg" alt="">
+
+표시해둔 부분을 클릭해주세요.<br>
+
+<img src="/hadoop/img/6_16.jpg" alt="">
+
+hadoop-env.sh 파일로 들어왔습니다. 이제 필요한 부분을 수정하겠습니다.<br>
+
+<pre class="terminal">
+    <blur><i># Set Hadoop-specific environment variables here.
+
+    # The only required environment variable is JAVA_HOME. All others are
+    # optional. When running a distributed configuration it is best to
+    # set JAVA_HOME in this file, so that it is correctly defined on
+    # remote nodes.
+
+    # The java implementation to use. Required.</i></blur>
+    <color2>export</color2> JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-0.b14.el7_4.x86_64
+    
+    <blur><i># Extra Java CLASSPATH elements. Optional.
+    # export HADOOP_CLASSPATH=
+
+    # The maximum amount of heap to use, in MB. Default is 1000.
+    # export HADOOP_HEAPSIZE=2000
+    
+    # Extra Java runtime options. Empty by default.
+    # export HADOOP_OPTS=-server
+    
+    # Command specific options appended to HADOOP_OPTS when specified</i></blur>
+    <color2>export</color2> HADOOP_NAMENODE_OPTS=<color7>"-Dcom.sun.management.jmxremote</color7> $HADOOP_NAMENODE_OPTS<color7>"</color7>
+    <color2>export</color2> HADOOP_SECONDARYNAMENODE_OPTS=<color7>"-Dcom.sun.management.jmxremote</color7> $HADOOP_SECONDARYNAMENODE_OPTS<color7>"</color7>
+    <color2>export</color2> HADOOP_DATANODE_OPTS=<color7>"-Dcom.sun.management.jmxremote</color7> $HADOOP_DATANODE_OPTS<color7>"</color7>
+    <color2>export</color2> HADOOP_BALANCER_OPTS=<color7>"-Dcom.sun.management.jmxremote</color7> $HADOOP_BALANCER_OPTS<color7>"</color7>
+    <color2>export</color2> HADOOP_JOBTRACKER_OPTS=<color7>"-Dcom.sun.management.jmxremote</color7> $HADOOP_JOBTRACKER_OPTS<color7>"</color7>
+    <blur><i># export HADOOP_TASKTRACKER_OPTS=
+    # The following applies to multiple commands (fs, dfs, fsck, distcp etc)
+    # export HADOOP_CLIENT_OPTS
+    
+    # Extra ssh options. Empty by default.
+    # export HADOOP_SSH_OPTS="-o ConnectTimeout=1 -o SendEnv=HADOOP_CONF_DIR"
+
+    # Where log files are stored. $HADOOP_HOME/logs by default.
+    # export HADOOP_LOG_DIR=${HADOOP_HOME}/logs
+
+    # File naming remote slave hosts. $HADOOP_HOME/conf/slaves by default.
+    # export HADOOP_SLAVES=${HADOOP_HOME}/conf/slaves
+
+    # host:path where hadoop code should be rsync'd from. Unset by default.
+    # export HADOOP_MASTER=master:/home/$USER/src/hadoop
+
+    # Seconds to sleep between slave commands. Unset by default. This
+    # can be useful in large clusters, where, e.g., slave rsyncs can
+    # otherwise arrive faster than the master can service them.
+    # export HADOOP_SLAVE_SLEEP=0.1
+
+    # The directory where pid files are stored. /tmp by default.
+    # NOTE: this should be set to a directory that can only be written to by
+    #   the users that are going to run the hadoop daemons. Otherwise there is
+    #   the potential for a symlink attack.</i></blur>
+    <color2>export</color2> HADOOP_PID_DIR=/home/hadoop/hadoop/pids
+
+    <blur><i># A string representing this instance of hadoop. $USER by default.
+    # export HADOOP_IDENT_STRING=$USER
+
+    # The scheduling priority for daemon processes. See 'man nice'.
+    # export HADOOP_NICENESS=10</i></blur>
+
+    <color2>export</color2> HADOOP_HOME_WARN_SUPPRESS=<color7>"TRUE"</color7>
+</pre>
+
+일단 여러분의 파일과 비교해보시면 눈에 들어오실겁니다.<br>
+9번줄에 # 주석을 없애고 JAVA_HOME의 경로를 아까 우리가 지정했던 JAVA_HOME의 경로로 변경해주었고,<br>
+51번줄에 # 주석을 없애고 경로를 HADOOP_HOME의 경로로 수정하고 뒤에 /pids를 추가했습니다.<br>
+그리고 59번줄은 추가했습니다.<br>
+59번줄이 이전 글에서 혹시나 에러가 날 수 있다고 했던 부분을 방지하는 방법입니다.<br>
+<key>Ctrl</key> + <key>s</key> 키를 눌러서 저장해주세요. 앞으로 뭐든 끄기 전에 이 키를 눌러서 저장부터 해주세요.<br>
+<br>
+그 다음은 masters 파일과 slaves 파일을 수정하겠습니다.<br>
+
+<img src="/hadoop/img/6_17.jpg" alt="">
+
+위에 x버튼을 눌러서 hadoop-env.sh 파일을 닫고 masters파일과 slavers파일을 더블클릭 해서 열어주세요.<br>
+<br>
+masters 파일을 이렇게 수정해주세요.<br>
+
+<terminal>
+    snamenode<br>
+</terminal>
+
+slaves 파일을 이렇게 수정해주세요.<br>
+
+<terminal>
+    snamenode<br>
+    datanode<br>
+</terminal>
+
+masters 파일에 들어가는 내용은 보조네임노드입니다.<br>
+slaves 파일에 들어가는 내용은 데이터노드이구요.<br>
+
+<img src="/hadoop/img/6_18.jpg" alt="">
+
+다 닫은 뒤 왼쪽에 표시해둔 3개의 파일을 더블클릭 해서 열어주세요.<br>
+3파일이 전부 내용이 똑같죠?<br>
+
+<pre class="terminal">
+    <color2>&lt;?</color2>xml version=<color7>"1.0"</color7><color2>?&gt;</color2>
+    <color2>&lt;?</color2>xml-stylesheet <color2>type</color2>=<color7>"text/xsl"</color7> <color2>href</color2>=<color7>"configuration.xsl"</color7><color2>?&gt;</color2>
+    
+    <blur><i>&lt;!-- Put site-specific property overrides in this file. --&gt;</i></blur>
+    
+    <color2>&lt;</color2>configuration<color2>&gt;</color2>
+
+    <color2>&lt;</color2>/configuration<color2>&gt;</color2>
+</pre>
+
+전부 다 이렇게 생겼습니다.<br>
+그럼 <color2>core-site.xml</color2> 부터 수정하겠습니다.<br>
+
+<pre class="terminal">
+    <color2>&lt;?</color2>xml version=<color7>"1.0"</color7><color2>?&gt;</color2>
+    <color2>&lt;?</color2>xml-stylesheet <color2>type</color2>=<color7>"text/xsl"</color7> <color2>href</color2>=<color7>"configuration.xsl"</color7><color2>?&gt;</color2>
+        
+    <color2>&lt;</color2>configuration<color2>&gt;</color2>
+        <color2>&lt;</color2>property<color2>&lt;/</color2>property<color2>&gt;</color2>
+            <color2>&lt;</color2>name<color2>&gt;</color2>fs.default.name<color2>&lt;/</color2>name<color2>&gt;</color2>
+            <color2>&lt;</color2>value<color2>&gt;</color2>hdfs://namenode:9000<color2>&lt;/</color2>value<color2>&gt;</color2>
+        <color2>&lt;/</color2>property<color2>&lt;/</color2>property<color2>&gt;</color2>
+        
+        <color2>&lt;</color2>property<color2>&lt;/</color2>property<color2>&gt;</color2>
+            <color2>&lt;</color2>name<color2>&gt;</color2>hadoop.tmp.dir<color2>&lt;/</color2>name<color2>&gt;</color2>
+            <color2>&lt;</color2>value<color2>&gt;</color2>/home/hadoop/hadoop-data<color2>&lt;/</color2>value<color2>&gt;</color2>
+        <color2>&lt;/</color2>property<color2>&lt;/</color2>property<color2>&gt;</color2>
+    <color2>&lt;/</color2>configuration<color2>&gt;</color2>
+</pre>
+
+그 다음은 <color2>hdfs-site.xml</color2> 입니다.<br>
+
+<pre class="terminal">
+    <color2>&lt;?</color2>xml version=<color7>"1.0"</color7><color2>?&gt;</color2>
+    <color2>&lt;?</color2>xml-stylesheet <color2>type</color2>=<color7>"text/xsl"</color7> <color2>href</color2>=<color7>"configuration.xsl"</color7><color2>?&gt;</color2>
+        
+    <color2>&lt;</color2>configuration<color2>&gt;</color2>
+        <color2>&lt;</color2>property<color2>&lt;/</color2>property<color2>&gt;</color2>
+            <color2>&lt;</color2>name<color2>&gt;</color2>dfs.replication<color2>&lt;/</color2>name<color2>&gt;</color2>
+            <color2>&lt;</color2>value<color2>&gt;</color2>3<color2>&lt;/</color2>value<color2>&gt;</color2>
+        <color2>&lt;/</color2>property<color2>&lt;/</color2>property<color2>&gt;</color2>
+        
+        <color2>&lt;</color2>property<color2>&lt;/</color2>property<color2>&gt;</color2>
+            <color2>&lt;</color2>name<color2>&gt;</color2>dfs.http.address<color2>&lt;/</color2>name<color2>&gt;</color2>
+            <color2>&lt;</color2>value<color2>&gt;</color2>namenode:50070<color2>&lt;/</color2>value<color2>&gt;</color2>
+        <color2>&lt;/</color2>property<color2>&lt;/</color2>property<color2>&gt;</color2>
+
+        <color2>&lt;</color2>property<color2>&lt;/</color2>property<color2>&gt;</color2>
+            <color2>&lt;</color2>name<color2>&gt;</color2>dfs.secondary.http.address<color2>&lt;/</color2>name<color2>&gt;</color2>
+            <color2>&lt;</color2>value<color2>&gt;</color2>snamenode:50090<color2>&lt;/</color2>value<color2>&gt;</color2>
+        <color2>&lt;/</color2>property<color2>&lt;/</color2>property<color2>&gt;</color2>
+    <color2>&lt;/</color2>configuration<color2>&gt;</color2>
+</pre>
+
+그 다음은 <color2>mapred-site.xml</color2>을 수정하겠습니다.<br>
+
+<pre class="terminal">
+    <color2>&lt;?</color2>xml version=<color7>"1.0"</color7><color2>?&gt;</color2>
+    <color2>&lt;?</color2>xml-stylesheet <color2>type</color2>=<color7>"text/xsl"</color7> <color2>href</color2>=<color7>"configuration.xsl"</color7><color2>?&gt;</color2>
+        
+    <color2>&lt;</color2>configuration<color2>&gt;</color2>
+        <color2>&lt;</color2>property<color2>&lt;/</color2>property<color2>&gt;</color2>
+            <color2>&lt;</color2>name<color2>&gt;</color2>mapred.job.tracker<color2>&lt;/</color2>name<color2>&gt;</color2>
+            <color2>&lt;</color2>value<color2>&gt;</color2>namenode:9001<color2>&lt;/</color2>value<color2>&gt;</color2>
+        <color2>&lt;/</color2>property<color2>&lt;/</color2>property<color2>&gt;</color2>
+    <color2>&lt;/</color2>configuration<color2>&gt;</color2>
+</pre>
+
+그대로 붙여넣기 하시면 됩니다.<br>
+<color2>core-site.xml</color2>의 프로퍼티부터 설명드리겠습니다.<br>
+<color4>fs.default.name</color4>은 하둡 파일시스템의 디폴트 <color5>포트</color5>입니다..<br>
+하지만 여기서 착각하시면 안되는게, default name이라고 써져있어서 이름인가? 하고 마음대로 지으면 안된다는 점입니다.<br>
+제가 포트를 강조한 이유가 그것입니다. 하둡 파일 시스템이 할당받는 포트 입니다.<br>
+그리고 <color4>hadoop.tmp.dir</color4>은 하둡의 저장 정보가 들어갈 폴더의 경로입니다.<br>
+<br>
+<color2>hdfs-site.xml</color2>의 프로퍼티에서 <color4>dfs.replication</color4>은 분산 환경 설정입니다.<br>
+1은 독립실행, 2는 가상분산, 3은 완전분산 입니다.<br>
+<color4>dfs.http.address</color4>는 나중에 html형식으로 모니터링을 제공하는데 그 때 들어가서 볼 포트입니다.<br>
+<color4>dfs.secondary.http.address</color4>는 보조네임노드의 모니터링 포트구요.<br>
+<br>
+<color2>mapred-site.xml</color2>의 프로퍼티에서 <color4>mapred.job.tracker</color4>는 맵리듀스의 잡트래커가 활동할 포트입니다.<br>
+<br>
+여기까지 마쳤다면 기본적인 하둡의 설정이 끝난겁니다.<br>
+이제 실행을 위한 준비를 해봅시다.<br>
+하둡 파일이 네임노드에만 있어서는 실행이 안됩니다. 서브네임노드와 데이터노드에도 보내줘야 합니다.<br>
+<br>
+그럼 위의 과정을 반복해야 하나요?<br>
+아뇨, 그럴 필요 없습니다. 폴더쨰로 압축해서 ssh통신으로 보내면 됩니다.<br>
+<br>
+아래 명령어를 터미널에 입력해주세요.<br>
+
+<terminal>
+    [hadoop@namenode ~]$ tar -zcvf hadoop.tar.gz hadoop<br>
+    <blur>(압축 과정 로그 생략)</blur><br>
+    [hadoop@namenode ~]$ scp hadoop.tar.gz snamenode:/home/hadoop/<br>
+    hadoop.tar.gz &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;100% 61MB 80.8MB/s&nbsp;&nbsp;&nbsp; 00:00<br>
+    [hadoop@namenode ~]$ scp hadoop.tar.gz datanode:/home/hadoop/<br>
+    hadoop.tar.gz &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;100% 61MB 72.2MB/s &nbsp;&nbsp;&nbsp;00:00<br>
+    [hadoop@namenode ~]$ ssh snamenode "cd /home/hadoop; tar -zxvf hadoop.tar.gz; rm hadoop.tar.gz"<br>
+    <blur>(압축 푸는 로그 생략)</blur><br>
+    [hadoop@namenode ~]$ ssh datanode "cd /home/hadoop; tar -zxvf hadoop.tar.gz; rm hadoop.tar.gz"<br>
+    <blur>(압축 푸는 로그 생략)</blur><br>
+    [hadoop@namenode ~]$ rm hadoop.tar.gz<br>
+</terminal>
+
+위의 명령어를 차례대로 넣으면 ssh통신을 통해 보조네임노드와 데이터노드에 하둡 폴더를 보내게 됩니다.<br>
+이제 하둡을 실행해봅시다.<br>
+아래 명령어를 입력해주세요.<br>
+
+<terminal>
+    [hadoop@namenode ~]$ cd $HADOOP_HOME<br>
+    [hadoop@namenode hadoop]$ ./bin/hadoop namenode -format<br>
+    18/01/21 04:56:38 INFO namenode.NameNode: STARTUP_MSG: <br>/************************************************************ STARTUP_MSG:
+    Starting NameNode <br>STARTUP_MSG: host = namenode/192.168.247.130 <br>STARTUP_MSG: args = [-format] <br>STARTUP_MSG: version = 1.2.1
+    <br>STARTUP_MSG: build = https://svn.apache.org/repos/asf/hadoop/common/branches/branch-1.2 -r 1503152; compiled by 'mattf' on
+    Mon Jul 22 15:23:09 PDT 2013 <br>STARTUP_MSG: java = 1.8.0_161 <br>************************************************************/
+    <br>18/01/21 04:56:38 INFO util.GSet: Computing capacity for map BlocksMap <br>18/01/21 04:56:38 INFO util.GSet: VM type = 64-bit
+    <br>18/01/21 04:56:38 INFO util.GSet: 2.0% max memory = 1013645312 <br>18/01/21 04:56:38 INFO util.GSet: capacity = 2^21 = 2097152
+    entries <br>18/01/21 04:56:38 INFO util.GSet: recommended=2097152, actual=2097152 <br>18/01/21 04:56:38 INFO namenode.FSNamesystem:
+    fsOwner=hadoop <br>18/01/21 04:56:38 INFO namenode.FSNamesystem: supergroup=supergroup <br>18/01/21 04:56:38 INFO namenode.FSNamesystem:
+    isPermissionEnabled=true <br>18/01/21 04:56:38 INFO namenode.FSNamesystem: dfs.block.invalidate.limit=100 <br>18/01/21 04:56:38 INFO
+    namenode.FSNamesystem: isAccessTokenEnabled=false accessKeyUpdateInterval=0 min(s), accessTokenLifetime=0 min(s) <br>18/01/21
+    04:56:38 INFO namenode.FSEditLog: dfs.namenode.edits.toleration.length = 0 <br>18/01/21 04:56:38 INFO namenode.NameNode: Caching
+    file names occuring more than 10 times <br>18/01/21 04:56:38 INFO common.Storage: Image file /home/hadoop/hadoop-data/dfs/name/current/fsimage
+    of size 112 bytes saved in 0 seconds. <br>18/01/21 04:56:38 INFO namenode.FSEditLog: closing edit log: position=4, editlog=/home/hadoop/hadoop-data/dfs/name/current/edits
+    <br>18/01/21 04:56:38 INFO namenode.FSEditLog: close success: truncate to 4, editlog=/home/hadoop/hadoop-data/dfs/name/current/edits
+    <br>18/01/21 04:56:38 INFO common.Storage: Storage directory /home/hadoop/hadoop-data/dfs/name has been successfully formatted.
+    <br>18/01/21 04:56:38 INFO namenode.NameNode: SHUTDOWN_MSG: <br>/************************************************************ <br>SHUTDOWN_MSG:
+    Shutting down NameNode at namenode/192.168.247.130 <br>************************************************************/<br>
+    [hadoop@namenode hadoop]$ ./bin/start-all.sh<br>
+    starting namenode, logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-namenode-namenode.out <br>snamenode: starting
+    datanode, logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-datanode-snamenode.out <br>datanode: starting datanode,
+    logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-datanode-datanode.out <br>snamenode: starting secondarynamenode,
+    logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-secondarynamenode-snamenode.out <br>starting jobtracker, logging
+    to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-jobtracker-namenode.out <br>datanode: starting tasktracker, logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-tasktracker-datanode.out
+    <br>snamenode: starting tasktracker, logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-tasktracker-snamenode.out
+</terminal>
+
+이제 인터넷을 켜고 아까 설정했던 모니터링 포트인 <color4>namenode:50070</color4>을 url에 입력합니다.<br>
+
+<img src="/hadoop/img/6_19.jpg" alt="">
+
+위에 나오는대로 url을 입력하면 html형식의 모니터링 화면이 나옵니다.<br>
+slaves에 snamenode와 datanode를 써놔서 연결된 라이브 노드가 2개로 나옵니다.<br>
+<br>
+잘 실행되었으니 예제를 한번 실험해봅시다.<br>
+하둡 폴더에 기본으로 들어있는 예제파일인데 Wordcount 기능을 해줍니다.<br>
+아래 명령어를 따라 입력해주세요.<br>
+
+<terminal>
+    [hadoop@namenode hadoop]$ ./bin/hadoop fs -put conf/hadoop-env.sh conf/hadoop-env.sh<br>
+    [hadoop@namenode hadoop]$ ./bin/hadoop jar hadoop-examples-*.jar wordcount conf/hadoop-env.sh wordcount_output<br>
+    18/01/21 05:06:04 INFO input.FileInputFormat: Total input paths to process : 1 <br>18/01/21 05:06:04 INFO util.NativeCodeLoader:
+    Loaded the native-hadoop library <br>18/01/21 05:06:04 WARN snappy.LoadSnappy: Snappy native library not loaded <br>18/01/21 05:06:04
+    INFO mapred.JobClient: Running job: job_201801210459_0001<br>
+    <blur>(생략...)</blur><br>
+    18/01/21 05:06:20 INFO mapred.JobClient: Data-local map tasks=1 <br>18/01/21 05:06:20 INFO mapred.JobClient: File Output Format
+    Counters <br>18/01/21 05:06:20 INFO mapred.JobClient: Bytes Written=2269<br>
+    [hadoop@namenode hadoop]$ ./bin/hadoop fs -cat wordcount_output/part-r-00000<br>
+    # 36 <br>$HADOOP_BALANCER_OPTS" 1 <br>$HADOOP_DATANODE_OPTS" 1<br>
+    <blur>(생략...)</blur><br>
+    when 1 <br>where 2 <br>where, 1 <br>written 1<br>
+</terminal>
+
+이렇게 나오면 예제까지 잘 실행되는겁니다. 하둡이 잘 실행되었습니다.<br>
+<br>
+여기서 팁을 하나 드리겠습니다.<br>
+만약 뭔가 오타를 냈거나 혹은 설정을 변경해서 다시 적용시키려고 하둡을 껐다가 켜려고 해도 바꾼 변경사항이 적용되지 않는걸 볼 수 있습니다.<br>
+그 방법에 대해 알려드리겠습니다.<br>
+일단 하둡을 끄는 방법입니다.<br>
+
+<terminal>
+    [hadoop@namenode hadoop]$ ./bin/stop-all.sh<br>
+</terminal>
+
+이렇게 입력해서 하둡을 끕니다.<br>
+이렇게 안끄고 그냥 컴퓨터를 꺼버리거나 하면 하둡이 safe mode가 되어서 아무것도 할 수 없게 되어버립니다.<br>
+만약 safe mode가 되었다면 해제하는 방법도 알려드리겠습니다.<br>
+
+<terminal>
+    [hadoop@namenode hadoop]$ hadoop dfsadmin -safemode leave<br>
+    Safe mode is OFF<br>
+</terminal>
+
+하둡이 실행된 상태에서 위의 명령어를 입력하면 safe mode가 종료됩니다.<br>
+그리고 하둡의 설정을 변경했을 때 적용하는 방법입니다.<br>
+그냥 하면 적용이 안되고, 하둡의 데이터를 저장하는 폴더... 그러니까 아까 <color2>core-site.xml</color2>에서 설정한<br>
+<color4>hadoop.tmp.dir</color4>에 설정된 경로의 폴더릴 지워야 합니다. 그리고 보조네임노드와 데이터노드의 하둡과 폴더를 다 지우고 다시 보내야 합니다.<br>
+귀찮죠? 명령어도 길고 지루하겠죠?<br>
+<br>
+그래서 그 과정을 쉘스크립트 파일에 저장해두고 필요할 때 불러오면 됩니다.<br>
+
+<img src="/hadoop/img/6_20.jpg" alt="">
+<img src="/hadoop/img/6_21.jpg" alt="">
+<img src="/hadoop/img/6_22.jpg" alt="">
+<img src="/hadoop/img/6_23.jpg" alt="">
+
+이렇게 유저폴더를 추가합니다.<br>
+
+<img src="/hadoop/img/6_24.jpg" alt="">
+
+유저폴더를 우클릭하여 파일을 생성합니다.<br>
+파일 이름은 <color4>hadoop.sh</color4>로 하겠습니다.<br>
+<br>
+내용은 아래의 내용을 붙여넣기 해주세요.<br>
+
+<terminal>
+    #! /bin/bash<br>
+    <br>
+    rm -r hadoop-data<br>
+    ssh snamenode "cd /home/hadoop; rm -r hadoop; rm -r hadoop-data"<br>
+    ssh datanode "cd /home/hadoop; rm -r hadoop; rm -r hadoop-data"<br>
+    tar -zcvf hadoop.tar.gz hadoop<br>
+    scp hadoop.tar.gz snamenode:/home/hadoop/<br>
+    scp hadoop.tar.gz datanode:/home/hadoop/<br>
+    ssh snamenode "cd /home/hadoop; tar -zxvf hadoop.tar.gz; rm hadoop.tar.gz"<br>
+    ssh datanode "cd /home/hadoop; tar -zxvf hadoop.tar.gz; rm hadoop.tar.gz"<br>
+    rm hadoop.tar.gz<br>
+    $HADOOP_HOME/bin/hadoop namenode -format<br>
+    $HADOOP_HOME/bin/start-all.sh<br>
+</terminal>
+
+그런데 이대로는 실행을 못해요. 일단 실행 권한을 줘야합니다.<br>
+
+<terminal>
+    [hadoop@namenode ~]$ sudo chmod -R 777 hadoop.sh<br>
+</terminal>
+
+이렇게 하면 앞으로 뭔가 변경했을 때 한번에 하둡 파일을 삭제시킨 뒤 다시 보낼 수 있습니다. 실행까지 자동으로 해주고요.<br>
+궁금하지요? 한번 해볼까요? 먼저 하둡을 꺼야겠죠?<br>
+
+<terminal>
+    [hadoop@namenode ~]$ cd $HADOOP_HOME<br>
+    [hadoop@namenode hadoop]$ ./bin/stop-all.sh<br>
+    stopping jobtracker <br>
+    snamenode: stopping tasktracker <br>
+    datanode: stopping tasktracker <br>
+    stopping namenode <br>
+    datanode: stopping datanode <br>
+    snamenode: stopping datanode <br>
+    snamenode: stopping secondarynamenode<br>
+    [hadoop@namenode hadoop]$ cd<br>
+    [hadoop@namenode ~]$ ./hadoop.sh<br>
+    <blur>(로그들이 주루룩 나옵니다...)</blur><br>
+</terminal>
+
+그 뒤에 인터넷을 켜고 namenode:50070으로 들어가보세요. 잘 작동되고 있는걸 보실 수 있습니다.<br>
+그 다음 예제들은 다음 글에서 다루도록 하겠습니다. 수고하셨습니다.<br>
+<br>
+<a href="/hadoop/page/1_7.html" onclick="
+    event.preventDefault();
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = () => {
+        document.querySelector('main').innerHTML = xhttp.responseText;
+    }
+
+    xhttp.open('GET', '/hadoop/page/1_7.html', true);
+    xhttp.send();
+
+    document.title = 'Hadoop Guide Part. 1 - Step. 7';
+    history.pushState('/hadoop/page/1_7.html' + ' ' + 'Part. 1 - Step. 7', null, '#1_7');
+
+    document.querySelector('side').children[0].children[6].classList.remove('on');
+    document.querySelector('side').children[0].children[7].classList.add('on');
+" class="button">다음단계로 가기</a>
