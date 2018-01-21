@@ -124,7 +124,7 @@ cursor {
 
 key {
   display: inline-block;
-  padding: 0.05rem;
+  padding: 0.01rem 0.05rem;
   background: #e6e6e6;
   color: #292a2b; }
 
