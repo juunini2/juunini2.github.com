@@ -157,6 +157,8 @@ cursor {
     padding: 0.2rem;
     background: #222223;
     border-radius: 5px;
+    white-space: pre-wrap;
+    word-break: break-all;
 }
 
 key {
@@ -181,6 +183,11 @@ tab3 {
 tab4 {
     display: block;
     margin-left: 1.6rem;
+}
+
+.link{
+    color: $COLON;
+    text-decoration: underline;
 }
 
 @media screen and (max-width: 860px) {

@@ -120,7 +120,9 @@ cursor {
   margin: 0.2rem 0;
   padding: 0.2rem;
   background: #222223;
-  border-radius: 5px; }
+  border-radius: 5px;
+  white-space: pre-wrap;
+  word-break: break-all; }
 
 key {
   display: inline-block;
