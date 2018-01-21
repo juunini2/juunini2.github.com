@@ -1,0 +1,408 @@
+이전 글에서는 네임노드의 GUI환경 구축에 대해서 다루었고, 이번 글에서는 하둡을 사용할 수 있는 환경 구성에 대해 다루겠습니다.<br>
+<br>
+터미널 창을 열고 아래와 같이 입력해주세요.<br>
+<br>
+<terminal>
+    [hadoop@namenode ~]$ su<br>
+    암호:<blur>(1234입력)</blur><br>
+    [root@namenode hadoop]# visudo
+</terminal>
+
+<img src="/hadoop/img/5_1.jpg" alt="">
+
+또 vi에디터가 나왔습니다.<br>
+모르시는 분들은 어떻게 해야할지 너무나도 답답하실겁니다.<br>
+일단 <key>Shift</key> + <key>g</key> 를 눌러서 맨 밑으로 내려갑니다.<br>
+
+<img src="/hadoop/img/5_2.jpg" alt="">
+
+그럼 저기 빨간 네모 표시해둔 부분을 발견하실 수 있으실텐데 거기까지 위 화살표를 눌러서 커서를 옮깁니다.<br>
+그 뒤에 <key>o</key>키를 눌러주세요.<br>
+
+<img src="/hadoop/img/5_3.jpg" alt="">
+
+그러면 아래 빨간 네모로 표시해둔 부분처럼 --INSERT-- 라고 표시가 될겁니다. 입력모드로 변경된겁니다.<br>
+root 아래에 이렇게 입력해주세요.
+
+<pre class="terminal">
+    hadoop  ALL=(ALL)   ALL
+</pre>
+
+<img src="/hadoop/img/5_4.jpg" alt="">
+
+이렇게 똑같이 하셨으면 <key>Esc</key> 키를 누른 뒤<br>
+:wq<br>
+라고 입력하고 엔터키를 눌러주세요.<br>
+<br>
+이걸 한 이유는, 현재 상태에서 sudo 명령어를 입력하면 sudoers 파일에 권한이 입력되지 않았다는 이유로<br>
+sudo 명령어 입력이 불가능해서 수정한겁니다.<br>
+<br>
+그 다음은 네임노드에도 ssh를 설치해서 보조네임노드와 데이터노드와 ssh통신을 하도록 하겠습니다.<br>
+아래와 같이 입력해주세요.<br>
+
+<terminal>
+    [root@namenode hadoop]# yum install -y openssh* && systemctl restart network && vi /etc/ssh/sshd_config
+</terminal>
+
+이렇게 입력하면 아래와 같이 나옵니다.<br>
+
+<img src="/hadoop/img/5_5.jpg" alt="">
+
+기억나지 않으세요? 아까 한번 했던 작업입니다.<br>
+빨간 네모로 표시해둔 부분에 가서 <key>x</key> 를 눌러 #을 없앤 뒤<br>
+:wq<br>
+를 입력하고 엔터키를 눌러주세요.<br>
+
+그리고 다시 명령어를 입력합니다.
+
+<terminal>
+    [root@namenode hadoop]# systemctl start sshd.service<br>
+    [root@namenode hadoop]# su hadoop<br>
+    [hadoop@namenode ~]$ ssh-keygen -t rsa<br>
+    Generating public/private rsa key pair.<br>
+    Enter file in which to save the key (/home/hadoop/.ssh/id_rsa):
+</terminal>
+
+이렇게 나오고 멈춰있을겁니다. 엔터키를 눌러주세요<br>
+
+<terminal>
+    [hadoop@namenode ~]$ ssh-keygen -t rsa<br>
+    Generating public/private rsa key pair.<br>
+    Enter file in which to save the key (/home/hadoop/.ssh/id_rsa):<br>
+    Created directory '/home/hadoop/.ssh'.<br>
+    Enter passphrase (empty for no passphrase):<br>
+</terminal>
+
+또 여기서 멈춰있을겁니다. 다시 엔터키를 눌러주세요<br>
+
+<terminal>
+    [hadoop@namenode ~]$ ssh-keygen -t rsa<br>
+    Generating public/private rsa key pair.<br>
+    Enter file in which to save the key (/home/hadoop/.ssh/id_rsa):<br>
+    Created directory '/home/hadoop/.ssh'.<br>
+    Enter passphrase (empty for no passphrase):<br>
+    Enter same passphrase again:<br>
+</terminal>
+
+또 멈춥니다. 또 엔터키를 눌러주세요.<br>
+
+<img src="/hadoop/img/5_6.jpg" alt="">
+
+그럼 이런식으로 결과가 나옵니다.<br>
+이걸 SSH 공개키를 만들었다. 라고 합니다.<br>
+만든 SSH 공개키를 보조네임노드와 데이터노드에 나눠주면 그 다음부터는<br>
+패스워드를 입력하지 않고 SSH 통신이 가능해집니다.<br>
+<br>
+이걸 해야하는 이유는 하둡을 실행했을 때 SSH공개키를 나눠주지 않아 패스워드 없이 자동으로 연결되지 않으면<br>
+보조네임노드와 데이터노드가 연결되지 않기 때문입니다.<br>
+<br>
+그럼 이제 나눠주는 준비 작업을 시작해봅시다.<br>
+잠깐 보조네임노드와 데이터노드를 올려서 아래 명령어를 입력시켜주세요.<br>
+<br>
+<terminal>
+    [root@snamenode ~]# yum install -y net-tools && ifconfig<br>
+</terminal>
+
+<img src="/hadoop/img/5_7.jpg" alt="">
+
+위와 같은 화면이 나올겁니다. net-tools를 설치한 이유는 ifconfig를 이용하여 ip를 확인하기 위함입니다.<br>
+아무튼 이렇게 해서 ip를 확인할 수 있습니다.<br>
+<br>
+네임노드에도 설치해줍니다.<br>
+
+<terminal>
+    [hadoop@namenode ~]$ sudo yum install -y net-tools && ifconfig<br>
+</terminal>
+
+<img src="/hadoop/img/5_8.jpg" alt="">
+
+sudo 명령어를 입력하면 위와 같은 상태가 되는데 비밀번호인 1234를 입력하고 엔터키를 눌러주세요.<br>
+이렇게 하면 모두의 ip가 뭔지 알 수 있게 됩니다.<br>
+네임노드에 터미널을 하나 더 실행시켜주세요.<br>
+<br>
+그 뒤에 두번쨰 연 터미널에 아래 명령어를 실행시켜주세요.<br>
+
+<terminal>
+    [hadoop@namenode ~]$ sudo vi /etc/hosts<br>
+</terminal>
+
+<img src="/hadoop/img/5_9.jpg" alt="">
+
+그럼 이런게 나오는데, 아래 화살표를 눌러 커서를 맨 밑으로 보낸 뒤 <key>o</key> 를 누르면 아까처럼 --INSERT-- 하고 입력모드가 됩니다.<br>
+거기에 각각의 ip와 컴퓨터의 호스트 네임을 입력해야 합니다.<br>
+일단 예시를 보여드리죠.<br>
+
+<img src="/hadoop/img/5_10.jpg" alt="">
+
+이런식으로 각각 ip를 확인한 뒤 호스트네임을 적어줍니다.<br>
+여러분은 ip가 다를테니 확인해보고 입력해주세요. 꼭!<br>
+제가 저렇다고 저랑 절대 똑같이 입력하시면 안돼요!<br>
+<br>
+호스트를 전부 입력했으니 저장합시다. <key>Esc</key>를 누른 뒤<br>
+:wq<br>
+를 입력하고 엔터키를 치고 빠져나오세요.<br>
+<br>
+그리고 아래 명령어를 입력해주세요.<br>
+
+<terminal>
+    [hadoop@namenode ~]$ source /etc/hosts<br>
+    <blur>(뭔가 에러로그가 나오는데 무시해주세요.)</blur>
+    [hadoop@namenode ~]$ ssh-copy-id -i snamenode<br>
+    /usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/home/hadoop/.ssh/id_rsa.pub" <br>
+    The authenticity of host 'snamenode (192.168.247.129)' can't be established. <br>
+    ECDSA key fingerprint is SHA256:SDowT/e42UvdsQIutWeZkF3qEg2qUh92elg8oltCJqk. <br>
+    ECDSA key fingerprint is MD5:f5:cf:14:8d:65:86:26:8f:45:b9:9e:9e:61:5c:d9:0c. Are you sure you want to continue connecting (yes/no)?
+</terminal>
+
+이렇게 나오고 멈춰있는데 yes 라고 입력하고 엔터키를 눌러주세요.<br>
+
+<terminal>
+    /usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed <br>
+    /usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys <br>
+    hadoop@snamenode's password:
+</terminal>
+
+그럼 그 아래에 이렇게 더 나온 뒤 멈춥니다.<br>
+snamenode의 패스워드를 입력해달라는 말입니다. 우리는 전부 똑같이 1234로 통일했기 때문에 1234를 입력하고 엔터키를 눌러주시면 됩니다.<br>
+
+<terminal>
+    Number of key(s) added: 1 <br>
+    Now try logging into the machine, with: "ssh 'snamenode'" <br>
+    and check to make sure that only the key(s) you wanted were added.<br>
+</terminal>
+
+그 뒤에 이렇게 나오며 완료가 됩니다.<br>
+한번 패스워드 없이 ssh통신이 되는지 확인해보죠.<br>
+아래와 같이 입력해주세요.<br>
+
+<terminal>
+    [hadoop@namenode ~]$ ssh snamenode<br>
+    [hadoop@snamenode ~]$
+</terminal>
+
+이렇게 나오면 성공입니다. 패스워드를 입력하지 않고 보조네임노드에 ssh통신이 되었습니다.<br>
+그럼 데이터노드에도 ssh키를 나눠줍시다.<br>
+
+<terminal>
+    [hadoop@snamenode ~]$ exit<br>
+    logout <br>
+    Connection to snamenode closed.<br>
+    [hadoop@namenode ~]$ ssh-copy-id -i datanode<br>
+    /usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/home/hadoop/.ssh/id_rsa.pub" <br>
+    The authenticity of host 'datanode (192.168.247.128)' can't be established. <br>
+    ECDSA key fingerprint is SHA256:bwsmDpNsUjJ2UgcoSMQ+729YNQHaCx3OBkqSffxl9Vo. <br>
+    ECDSA key fingerprint is MD5:27:f2:cd:74:ef:30:1f:de:36:96:74:73:02:1e:29:83. <br>
+    Are you sure you want to continue connecting (yes/no)?<blur>(yes 입력 후 엔터)</blur><br>
+    /usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed <br>
+    /usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys <br>
+    hadoop@datanode's password:<blur>(1234 입력 후 엔터)</blur><br>
+    <br>
+    Number of key(s) added: 1 <br>
+    <br>
+    Now try logging into the machine, with: "ssh 'datanode'" <br>
+    and check to make sure that only the key(s) you wanted were added.<br>
+    <br>
+    [hadoop@namenode ~]$ ssh datanode<br>
+    [hadoop@datanode ~]$ exit<br>
+    logout <br>
+    Connection to datanode closed. <br>
+    [hadoop@namenode ~]$<br>
+</terminal>
+
+이렇게 입력해서 데이터노드에도 패스워드를 입력하지 않고 접속이 되면 전체에 ssh 공개키가 잘 배포된겁니다.<br>
+그럼 터미널창을 전부 닫고 터미널 창을 새로 3개 열어주세요.<br>
+
+<img src="/hadoop/img/5_11.jpg" alt="">
+
+이렇게요.<br>
+<br>
+하나는 보조네임노드에 접속하고, 하나는 데이터노드에 접속하겠습니다.<br>
+
+<img src="/hadoop/img/5_12.jpg" alt="">
+
+이렇게 접속해주세요.<br>
+su를 입력해서 root권한으로 바꿔주시구요.<br>
+그리고 아까 네임노드에만 했던 호스트 작업을 다른곳에도 하겠습니다.<br>
+
+<terminal>
+vi /etc/hosts
+</terminal>
+
+를 세곳 다 입력해주세요.<br>
+
+<img src="/hadoop/img/5_13.jpg" alt="">
+
+이렇게 엽니다.<br>
+네임노드에 입력된 부분을 드래그 해서<br>
+<key>Ctrl</key> + <key>Shift</key> + <key>c</key> 또는 마우스 우클릭 해서 복사를 해주세요.<br>
+그리고 다른곳에 붙여넣기 하고 저장해줍니다.<br>
+<br>
+그 다음 할 일은 방화벽을 끄는 일 입니다.<br>
+방화벽을 끄지 않으면 하둡 실행 시 방화벽에 걸려 권한이 없다는 에러가 나오며 데이터노드 연동이 안됩니다.<br>
+아래 명령어를 세곳 다 입력해주세요.<br>
+아, 그 전에 네임노드쪽 터미널에도 su 입력해서 루트권한으로 바꿔주세요.<br>
+
+<terminal>
+    systemctl disable firewalld && systemctl stop firewalld && systemctl mask firewalld<br>
+</terminal>
+
+이렇게 입력하면<br>
+
+<terminal>
+    Removed symlink /etc/systemd/system/multi-user.target.wants/firewalld.service. <br>
+    Removed symlink /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service.<br>
+    Created symlink from /etc/systemd/system/firewalld.service to /dev/null.
+</terminal>
+
+이런 로그가 나오며 방화벽이 꺼지고 재부팅 후에도 방화벽이 작동되지 않도록 막습니다.<br>
+<br>
+이제 하둡 실행에 필요한 자바 설치를 진행하겠습니다.<br>
+일단 네임노드쪽 터미널에 이렇게 입력해주세요.<br>
+
+<terminal>
+    [root@namenode hadoop]# yum list java*jdk-devel<br>
+    Loaded plugins: fastestmirror <br>
+    Loading mirror speeds from cached hostfile <br>
+    * base: ftp.daumkakao.com <br>
+    * epel: mirrors.ustc.edu.cn<br>
+    * extras: data.nicehosting.co.kr <br>
+    * updates: data.nicehosting.co.kr <br>
+    Available Packages <br>
+    java-1.6.0-openjdk-devel.x86_64&nbsp;&nbsp;&nbsp; 1:1.6.0.41-1.13.13.1.el7_3&nbsp;&nbsp;&nbsp; base <br>
+    java-1.7.0-openjdk-devel.x86_64&nbsp;&nbsp;&nbsp; 1:1.7.0.161-2.6.12.0.el7_4&nbsp;&nbsp;&nbsp; updates <br>
+    java-1.8.0-openjdk-devel.i686&nbsp;&nbsp;&nbsp; 1:1.8.0.161-0.b14.el7_4&nbsp;&nbsp;&nbsp; updates <br>
+    java-1.8.0-openjdk-devel.x86_64&nbsp;&nbsp;&nbsp; 1:1.8.0.161-0.b14.el7_4&nbsp;&nbsp;&nbsp; updates<br>
+</terminal>
+
+openjdk 자바 패키지 리스트를 조회한 것입니다.<br>
+아마 여러분이 이 글을 보고 실습할 땐 업데이트 되어 패키지 이름이 다를 수도 있기 때문에 써둔겁니다.<br>
+맨 아래에 있는 java-1.8.0-openjdk-devel.x86_64를 설치하겠습니다.<br>
+세군데 다 복사 붙여넣기 해주세요.<br>
+
+<terminal>
+    yum install -y java-1.8.0-openjdk-devel.x86_64
+</terminal>
+
+설치가 끝나고나면 네임노드 터미널에서 아래 명령어를 입력해주세요.<br>
+
+<terminal>
+    [root@namenode hadoop]# javac -version <br>
+    javac 1.8.0_161<br>
+    [root@namenode hadoop]# which javac<br>
+    /usr/bin/javac<br>
+    [root@namenode hadoop]# readlink -f /usr/bin/javac<br>
+    /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-0.b14.el7_4.x86_64/bin/javac<br>
+</terminal>
+
+이렇게 해서 설치 경로를 찾아냅니다.<br>
+<color4>/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-0.b14.el7_4.x86_64</color4>/bin/javac 중에서 분홍색으로 표시해둔 부분이 경로입니다.<br>
+저 부분이 경로라는걸 기억해주세요.<br>
+여러분은 조금 다를 수도 있습니다! 조심해주세요 똑같이 붙여넣기 하시면 안됩니다! 확인 한 다음에 작업해주세요!<br>
+자바의 위치를 환경변수에 등록하는 작업을 시작하겠습니다.<br>
+
+<terminal>
+    vi /etc/profile<br>
+</terminal>
+
+위 명령어를 터미널 세군데 다 입력해주세요.<br>
+그리고 <key>Shift</key> + <key>g</key> 를 입력해서 맨 아래로 이동한 뒤 <key>o</key>를 입력해서 입력모드로 전환해주세요.<br>
+맨 아래에 --INSERT-- 하고 나오면 입력모드가 된겁니다.<br>
+그리고 맨 아래에 이렇게 입력해주세요.<br>
+
+<terminal>
+    export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-0.b14.el7_4.x86_64<br>
+    export PATH=$PATH:$JAVA_HOME/bin<br>
+    export CLASS_PATH="."<br>
+</terminal>
+
+다 입력하셨으면 <key>Esc</key>키를 누른 뒤<br>
+:wq<br>
+하고 입력해서 저장한 뒤 빠져나오세요.<br>
+그 뒤에 아래 명령어를 세군데 다 입력해주세요.<br>
+
+<terminal>
+    source /etc/profile
+</terminal>
+
+이렇게 하면 변경한 환경변수가 적용이 됩니다. 그 후 아래 명령어를 입력하여 잘 적용되었나 확인해주세요.<br>
+
+<terminal>
+    [root@namenode hadoop]# echo $JAVA_HOME<br>
+    /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-0.b14.el7_4.x86_64<br>
+    [root@namenode hadoop]# $JAVA_HOME/bin/javac -version<br>
+    javac 1.8.0_161<br>
+    [root@namenode hadoop]# javac -version<br>
+    javac 1.8.0_161<br>
+</terminal>
+
+이렇게 출력되면 환경변수 설정이 잘 적용된겁니다.<br>
+<br>
+이제 보조네임노드와 데이터노드가 연결된 터미널에<br>
+exit 를 두번 입력한 뒤 모든 터미널을 꺼주세요.<br>
+<br>
+이제 진짜 '하둡'을 설치할겁니다.<br>
+터미널을 하나 열어주세요.<br>
+그 뒤에 아래 명령어를 입력해주세요.<br>
+
+<terminal>
+    [hadoop@namenode ~]$ sudo yum install -y wget && wget "http://www.eu.apache.org/dist/hadoop/common/hadoop-1.2.1/hadoop-1.2.1.tar.gz" && tar -zxvf hadoop-1.2.1.tar.gz && rm hadoop-1.2.1.tar.gz && mv hadoop-1.2.1 hadoop<br>
+</terminal>
+
+저렇게 입력하면 하둡 압축파일을 다운로드 받고, 압축을 풀고, 필요없어진 압축파일을 삭제하고,<br>
+하둡 폴더의 이름이 hadoop-1.2.1인데 앞으로 저렇게 일일이 치려면 귀찮으니 hadoop으로 변경하는 작업을 한겁니다.<br>
+<br>
+하둡을 설치했으니 하둡의 경로도 환경변수에 등록해서 앞으로 작업할 때 편하게 하도록 하겠습니다.<br>
+아래 명령어를 입력해주세요.<br>
+
+<terminal>
+    [hadoop@namenode ~]$ sudo vi /etc/profile<br>
+</terminal>
+
+다시 vi로 환경변수를 설정하게 됩니다.<br>
+<key>Shift</key> + <key>g</key> 를 누른 뒤 <key>o</key>를 눌러서 맨 마지막 줄에 이렇게 추가해주세요.<br>
+
+<terminal>
+    export HADOOP_HOME=/home/hadoop/hadoop/<br>
+</terminal>
+
+그리고 <key>Esc</key>키를 누른 뒤<br>
+:wq<br>
+하고 입력하고 빠져나옵니다.<br>
+
+<terminal>
+    [hadoop@namenode ~]$ source /etc/profile<br>
+</terminal>
+
+를 입력하여 방금 변경한 환경변수를 적용시켜주시고 아래 명령어를 입력하여 잘 됐는가 실험해봅니다.<br>
+
+<terminal>
+    [hadoop@namenode ~]$ echo $HADOOP_HOME<br>
+    /home/hadoop/hadoop/<br>
+    [hadoop@namenode ~]$ cd $HADOOP_HOME<br>
+    [hadoop@namenode hadoop]$<br>
+</terminal>
+
+이렇게 되면 잘 된겁니다.<br>
+혹시나 에러가 하나 뜰 수도 있습니다.<br>
+<color2>Warning: $HADOOP_HOME is deprecated.</color2><br>
+하고 에러가 뜰 수도 있는데 그걸 고치는 방법은 다음 글에 설명하도록 하겠습니다.<br>
+수고하셨습니다.<br>
+<br>
+<a href="/hadoop/page/1_6.html" onclick="
+    event.preventDefault();
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = () => {
+        document.querySelector('main').innerHTML = xhttp.responseText;
+    }
+
+    xhttp.open('GET', '/hadoop/page/1_6.html', true);
+    xhttp.send();
+
+    document.title = 'Hadoop Guide Part. 1 - Step. 6';
+    history.pushState('/hadoop/page/1_6.html' + ' ' + 'Part. 1 - Step. 6', null, '#1_6');
+
+    document.querySelector('side').children[0].children[5].classList.remove('on');
+    document.querySelector('side').children[0].children[6].classList.add('on');
+" class="button">다음단계로 가기</a>
