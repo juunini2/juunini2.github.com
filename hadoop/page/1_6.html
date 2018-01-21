@@ -35,14 +35,14 @@
 아래 명령어를 따라 입력해주세요.<br>
 
 <terminal>
-    [hadoop@namenode Downloads]$ sudo rpm -Uvh code<blur>(<key>tab</key> 키를 눌러주세요.)</blur><br>
+[hadoop@namenode Downloads]$ sudo rpm -Uvh code<blur>(<key>tab</key> 키를 눌러주세요.)</blur>
 </terminal>
 
 tab 키를 눌러주세요 부분에서 code 까지만 치고 <key>tab</key> 키를 누르면 자동완성이 됩니다.<br>
 아래를 봐주세요.
 
 <terminal>
-    [hadoop@namenode Downloads]$ sudo rpm -Uvh code-1.19.2-1515600099.el7.x86_64.rpm<br>
+[hadoop@namenode Downloads]$ sudo rpm -Uvh code-1.19.2-1515600099.el7.x86_64.rpm
 </terminal>
 
 이런식으로 알아서 code 뒷부분을 자동완성 시켜줍니다.<br>
@@ -170,14 +170,14 @@ hadoop-env.sh 파일로 들어왔습니다. 이제 필요한 부분을 수정하
 masters 파일을 이렇게 수정해주세요.<br>
 
 <terminal>
-    snamenode<br>
+snamenode
 </terminal>
 
 slaves 파일을 이렇게 수정해주세요.<br>
 
 <terminal>
-    snamenode<br>
-    datanode<br>
+snamenode
+datanode
 </terminal>
 
 masters 파일에 들어가는 내용은 보조네임노드입니다.<br>
@@ -281,17 +281,17 @@ slaves 파일에 들어가는 내용은 데이터노드이구요.<br>
 아래 명령어를 터미널에 입력해주세요.<br>
 
 <terminal>
-    [hadoop@namenode ~]$ tar -zcvf hadoop.tar.gz hadoop<br>
-    <blur>(압축 과정 로그 생략)</blur><br>
-    [hadoop@namenode ~]$ scp hadoop.tar.gz snamenode:/home/hadoop/<br>
-    hadoop.tar.gz &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;100% 61MB 80.8MB/s&nbsp;&nbsp;&nbsp; 00:00<br>
-    [hadoop@namenode ~]$ scp hadoop.tar.gz datanode:/home/hadoop/<br>
-    hadoop.tar.gz &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;100% 61MB 72.2MB/s &nbsp;&nbsp;&nbsp;00:00<br>
-    [hadoop@namenode ~]$ ssh snamenode "cd /home/hadoop; tar -zxvf hadoop.tar.gz; rm hadoop.tar.gz"<br>
-    <blur>(압축 푸는 로그 생략)</blur><br>
-    [hadoop@namenode ~]$ ssh datanode "cd /home/hadoop; tar -zxvf hadoop.tar.gz; rm hadoop.tar.gz"<br>
-    <blur>(압축 푸는 로그 생략)</blur><br>
-    [hadoop@namenode ~]$ rm hadoop.tar.gz<br>
+[hadoop@namenode ~]$ tar -zcvf hadoop.tar.gz hadoop
+<blur>(압축 과정 로그 생략)</blur>
+[hadoop@namenode ~]$ scp hadoop.tar.gz snamenode:/home/hadoop/
+hadoop.tar.gz &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;100% 61MB 80.8MB/s&nbsp;&nbsp;&nbsp; 00:00
+[hadoop@namenode ~]$ scp hadoop.tar.gz datanode:/home/hadoop/
+hadoop.tar.gz &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;100% 61MB 72.2MB/s &nbsp;&nbsp;&nbsp;00:00
+[hadoop@namenode ~]$ ssh snamenode "cd /home/hadoop; tar -zxvf hadoop.tar.gz; rm hadoop.tar.gz"
+<blur>(압축 푸는 로그 생략)</blur>
+[hadoop@namenode ~]$ ssh datanode "cd /home/hadoop; tar -zxvf hadoop.tar.gz; rm hadoop.tar.gz"
+<blur>(압축 푸는 로그 생략)</blur>
+[hadoop@namenode ~]$ rm hadoop.tar.gz
 </terminal>
 
 위의 명령어를 차례대로 넣으면 ssh통신을 통해 보조네임노드와 데이터노드에 하둡 폴더를 보내게 됩니다.<br>
@@ -299,32 +299,58 @@ slaves 파일에 들어가는 내용은 데이터노드이구요.<br>
 아래 명령어를 입력해주세요.<br>
 
 <terminal>
-    [hadoop@namenode ~]$ cd $HADOOP_HOME<br>
-    [hadoop@namenode hadoop]$ ./bin/hadoop namenode -format<br>
-    18/01/21 04:56:38 INFO namenode.NameNode: STARTUP_MSG: <br>/************************************************************ STARTUP_MSG:
-    Starting NameNode <br>STARTUP_MSG: host = namenode/192.168.247.130 <br>STARTUP_MSG: args = [-format] <br>STARTUP_MSG: version = 1.2.1
-    <br>STARTUP_MSG: build = https://svn.apache.org/repos/asf/hadoop/common/branches/branch-1.2 -r 1503152; compiled by 'mattf' on
-    Mon Jul 22 15:23:09 PDT 2013 <br>STARTUP_MSG: java = 1.8.0_161 <br>************************************************************/
-    <br>18/01/21 04:56:38 INFO util.GSet: Computing capacity for map BlocksMap <br>18/01/21 04:56:38 INFO util.GSet: VM type = 64-bit
-    <br>18/01/21 04:56:38 INFO util.GSet: 2.0% max memory = 1013645312 <br>18/01/21 04:56:38 INFO util.GSet: capacity = 2^21 = 2097152
-    entries <br>18/01/21 04:56:38 INFO util.GSet: recommended=2097152, actual=2097152 <br>18/01/21 04:56:38 INFO namenode.FSNamesystem:
-    fsOwner=hadoop <br>18/01/21 04:56:38 INFO namenode.FSNamesystem: supergroup=supergroup <br>18/01/21 04:56:38 INFO namenode.FSNamesystem:
-    isPermissionEnabled=true <br>18/01/21 04:56:38 INFO namenode.FSNamesystem: dfs.block.invalidate.limit=100 <br>18/01/21 04:56:38 INFO
-    namenode.FSNamesystem: isAccessTokenEnabled=false accessKeyUpdateInterval=0 min(s), accessTokenLifetime=0 min(s) <br>18/01/21
-    04:56:38 INFO namenode.FSEditLog: dfs.namenode.edits.toleration.length = 0 <br>18/01/21 04:56:38 INFO namenode.NameNode: Caching
-    file names occuring more than 10 times <br>18/01/21 04:56:38 INFO common.Storage: Image file /home/hadoop/hadoop-data/dfs/name/current/fsimage
-    of size 112 bytes saved in 0 seconds. <br>18/01/21 04:56:38 INFO namenode.FSEditLog: closing edit log: position=4, editlog=/home/hadoop/hadoop-data/dfs/name/current/edits
-    <br>18/01/21 04:56:38 INFO namenode.FSEditLog: close success: truncate to 4, editlog=/home/hadoop/hadoop-data/dfs/name/current/edits
-    <br>18/01/21 04:56:38 INFO common.Storage: Storage directory /home/hadoop/hadoop-data/dfs/name has been successfully formatted.
-    <br>18/01/21 04:56:38 INFO namenode.NameNode: SHUTDOWN_MSG: <br>/************************************************************ <br>SHUTDOWN_MSG:
-    Shutting down NameNode at namenode/192.168.247.130 <br>************************************************************/<br>
-    [hadoop@namenode hadoop]$ ./bin/start-all.sh<br>
-    starting namenode, logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-namenode-namenode.out <br>snamenode: starting
-    datanode, logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-datanode-snamenode.out <br>datanode: starting datanode,
-    logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-datanode-datanode.out <br>snamenode: starting secondarynamenode,
-    logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-secondarynamenode-snamenode.out <br>starting jobtracker, logging
-    to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-jobtracker-namenode.out <br>datanode: starting tasktracker, logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-tasktracker-datanode.out
-    <br>snamenode: starting tasktracker, logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-tasktracker-snamenode.out
+[hadoop@namenode ~]$ cd $HADOOP_HOME
+[hadoop@namenode hadoop]$ ./bin/hadoop namenode -format
+18/01/21 04:56:38 INFO namenode.NameNode: STARTUP_MSG: 
+/************************************************************ STARTUP_MSG:
+Starting NameNode 
+STARTUP_MSG: host = namenode/192.168.247.130 
+STARTUP_MSG: args = [-format] 
+STARTUP_MSG: version = 1.2.1
+STARTUP_MSG: build = https://svn.apache.org/repos/asf/hadoop/common/branches/branch-1.2 -r 1503152; compiled by 'mattf' on
+Mon Jul 22 15:23:09 PDT 2013 
+STARTUP_MSG: java = 1.8.0_161 
+************************************************************/
+18/01/21 04:56:38 INFO util.GSet: Computing capacity for map BlocksMap 
+18/01/21 04:56:38 INFO util.GSet: VM type = 64-bit
+18/01/21 04:56:38 INFO util.GSet: 2.0% max memory = 1013645312 
+18/01/21 04:56:38 INFO util.GSet: capacity = 2^21 = 2097152
+entries 
+18/01/21 04:56:38 INFO util.GSet: recommended=2097152, actual=2097152 
+18/01/21 04:56:38 INFO namenode.FSNamesystem:
+fsOwner=hadoop 
+18/01/21 04:56:38 INFO namenode.FSNamesystem: supergroup=supergroup 
+18/01/21 04:56:38 INFO namenode.FSNamesystem:
+isPermissionEnabled=true 
+18/01/21 04:56:38 INFO namenode.FSNamesystem: dfs.block.invalidate.limit=100 
+18/01/21 04:56:38 INFO
+namenode.FSNamesystem: isAccessTokenEnabled=false accessKeyUpdateInterval=0 min(s), accessTokenLifetime=0 min(s) 
+18/01/21
+04:56:38 INFO namenode.FSEditLog: dfs.namenode.edits.toleration.length = 0 
+18/01/21 04:56:38 INFO namenode.NameNode: Caching
+file names occuring more than 10 times 
+18/01/21 04:56:38 INFO common.Storage: Image file /home/hadoop/hadoop-data/dfs/name/current/fsimage
+of size 112 bytes saved in 0 seconds. 
+18/01/21 04:56:38 INFO namenode.FSEditLog: closing edit log: position=4, editlog=/home/hadoop/hadoop-data/dfs/name/current/edits
+18/01/21 04:56:38 INFO namenode.FSEditLog: close success: truncate to 4, editlog=/home/hadoop/hadoop-data/dfs/name/current/edits
+18/01/21 04:56:38 INFO common.Storage: Storage directory /home/hadoop/hadoop-data/dfs/name has been successfully formatted.
+18/01/21 04:56:38 INFO namenode.NameNode: SHUTDOWN_MSG: 
+/************************************************************ 
+SHUTDOWN_MSG:
+Shutting down NameNode at namenode/192.168.247.130 
+************************************************************/
+[hadoop@namenode hadoop]$ ./bin/start-all.sh
+starting namenode, logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-namenode-namenode.out 
+snamenode: starting
+datanode, logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-datanode-snamenode.out 
+datanode: starting datanode,
+logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-datanode-datanode.out 
+snamenode: starting secondarynamenode,
+logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-secondarynamenode-snamenode.out 
+starting jobtracker, logging
+to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-jobtracker-namenode.out 
+datanode: starting tasktracker, logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-tasktracker-datanode.out
+snamenode: starting tasktracker, logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-tasktracker-snamenode.out
 </terminal>
 
 이제 인터넷을 켜고 아까 설정했던 모니터링 포트인 <color4>namenode:50070</color4>을 url에 입력합니다.<br>
@@ -339,18 +365,28 @@ slaves에 snamenode와 datanode를 써놔서 연결된 라이브 노드가 2개�
 아래 명령어를 따라 입력해주세요.<br>
 
 <terminal>
-    [hadoop@namenode hadoop]$ ./bin/hadoop fs -put conf/hadoop-env.sh conf/hadoop-env.sh<br>
-    [hadoop@namenode hadoop]$ ./bin/hadoop jar hadoop-examples-*.jar wordcount conf/hadoop-env.sh wordcount_output<br>
-    18/01/21 05:06:04 INFO input.FileInputFormat: Total input paths to process : 1 <br>18/01/21 05:06:04 INFO util.NativeCodeLoader:
-    Loaded the native-hadoop library <br>18/01/21 05:06:04 WARN snappy.LoadSnappy: Snappy native library not loaded <br>18/01/21 05:06:04
-    INFO mapred.JobClient: Running job: job_201801210459_0001<br>
-    <blur>(생략...)</blur><br>
-    18/01/21 05:06:20 INFO mapred.JobClient: Data-local map tasks=1 <br>18/01/21 05:06:20 INFO mapred.JobClient: File Output Format
-    Counters <br>18/01/21 05:06:20 INFO mapred.JobClient: Bytes Written=2269<br>
-    [hadoop@namenode hadoop]$ ./bin/hadoop fs -cat wordcount_output/part-r-00000<br>
-    # 36 <br>$HADOOP_BALANCER_OPTS" 1 <br>$HADOOP_DATANODE_OPTS" 1<br>
-    <blur>(생략...)</blur><br>
-    when 1 <br>where 2 <br>where, 1 <br>written 1<br>
+[hadoop@namenode hadoop]$ ./bin/hadoop fs -put conf/hadoop-env.sh conf/hadoop-env.sh
+[hadoop@namenode hadoop]$ ./bin/hadoop jar hadoop-examples-*.jar wordcount conf/hadoop-env.sh wordcount_output
+18/01/21 05:06:04 INFO input.FileInputFormat: Total input paths to process : 1 
+18/01/21 05:06:04 INFO util.NativeCodeLoader:
+Loaded the native-hadoop library 
+18/01/21 05:06:04 WARN snappy.LoadSnappy: Snappy native library not loaded 
+18/01/21 05:06:04
+INFO mapred.JobClient: Running job: job_201801210459_0001
+<blur>(생략...)</blur>
+18/01/21 05:06:20 INFO mapred.JobClient: Data-local map tasks=1 
+18/01/21 05:06:20 INFO mapred.JobClient: File Output Format
+Counters 
+18/01/21 05:06:20 INFO mapred.JobClient: Bytes Written=2269
+[hadoop@namenode hadoop]$ ./bin/hadoop fs -cat wordcount_output/part-r-00000
+# 36 
+$HADOOP_BALANCER_OPTS" 1 
+$HADOOP_DATANODE_OPTS" 1
+<blur>(생략...)</blur>
+when 1 
+where 2 
+where, 1 
+written 1
 </terminal>
 
 이렇게 나오면 예제까지 잘 실행되는겁니다. 하둡이 잘 실행되었습니다.<br>
@@ -361,7 +397,7 @@ slaves에 snamenode와 datanode를 써놔서 연결된 라이브 노드가 2개�
 일단 하둡을 끄는 방법입니다.<br>
 
 <terminal>
-    [hadoop@namenode hadoop]$ ./bin/stop-all.sh<br>
+[hadoop@namenode hadoop]$ ./bin/stop-all.sh
 </terminal>
 
 이렇게 입력해서 하둡을 끕니다.<br>
@@ -369,8 +405,8 @@ slaves에 snamenode와 datanode를 써놔서 연결된 라이브 노드가 2개�
 만약 safe mode가 되었다면 해제하는 방법도 알려드리겠습니다.<br>
 
 <terminal>
-    [hadoop@namenode hadoop]$ hadoop dfsadmin -safemode leave<br>
-    Safe mode is OFF<br>
+[hadoop@namenode hadoop]$ hadoop dfsadmin -safemode leave
+Safe mode is OFF
 </terminal>
 
 하둡이 실행된 상태에서 위의 명령어를 입력하면 safe mode가 종료됩니다.<br>
@@ -396,43 +432,43 @@ slaves에 snamenode와 datanode를 써놔서 연결된 라이브 노드가 2개�
 내용은 아래의 내용을 붙여넣기 해주세요.<br>
 
 <terminal>
-    #! /bin/bash<br>
-    <br>
-    rm -r hadoop-data<br>
-    ssh snamenode "cd /home/hadoop; rm -r hadoop; rm -r hadoop-data"<br>
-    ssh datanode "cd /home/hadoop; rm -r hadoop; rm -r hadoop-data"<br>
-    tar -zcvf hadoop.tar.gz hadoop<br>
-    scp hadoop.tar.gz snamenode:/home/hadoop/<br>
-    scp hadoop.tar.gz datanode:/home/hadoop/<br>
-    ssh snamenode "cd /home/hadoop; tar -zxvf hadoop.tar.gz; rm hadoop.tar.gz"<br>
-    ssh datanode "cd /home/hadoop; tar -zxvf hadoop.tar.gz; rm hadoop.tar.gz"<br>
-    rm hadoop.tar.gz<br>
-    $HADOOP_HOME/bin/hadoop namenode -format<br>
-    $HADOOP_HOME/bin/start-all.sh<br>
+<blur><i>#! /bin/bash</i></blur>
+
+rm -r hadoop-data
+ssh snamenode "cd /home/hadoop; rm -r hadoop; rm -r hadoop-data"
+ssh datanode "cd /home/hadoop; rm -r hadoop; rm -r hadoop-data"
+tar -zcvf hadoop.tar.gz hadoop
+scp hadoop.tar.gz snamenode:/home/hadoop/
+scp hadoop.tar.gz datanode:/home/hadoop/
+ssh snamenode "cd /home/hadoop; tar -zxvf hadoop.tar.gz; rm hadoop.tar.gz"
+ssh datanode "cd /home/hadoop; tar -zxvf hadoop.tar.gz; rm hadoop.tar.gz"
+rm hadoop.tar.gz
+$HADOOP_HOME/bin/hadoop namenode -format
+$HADOOP_HOME/bin/start-all.sh
 </terminal>
 
 그런데 이대로는 실행을 못해요. 일단 실행 권한을 줘야합니다.<br>
 
 <terminal>
-    [hadoop@namenode ~]$ sudo chmod -R 777 hadoop.sh<br>
+[hadoop@namenode ~]$ sudo chmod -R 777 hadoop.sh
 </terminal>
 
 이렇게 하면 앞으로 뭔가 변경했을 때 한번에 하둡 파일을 삭제시킨 뒤 다시 보낼 수 있습니다. 실행까지 자동으로 해주고요.<br>
 궁금하지요? 한번 해볼까요? 먼저 하둡을 꺼야겠죠?<br>
 
 <terminal>
-    [hadoop@namenode ~]$ cd $HADOOP_HOME<br>
-    [hadoop@namenode hadoop]$ ./bin/stop-all.sh<br>
-    stopping jobtracker <br>
-    snamenode: stopping tasktracker <br>
-    datanode: stopping tasktracker <br>
-    stopping namenode <br>
-    datanode: stopping datanode <br>
-    snamenode: stopping datanode <br>
-    snamenode: stopping secondarynamenode<br>
-    [hadoop@namenode hadoop]$ cd<br>
-    [hadoop@namenode ~]$ ./hadoop.sh<br>
-    <blur>(로그들이 주루룩 나옵니다...)</blur><br>
+[hadoop@namenode ~]$ cd $HADOOP_HOME
+[hadoop@namenode hadoop]$ ./bin/stop-all.sh
+stopping jobtracker 
+snamenode: stopping tasktracker 
+datanode: stopping tasktracker 
+stopping namenode 
+datanode: stopping datanode 
+snamenode: stopping datanode 
+snamenode: stopping secondarynamenode
+[hadoop@namenode hadoop]$ cd
+[hadoop@namenode ~]$ ./hadoop.sh
+<blur>(로그들이 주루룩 나옵니다...)</blur>
 </terminal>
 
 그 뒤에 인터넷을 켜고 namenode:50070으로 들어가보세요. 잘 작동되고 있는걸 보실 수 있습니다.<br>

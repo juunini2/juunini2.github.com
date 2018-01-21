@@ -60,10 +60,10 @@ SingleFileWriteRead.java 라는 파일을 생성해서 내용을 입력하도록
 아래 방법처럼 해주세요.<br>
 
 <terminal>
-    [hadoop@namenode hadoop]$ javac -cp ./hadoop-core* SingleFileWriteRead.java<br>
-    [hadoop@namenode hadoop]$ jar -cvf SingleFileWriteRead.jar SingleFileWriteRead.class<br>
-    Manifest를 추가함 <br>
-    추가하는 중: SingleFileWriteRead.class(입력 = 1681) (출력 = 891)(46%를 감소함)<br>
+[hadoop@namenode hadoop]$ javac -cp ./hadoop-core* SingleFileWriteRead.java
+[hadoop@namenode hadoop]$ jar -cvf SingleFileWriteRead.jar SingleFileWriteRead.class
+Manifest를 추가함 
+추가하는 중: SingleFileWriteRead.class(입력 = 1681) (출력 = 891)(46%를 감소함)
 </terminal>
 
 이렇게 해야 컴파일이 가능합니다. javac -cp 옵션은 classpath옵션으로 그 다음에 쓰는 파일을 포함해서 컴파일 하는겁니다.<br>
@@ -72,8 +72,8 @@ SingleFileWriteRead.java 라는 파일을 생성해서 내용을 입력하도록
 컴파일을 끝마쳤으니 방금 만든 예제를 실행시켜보겠습니다.<br>
 
 <terminal>
-    [hadoop@namenode hadoop]$ ./bin/hadoop jar SingleFileWriteRead.jar SingleFileWriteRead input.txt Hello,HDFS<br>
-    ## inputString:Hello,HDFS<br>
+    [hadoop@namenode hadoop]$ ./bin/hadoop jar SingleFileWriteRead.jar SingleFileWriteRead input.txt Hello,HDFS
+    ## inputString:Hello,HDFS
 </terminal>
 
 이렇게 나옵니다. SingleFileWriteRead 뒤에 input.txt가 첫번째 배열(파일 이름), Hello,HDFS가 두번째 배열(파일 내용)입니다.<br>
@@ -83,12 +83,12 @@ SingleFileWriteRead.java 라는 파일을 생성해서 내용을 입력하도록
 파일이 잘 만들어졌는지 확인해보겠습니다.<br>
 
 <terminal>
-    [hadoop@namenode hadoop]$ ./bin/hadoop fs -ls input.txt<br>
-    Found 1 items <br>
-    -rw-r--r-- 3 hadoop supergroup 12 2018-01-21 07:19 /user/hadoop/input.txt<br>
-    [hadoop@namenode hadoop]$ ./bin/hadoop fs -cat input.txt<br>
-    <br>
-    Hello,HDFS[hadoop@namenode hadoop]$
+[hadoop@namenode hadoop]$ ./bin/hadoop fs -ls input.txt
+Found 1 items
+-rw-r--r-- 3 hadoop supergroup 12 2018-01-21 07:19 /user/hadoop/input.txt
+[hadoop@namenode hadoop]$ ./bin/hadoop fs -cat input.txt
+
+Hello,HDFS[hadoop@namenode hadoop]$
 </terminal>
 
 이렇게 출력됩니다. 정상적으로 파일이 만들어졌고, 정상적으로 내용이 출력됨을 알 수 있습니다.<br>
