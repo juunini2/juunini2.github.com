@@ -160,6 +160,9 @@ cursor {
     white-space: pre-wrap;
     word-break: break-all;
 }
+terminal{
+    padding-top: 0;
+}
 
 key {
     display: inline-block;
