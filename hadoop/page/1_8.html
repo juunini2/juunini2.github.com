@@ -51,6 +51,54 @@ SingleFileWriteRead.java 라는 파일을 생성해서 내용을 입력하도록
 
 붙여넣기는 하시되 주석 내용들은 좀 읽어주세요. 열심히 해석해서 알기쉽게 써놓았습니다.<br>
 <br>
+그런데 잘 보면 여기에는 불필요한 코드가 섞여있음을 알 수 있습니다.<br>
+파일을 저장했는데 왜 또 굳이 저장한 파일을 다시 읽어들여서 문자열을 출력하는 형식이거든요.<br>
+사실 책의 저자가 이런 기능도 있음을 친절하게 알려주는듯한 느낌이 드는 부분이긴 하지만요.<br>
+그래서 불필요한 부분을 제거한 코드도 올려드리겠습니다.<br>
+
+<pre class="terminal">
+<color6>import</color6> <color2>org.apache.hadoop.conf.Configuration</color2>;
+<blur><i>//import org.apache.hadoop.fs.FSDataInputStream; 파일을 저장하기 위함이지 읽어들일 필요는 없습니다.</i></blur>
+<color6>import</color6> <color2>org.apache.hadoop.fs.FSDataOutputStream</color2>;
+<color6>import</color6> <color2>org.apache.hadoop.fs.FileSystem</color2>;
+<color6>import</color6> <color2>org.apache.hadoop.fs.Path</color2>;
+
+<color2>public class</color2> SingleFileWriteRead { <blur><i>// 자바는 파일명과 퍼블릭 클래스가 무조건 같아야합니다.</i></blur>
+    <color2>public static void</color2> <color3>main</color3>(<color2>String</color2>[] args) {
+
+        <color6>if</color6> (<color4>args</color4>.length <color2>!= 2</color2>) { <blur><i>// 자바 파일을 실행할 때 그냥 실행하는게 아니라 뒤에 문자열을 붙이면 args에 배열로 저장됨.</i></blur>
+                                <blur><i>// 그러니까, 2개의 배열이 들어오지 않으면 에러로 취급하겠다는 뜻</i></blur>
+            <color4>System</color4>.<color4>err</color4>.<color3>println</color3>(<color7>"Usage: SingleFileWriteRead &lt;filename&gt; &lt;contents&gt;"</color7>); <blur><i>// 파일이름 파일내용 으로 넣어달라는 에러메시지</i></blur>
+            <color4>System</color4>.<color3>exit</color3>(<color2>2</color2>);
+        }
+
+        <color6>try</color6> {   <blur><i>// 정상 실행</i></blur>
+            <color2>Configuration</color2> conf = <color6>new</color6> <color3>Configuration</color3>();   <blur><i>// core-default.xml 과 core-site.xml의 값을 받아옴</i></blur>
+            <color2>FileSystem</color2> hdfs = <color4>FileSystem</color4>.<color3>get</color3>(conf);     <blur><i>// 하둡 파일 시스템 객체를 위의 값에서 받아옴</i></blur>
+
+            <color2>Path</color2> path = <color4>new</color4> <color3>Path</color3>(args[<color2>0</color2>]);  <blur><i>// 자바 파일을 실행할 때 첫번 쨰 배열은 파일이름 입니다.</i></blur>
+            <color2>if</color2> (<color4>hdfs</color4>.<color3>exists</color3>(path)) {        <blur><i>// 만약에 만들려는 파일의 이름이 존재하면 삭제하고 새로 만듦.</i></blur>
+                <color4>hdfs</color4>.<color3>delete</color3>(path, <color2>true</color2>);
+            }
+
+            <color2>FSDataOutputStream</color2> outStream = <color4>hdfs</color4>.<color3>create</color3>(path);   <blur><i>// hadoop-data 폴더에서 방금 만든 파일을 읽어옴</i></blur>
+            <color4>outStream</color4>.<color3>writeUTF</color3>(args[<color2>1</color2>]);                        <blur><i>// 자바 파일을 실행할 때 두번 째 배열은 파일 내용이고 UTF형식으로 저장함.</i></blur>
+            <color4>outStream</color4>.<color3>close</color3>();                                  <blur><i>// 저장종료</i></blur>
+
+            <blur><i>FSDataInputStream inputStream = hdfs.open(path);
+            String inputString = inputStream.readUTF();
+            inputStream.close();
+
+            System.out.println("## inputString : " + inputString);</i></blur>
+            
+            <color4>System</color4>.<color4>out</color4>.<color3>println</color3>(<color7>"## inputString : "</color7> + args[<color2>1</color2>]);     <blur><i>//굳이 저장한 파일을 다시 읽어들일 필요 없이 실행시 받아들인 두번 째 배열을 출력하면 됩니다.</i></blur>
+        } <color6>catch</color6> (<color2>Exception</color2> e) {     <blur><i>// 에러가 났을 경우</i></blur>
+            <color4>e</color4>.<color3>printStackTrace</color3>();    <blur><i>// 에러문구 출력</i></blur>
+        }
+    }
+}
+</pre>
+
 그럼 컴파일을 해야겠죠? 자바를 써보신 분들은 아시겠지만, 자바를 컴파일 하는 방법은<br>
 <color4>javac SingleFileWriteRead.java</color4> 입니다.<br>
 그런데, 이대로 컴파일을 하면 에러가 납니다.<br>
@@ -66,8 +114,8 @@ Manifest를 추가함
 추가하는 중: SingleFileWriteRead.class(입력 = 1681) (출력 = 891)(46%를 감소함)
 </terminal>
 
-이렇게 해야 컴파일이 가능합니다. javac -cp 옵션은 classpath옵션으로 그 다음에 쓰는 파일을 포함해서 컴파일 하는겁니다.<br>
-그리고 jar -cvf 는 jar파일을 만들고, class파일을 포함하고, 이름을 짓는 명령어입니다.<br>
+이렇게 해야 컴파일이 가능합니다. <color2>javac -cp</color2> 옵션은 <color3>classpath</color3>옵션으로 그 다음에 쓰는 파일을 포함해서 컴파일 하는겁니다.<br>
+그리고 <color2>jar -cvf</color2> 는 <color3>jar파일을 만들고, class파일을 포함하고, 이름을 짓는 명령어</color3>입니다.<br>
 <br>
 컴파일을 끝마쳤으니 방금 만든 예제를 실행시켜보겠습니다.<br>
 
@@ -76,8 +124,8 @@ Manifest를 추가함
 ## inputString:Hello,HDFS
 </terminal>
 
-이렇게 나옵니다. SingleFileWriteRead 뒤에 input.txt가 첫번째 배열(파일 이름), Hello,HDFS가 두번째 배열(파일 내용)입니다.<br>
-"## inputString:" + 파일 내용<br>
+이렇게 나옵니다. SingleFileWriteRead 뒤에 <color4>input.txt</color4>가 첫번째 배열(파일 이름), <color4>Hello,HDFS</color4>가 두번째 배열(파일 내용)입니다.<br>
+<color2>"## inputString:" + 파일 내용</color2><br>
 이니까 맞게 출력되었습니다.<br>
 <br>
 파일이 잘 만들어졌는지 확인해보겠습니다.<br>
