@@ -7,7 +7,7 @@ Part. 1의 마지막 장 입니다.<br>
 터미널을 켜서 하둡 폴더 내에서 아래 명령어를 입력해보세요.<br>
 
 <terminal>
-[hadoop@namenode hadoop]$ find -name Writable*.java
+<strong>[hadoop@namenode hadoop]$</strong> find -name Writable*.java
 ./src/core/org/apache/hadoop/io/serializer/WritableSerialization.java 
 ./src/core/org/apache/hadoop/io/Writable.java 
 ./src/core/org/apache/hadoop/io/WritableComparable.java
@@ -191,14 +191,14 @@ public 클래스 뒤에 <color2>extends Reducer&lt;입력 키, 입력 밸류, �
 터미널의 경로를 hadoop-examples 폴더로 하고 아래 명령어를 입력해주세요.<br>
 
 <terminal>
-[hadoop@namenode hadoop-examples]$ javac -cp $HADOOP_HOME/hadoop-core*.jar WordCount*.java
-[hadoop@namenode hadoop-examples]$ jar -cvf $HADOOP_HOME/WordCount.jar WordCount*.class
+<strong>[hadoop@namenode hadoop-examples]$</strong> javac -cp $HADOOP_HOME/hadoop-core*.jar WordCount*.java
+<strong>[hadoop@namenode hadoop-examples]$</strong> jar -cvf $HADOOP_HOME/WordCount.jar WordCount*.class
 Manifest를 추가함 
 추가하는 중: WordCount.class(입력 = 1648) (출력 = 863)(47%를 감소함) 
 추가하는 중: WordCountMapper.class(입력 = 1801) (출력 = 754)(58%를 감소함) 
 추가하는 중: WordCountReducer.class(입력 = 1700) (출력 = 717)(57%를 감소함)
-[hadoop@namenode hadoop-examples]$ cd $HADOOP_HOME
-[hadoop@namenode hadoop]$ ./bin/hadoop fs -put input.txt input.txt
+<strong>[hadoop@namenode hadoop-examples]$</strong> cd $HADOOP_HOME
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -put input.txt input.txt
 put: Target input.txt already exists
 </terminal>
 
@@ -211,10 +211,10 @@ put명령어를 수행하는데 input.txt파일이 이미 존재한다는 내용
 그럼 삭제하고 진행해봅시다.<br>
 
 <terminal>
-[hadoop@namenode hadoop]$ ./bin/hadoop fs -rm input.txt
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -rm input.txt
 Deleted hdfs://namenode:9000/user/hadoop/input.txt
-[hadoop@namenode hadoop]$ ./bin/hadoop fs -put input.txt input.txt
-[hadoop@namenode hadoop]$ ./bin/hadoop jar WordCount.jar WordCount input.txt wordcount_output
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -put input.txt input.txt
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop jar WordCount.jar WordCount input.txt wordcount_output
 18/01/22 10:40:29 WARN mapred.JobClient:        Use GenericOptionsParser for parsing the arguments. Applications should implement Tool for the same. 
 18/01/22 10:40:29 INFO input.FileInputFormat:   Total input paths to process : 1 
 18/01/22 10:40:29 INFO util.NativeCodeLoader:   Loaded the native-hadoop library 
@@ -260,7 +260,7 @@ Deleted hdfs://namenode:9000/user/hadoop/input.txt
 18/01/22 10:40:44 INFO mapred.JobClient:        Data-local map tasks=1 
 18/01/22 10:40:44 INFO mapred.JobClient:        File Output Format Counters 
 18/01/22 10:40:44 INFO mapred.JobClient:        Bytes Written=26
-[hadoop@namenode hadoop]$ ./bin/hadoop fs -cat wordcount_output/part-r-00000
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -cat wordcount_output/part-r-00000
 a       2
 book    2
 read    1
@@ -273,7 +273,7 @@ write   1
 하둡폴더 내에서 작업을 한 뒤에 실행을 하면 아래와 같은 에러를 만나시게 될겁니다.<br>
 
 <terminal>
-[hadoop@namenode hadoop]$ ./bin/hadoop jar WordCount.jar WordCount input.txt wordcount_output 
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop jar WordCount.jar WordCount input.txt wordcount_output 
 18/01/22 10:50:03 WARN mapred.JobClient: Use GenericOptionsParser for parsing the arguments. Applications should implement Tool for the same. 
 18/01/22 10:50:03 WARN mapred.JobClient: No job jar file set. User classes may not be found. See JobConf(Class) or JobConf#setJar(String). 
 18/01/22 10:50:03 INFO input.FileInputFormat: Total input paths to process : 1 

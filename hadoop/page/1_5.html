@@ -3,9 +3,9 @@
 터미널 창을 열고 아래와 같이 입력해주세요.<br>
 <br>
 <terminal>
-[hadoop@namenode ~]$ su
+<strong>[hadoop@namenode ~]$</strong> su
 암호:<blur>(1234입력)</blur>
-[root@namenode hadoop]# visudo
+<strong>[root@namenode hadoop]#</strong> visudo
 </terminal>
 
 <img src="/hadoop/img/5_1.jpg" alt="">
@@ -41,7 +41,7 @@ sudo 명령어 입력이 불가능해서 수정한겁니다.<br>
 아래와 같이 입력해주세요.<br>
 
 <terminal>
-[root@namenode hadoop]# yum install -y openssh* && systemctl restart network && vi /etc/ssh/sshd_config
+<strong>[root@namenode hadoop]#</strong> yum install -y openssh* && systemctl restart network && vi /etc/ssh/sshd_config
 </terminal>
 
 이렇게 입력하면 아래와 같이 나옵니다.<br>
@@ -56,9 +56,9 @@ sudo 명령어 입력이 불가능해서 수정한겁니다.<br>
 그리고 다시 명령어를 입력합니다.
 
 <terminal>
-[root@namenode hadoop]# systemctl start sshd.service
-[root@namenode hadoop]# su hadoop
-[hadoop@namenode ~]$ ssh-keygen -t rsa
+<strong>[root@namenode hadoop]#</strong> systemctl start sshd.service
+<strong>[root@namenode hadoop]#</strong> su hadoop
+<strong>[hadoop@namenode ~]$</strong> ssh-keygen -t rsa
 Generating public/private rsa key pair.
 Enter file in which to save the key (/home/hadoop/.ssh/id_rsa):
 </terminal>
@@ -66,7 +66,7 @@ Enter file in which to save the key (/home/hadoop/.ssh/id_rsa):
 이렇게 나오고 멈춰있을겁니다. 엔터키를 눌러주세요<br>
 
 <terminal>
-[hadoop@namenode ~]$ ssh-keygen -t rsa
+<strong>[hadoop@namenode ~]$</strong> ssh-keygen -t rsa
 Generating public/private rsa key pair.
 Enter file in which to save the key (/home/hadoop/.ssh/id_rsa):
 Created directory '/home/hadoop/.ssh'.
@@ -76,7 +76,7 @@ Enter passphrase (empty for no passphrase):
 또 여기서 멈춰있을겁니다. 다시 엔터키를 눌러주세요<br>
 
 <terminal>
-[hadoop@namenode ~]$ ssh-keygen -t rsa
+<strong>[hadoop@namenode ~]$</strong> ssh-keygen -t rsa
 Generating public/private rsa key pair.
 Enter file in which to save the key (/home/hadoop/.ssh/id_rsa):
 Created directory '/home/hadoop/.ssh'.
@@ -100,7 +100,7 @@ Enter same passphrase again:
 잠깐 보조네임노드와 데이터노드를 올려서 아래 명령어를 입력시켜주세요.<br>
 <br>
 <terminal>
-[root@snamenode ~]# yum install -y net-tools && ifconfig
+<strong>[root@snamenode ~]#</strong> yum install -y net-tools && ifconfig
 </terminal>
 
 <img src="/hadoop/img/5_7.jpg" alt="">
@@ -111,7 +111,7 @@ Enter same passphrase again:
 네임노드에도 설치해줍니다.<br>
 
 <terminal>
-[hadoop@namenode ~]$ sudo yum install -y net-tools && ifconfig
+<strong>[hadoop@namenode ~]$</strong> sudo yum install -y net-tools && ifconfig
 </terminal>
 
 <img src="/hadoop/img/5_8.jpg" alt="">
@@ -123,7 +123,7 @@ sudo 명령어를 입력하면 위와 같은 상태가 되는데 비밀번호인
 그 뒤에 두번쨰 연 터미널에 아래 명령어를 실행시켜주세요.<br>
 
 <terminal>
-[hadoop@namenode ~]$ sudo vi /etc/hosts
+<strong>[hadoop@namenode ~]$</strong> sudo vi /etc/hosts
 </terminal>
 
 <img src="/hadoop/img/5_9.jpg" alt="">
@@ -145,9 +145,9 @@ sudo 명령어를 입력하면 위와 같은 상태가 되는데 비밀번호인
 그리고 아래 명령어를 입력해주세요.<br>
 
 <terminal>
-[hadoop@namenode ~]$ source /etc/hosts
+<strong>[hadoop@namenode ~]$</strong> source /etc/hosts
 <blur>(뭔가 에러로그가 나오는데 무시해주세요.)</blur>
-[hadoop@namenode ~]$ ssh-copy-id -i snamenode
+<strong>[hadoop@namenode ~]$</strong> ssh-copy-id -i snamenode
 /usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/home/hadoop/.ssh/id_rsa.pub" 
 The authenticity of host 'snamenode (192.168.247.129)' can't be established. 
 ECDSA key fingerprint is SHA256:SDowT/e42UvdsQIutWeZkF3qEg2qUh92elg8oltCJqk. 
@@ -176,18 +176,18 @@ and check to make sure that only the key(s) you wanted were added.
 아래와 같이 입력해주세요.<br>
 
 <terminal>
-[hadoop@namenode ~]$ ssh snamenode
-[hadoop@snamenode ~]$
+<strong>[hadoop@namenode ~]$</strong> ssh snamenode
+<strong>[hadoop@snamenode ~]$</strong>
 </terminal>
 
 이렇게 나오면 성공입니다. 패스워드를 입력하지 않고 보조네임노드에 ssh통신이 되었습니다.<br>
 그럼 데이터노드에도 ssh키를 나눠줍시다.<br>
 
 <terminal>
-[hadoop@snamenode ~]$ exit
+<strong>[hadoop@snamenode ~]$</strong> exit
 logout 
 Connection to snamenode closed.
-[hadoop@namenode ~]$ ssh-copy-id -i datanode
+<strong>[hadoop@namenode ~]$</strong> ssh-copy-id -i datanode
 /usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/home/hadoop/.ssh/id_rsa.pub" 
 The authenticity of host 'datanode (192.168.247.128)' can't be established. 
 ECDSA key fingerprint is SHA256:bwsmDpNsUjJ2UgcoSMQ+729YNQHaCx3OBkqSffxl9Vo. 
@@ -202,11 +202,11 @@ Number of key(s) added: 1
 Now try logging into the machine, with: "ssh 'datanode'" 
 and check to make sure that only the key(s) you wanted were added.
 
-[hadoop@namenode ~]$ ssh datanode
-[hadoop@datanode ~]$ exit
+<strong>[hadoop@namenode ~]$</strong> ssh datanode
+<strong>[hadoop@datanode ~]$</strong> exit
 logout 
 Connection to datanode closed. 
-[hadoop@namenode ~]$
+<strong>[hadoop@namenode ~]$</strong>
 </terminal>
 
 이렇게 입력해서 데이터노드에도 패스워드를 입력하지 않고 접속이 되면 전체에 ssh 공개키가 잘 배포된겁니다.<br>
@@ -260,7 +260,7 @@ Created symlink from /etc/systemd/system/firewalld.service to /dev/null.
 일단 네임노드쪽 터미널에 이렇게 입력해주세요.<br>
 
 <terminal>
-[root@namenode hadoop]# yum list java*jdk-devel
+<strong>[root@namenode hadoop]#</strong> yum list java*jdk-devel
 Loaded plugins: fastestmirror 
 Loading mirror speeds from cached hostfile 
 * base: ftp.daumkakao.com 
@@ -286,11 +286,11 @@ yum install -y java-1.8.0-openjdk-devel.x86_64
 설치가 끝나고나면 네임노드 터미널에서 아래 명령어를 입력해주세요.<br>
 
 <terminal>
-[root@namenode hadoop]# javac -version 
+<strong>[root@namenode hadoop]#</strong> javac -version 
 javac 1.8.0_161
-[root@namenode hadoop]# which javac
+<strong>[root@namenode hadoop]#</strong> which javac
 /usr/bin/javac
-[root@namenode hadoop]# readlink -f /usr/bin/javac
+<strong>[root@namenode hadoop]#</strong> readlink -f /usr/bin/javac
 /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-0.b14.el7_4.x86_64/bin/javac
 </terminal>
 
@@ -327,11 +327,11 @@ source /etc/profile
 이렇게 하면 변경한 환경변수가 적용이 됩니다. 그 후 아래 명령어를 입력하여 잘 적용되었나 확인해주세요.<br>
 
 <terminal>
-[root@namenode hadoop]# echo $JAVA_HOME
+<strong>[root@namenode hadoop]#</strong> echo $JAVA_HOME
 /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-0.b14.el7_4.x86_64
-[root@namenode hadoop]# $JAVA_HOME/bin/javac -version
+<strong>[root@namenode hadoop]#</strong> $JAVA_HOME/bin/javac -version
 javac 1.8.0_161
-[root@namenode hadoop]# javac -version
+<strong>[root@namenode hadoop]#</strong> javac -version
 javac 1.8.0_161
 </terminal>
 
@@ -345,7 +345,7 @@ exit 를 두번 입력한 뒤 모든 터미널을 꺼주세요.<br>
 그 뒤에 아래 명령어를 입력해주세요.<br>
 
 <terminal>
-[hadoop@namenode ~]$ sudo yum install -y wget && wget "http://www.eu.apache.org/dist/hadoop/common/hadoop-1.2.1/hadoop-1.2.1.tar.gz" && tar -zxvf hadoop-1.2.1.tar.gz && rm hadoop-1.2.1.tar.gz && mv hadoop-1.2.1 hadoop
+<strong>[hadoop@namenode ~]$</strong> sudo yum install -y wget && wget "http://www.eu.apache.org/dist/hadoop/common/hadoop-1.2.1/hadoop-1.2.1.tar.gz" && tar -zxvf hadoop-1.2.1.tar.gz && rm hadoop-1.2.1.tar.gz && mv hadoop-1.2.1 hadoop
 </terminal>
 
 저렇게 입력하면 하둡 압축파일을 다운로드 받고, 압축을 풀고, 필요없어진 압축파일을 삭제하고,<br>
@@ -355,7 +355,7 @@ exit 를 두번 입력한 뒤 모든 터미널을 꺼주세요.<br>
 아래 명령어를 입력해주세요.<br>
 
 <terminal>
-[hadoop@namenode ~]$ sudo vi /etc/profile
+<strong>[hadoop@namenode ~]$</strong> sudo vi /etc/profile
 </terminal>
 
 다시 vi로 환경변수를 설정하게 됩니다.<br>
@@ -370,16 +370,16 @@ export HADOOP_HOME=/home/hadoop/hadoop/
 하고 입력하고 빠져나옵니다.<br>
 
 <terminal>
-[hadoop@namenode ~]$ source /etc/profile
+<strong>[hadoop@namenode ~]$</strong> source /etc/profile
 </terminal>
 
 를 입력하여 방금 변경한 환경변수를 적용시켜주시고 아래 명령어를 입력하여 잘 됐는가 실험해봅니다.<br>
 
 <terminal>
-[hadoop@namenode ~]$ echo $HADOOP_HOME
+<strong>[hadoop@namenode ~]$</strong> echo $HADOOP_HOME
 /home/hadoop/hadoop/
-[hadoop@namenode ~]$ cd $HADOOP_HOME
-[hadoop@namenode hadoop]$
+<strong>[hadoop@namenode ~]$</strong> cd $HADOOP_HOME
+<strong>[hadoop@namenode hadoop]$</strong>
 </terminal>
 
 이렇게 되면 잘 된겁니다.<br>

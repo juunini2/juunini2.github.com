@@ -35,14 +35,14 @@
 아래 명령어를 따라 입력해주세요.<br>
 
 <terminal>
-[hadoop@namenode Downloads]$ sudo rpm -Uvh code<blur>(<key>tab</key> 키를 눌러주세요.)</blur>
+<strong>[hadoop@namenode Downloads]$</strong> sudo rpm -Uvh code<blur>(<key>tab</key> 키를 눌러주세요.)</blur>
 </terminal>
 
 tab 키를 눌러주세요 부분에서 code 까지만 치고 <key>tab</key> 키를 누르면 자동완성이 됩니다.<br>
 아래를 봐주세요.
 
 <terminal>
-[hadoop@namenode Downloads]$ sudo rpm -Uvh code-1.19.2-1515600099.el7.x86_64.rpm
+<strong>[hadoop@namenode Downloads]$</strong> sudo rpm -Uvh code-1.19.2-1515600099.el7.x86_64.rpm
 </terminal>
 
 이런식으로 알아서 code 뒷부분을 자동완성 시켜줍니다.<br>
@@ -281,17 +281,17 @@ slaves 파일에 들어가는 내용은 데이터노드이구요.<br>
 아래 명령어를 터미널에 입력해주세요.<br>
 
 <terminal>
-[hadoop@namenode ~]$ tar -zcvf hadoop.tar.gz hadoop
+<strong>[hadoop@namenode ~]$</strong> tar -zcvf hadoop.tar.gz hadoop
 <blur>(압축 과정 로그 생략)</blur>
-[hadoop@namenode ~]$ scp hadoop.tar.gz snamenode:/home/hadoop/
+<strong>[hadoop@namenode ~]$</strong> scp hadoop.tar.gz snamenode:/home/hadoop/
 hadoop.tar.gz &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;100% 61MB 80.8MB/s&nbsp;&nbsp;&nbsp; 00:00
-[hadoop@namenode ~]$ scp hadoop.tar.gz datanode:/home/hadoop/
+<strong>[hadoop@namenode ~]$</strong> scp hadoop.tar.gz datanode:/home/hadoop/
 hadoop.tar.gz &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;100% 61MB 72.2MB/s &nbsp;&nbsp;&nbsp;00:00
-[hadoop@namenode ~]$ ssh snamenode "cd /home/hadoop; tar -zxvf hadoop.tar.gz; rm hadoop.tar.gz"
+<strong>[hadoop@namenode ~]$</strong> ssh snamenode "cd /home/hadoop; tar -zxvf hadoop.tar.gz; rm hadoop.tar.gz"
 <blur>(압축 푸는 로그 생략)</blur>
-[hadoop@namenode ~]$ ssh datanode "cd /home/hadoop; tar -zxvf hadoop.tar.gz; rm hadoop.tar.gz"
+<strong>[hadoop@namenode ~]$</strong> ssh datanode "cd /home/hadoop; tar -zxvf hadoop.tar.gz; rm hadoop.tar.gz"
 <blur>(압축 푸는 로그 생략)</blur>
-[hadoop@namenode ~]$ rm hadoop.tar.gz
+<strong>[hadoop@namenode ~]$</strong> rm hadoop.tar.gz
 </terminal>
 
 위의 명령어를 차례대로 넣으면 ssh통신을 통해 보조네임노드와 데이터노드에 하둡 폴더를 보내게 됩니다.<br>
@@ -299,8 +299,8 @@ hadoop.tar.gz &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;100% 61MB 72.2MB/s &nbsp
 아래 명령어를 입력해주세요.<br>
 
 <terminal>
-[hadoop@namenode ~]$ cd $HADOOP_HOME
-[hadoop@namenode hadoop]$ ./bin/hadoop namenode -format
+<strong>[hadoop@namenode ~]$</strong> cd $HADOOP_HOME
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop namenode -format
 18/01/21 04:56:38 INFO namenode.NameNode: STARTUP_MSG: 
 /************************************************************ STARTUP_MSG:
 Starting NameNode 
@@ -339,7 +339,7 @@ of size 112 bytes saved in 0 seconds.
 SHUTDOWN_MSG:
 Shutting down NameNode at namenode/192.168.247.130 
 ************************************************************/
-[hadoop@namenode hadoop]$ ./bin/start-all.sh
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/start-all.sh
 starting namenode, logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-namenode-namenode.out 
 snamenode: starting
 datanode, logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-datanode-snamenode.out 
@@ -365,8 +365,8 @@ slaves에 snamenode와 datanode를 써놔서 연결된 라이브 노드가 2개�
 아래 명령어를 따라 입력해주세요.<br>
 
 <terminal>
-[hadoop@namenode hadoop]$ ./bin/hadoop fs -put conf/hadoop-env.sh conf/hadoop-env.sh
-[hadoop@namenode hadoop]$ ./bin/hadoop jar hadoop-examples-*.jar wordcount conf/hadoop-env.sh wordcount_output
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -put conf/hadoop-env.sh conf/hadoop-env.sh
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop jar hadoop-examples-*.jar wordcount conf/hadoop-env.sh wordcount_output
 18/01/21 05:06:04 INFO input.FileInputFormat: Total input paths to process : 1 
 18/01/21 05:06:04 INFO util.NativeCodeLoader:
 Loaded the native-hadoop library 
@@ -378,7 +378,7 @@ INFO mapred.JobClient: Running job: job_201801210459_0001
 18/01/21 05:06:20 INFO mapred.JobClient: File Output Format
 Counters 
 18/01/21 05:06:20 INFO mapred.JobClient: Bytes Written=2269
-[hadoop@namenode hadoop]$ ./bin/hadoop fs -cat wordcount_output/part-r-00000
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -cat wordcount_output/part-r-00000
 # 36 
 $HADOOP_BALANCER_OPTS" 1 
 $HADOOP_DATANODE_OPTS" 1
@@ -397,7 +397,7 @@ written 1
 일단 하둡을 끄는 방법입니다.<br>
 
 <terminal>
-[hadoop@namenode hadoop]$ ./bin/stop-all.sh
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/stop-all.sh
 </terminal>
 
 이렇게 입력해서 하둡을 끕니다.<br>
@@ -405,7 +405,7 @@ written 1
 만약 safe mode가 되었다면 해제하는 방법도 알려드리겠습니다.<br>
 
 <terminal>
-[hadoop@namenode hadoop]$ hadoop dfsadmin -safemode leave
+<strong>[hadoop@namenode hadoop]$</strong> hadoop dfsadmin -safemode leave
 Safe mode is OFF
 </terminal>
 
@@ -450,15 +450,15 @@ $HADOOP_HOME/bin/start-all.sh
 그런데 이대로는 실행을 못해요. 일단 실행 권한을 줘야합니다.<br>
 
 <terminal>
-[hadoop@namenode ~]$ sudo chmod -R 777 hadoop.sh
+<strong>[hadoop@namenode ~]$</strong> sudo chmod -R 777 hadoop.sh
 </terminal>
 
 이렇게 하면 앞으로 뭔가 변경했을 때 한번에 하둡 파일을 삭제시킨 뒤 다시 보낼 수 있습니다. 실행까지 자동으로 해주고요.<br>
 궁금하지요? 한번 해볼까요? 먼저 하둡을 꺼야겠죠?<br>
 
 <terminal>
-[hadoop@namenode ~]$ cd $HADOOP_HOME
-[hadoop@namenode hadoop]$ ./bin/stop-all.sh
+<strong>[hadoop@namenode ~]$</strong> cd $HADOOP_HOME
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/stop-all.sh
 stopping jobtracker 
 snamenode: stopping tasktracker 
 datanode: stopping tasktracker 
@@ -466,8 +466,8 @@ stopping namenode
 datanode: stopping datanode 
 snamenode: stopping datanode 
 snamenode: stopping secondarynamenode
-[hadoop@namenode hadoop]$ cd
-[hadoop@namenode ~]$ ./hadoop.sh
+<strong>[hadoop@namenode hadoop]$</strong> cd
+<strong>[hadoop@namenode ~]$</strong> ./hadoop.sh
 <blur>(로그들이 주루룩 나옵니다...)</blur>
 </terminal>
 

@@ -108,8 +108,8 @@ SingleFileWriteRead.java 라는 파일을 생성해서 내용을 입력하도록
 아래 방법처럼 해주세요.<br>
 
 <terminal>
-[hadoop@namenode hadoop]$ javac -cp ./hadoop-core* SingleFileWriteRead.java
-[hadoop@namenode hadoop]$ jar -cvf SingleFileWriteRead.jar SingleFileWriteRead.class
+<strong>[hadoop@namenode hadoop]$</strong> javac -cp ./hadoop-core* SingleFileWriteRead.java
+<strong>[hadoop@namenode hadoop]$</strong> jar -cvf SingleFileWriteRead.jar SingleFileWriteRead.class
 Manifest를 추가함 
 추가하는 중: SingleFileWriteRead.class(입력 = 1681) (출력 = 891)(46%를 감소함)
 </terminal>
@@ -120,7 +120,7 @@ Manifest를 추가함
 컴파일을 끝마쳤으니 방금 만든 예제를 실행시켜보겠습니다.<br>
 
 <terminal>
-[hadoop@namenode hadoop]$ ./bin/hadoop jar SingleFileWriteRead.jar SingleFileWriteRead input.txt Hello,HDFS
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop jar SingleFileWriteRead.jar SingleFileWriteRead input.txt Hello,HDFS
 ## inputString:Hello,HDFS
 </terminal>
 
@@ -131,12 +131,12 @@ Manifest를 추가함
 파일이 잘 만들어졌는지 확인해보겠습니다.<br>
 
 <terminal>
-[hadoop@namenode hadoop]$ ./bin/hadoop fs -ls input.txt
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -ls input.txt
 Found 1 items
 -rw-r--r-- 3 hadoop supergroup 12 2018-01-21 07:19 /user/hadoop/input.txt
-[hadoop@namenode hadoop]$ ./bin/hadoop fs -cat input.txt
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -cat input.txt
 
-Hello,HDFS[hadoop@namenode hadoop]$
+Hello,HDFS<strong>[hadoop@namenode hadoop]$</strong>
 </terminal>
 
 이렇게 출력됩니다. 정상적으로 파일이 만들어졌고, 정상적으로 내용이 출력됨을 알 수 있습니다.<br>
