@@ -1,0 +1,386 @@
+이번에는 책의 101페이지, 맵리듀스 시작하기 부분을 살펴보겠습니다.<br>
+Part. 1의 마지막 장 입니다.<br>
+<br>
+맵리듀스의 개념에 대한 설명이 있는데 108페이지부터 java 코드가 나옵니다.<br>
+이 부분은 예제가 아니라 하둡 폴더 내 맵리듀스가 작동하는 코드입니다.<br>
+<color4>WritableComparable.java</color4>, <color4>Writable.java</color4> 등등의 파일의 내용이 책에 있는데, 이건 따라서 작성하는 예제가 아니라는 말입니다.<br>
+터미널을 켜서 하둡 폴더 내에서 아래 명령어를 입력해보세요.<br>
+
+<terminal>
+[hadoop@namenode hadoop]$ find -name Writable*.java
+./src/core/org/apache/hadoop/io/serializer/WritableSerialization.java 
+./src/core/org/apache/hadoop/io/Writable.java 
+./src/core/org/apache/hadoop/io/WritableComparable.java
+./src/core/org/apache/hadoop/io/WritableComparator.java 
+./src/core/org/apache/hadoop/io/WritableFactories.java 
+./src/core/org/apache/hadoop/io/WritableFactory.java
+./src/core/org/apache/hadoop/io/WritableName.java 
+./src/core/org/apache/hadoop/io/WritableUtils.java
+</terminal>
+
+결과 중 두번쨰에 있는 <color4>./src/core/org/apache/hadoop/io/Writable.java</color4> 와 <color4>./src/core/org/apache/hadoop/io/WritableComparable.java</color4>이 있는게 보이시죠?<br>
+전부 있는 파일들입니다. 열어서 내용을 봐도 책에 있는 내용과 같습니다.<br>
+굳이 따라서 입력하고 저장하는 번거로운 일을 하지 마시길...<br>
+<br>
+<color4>WritableComparable.java</color4> 파일은 패키지 형식으로 되어있어서 <color2>import org.apache.hadoop.io.WritableComparable;</color2> 하고 불러올 수 있습니다.<br>
+패키지 내에 <color2>&lt;T&gt;</color2>라고 된 부분은 제네릭이라서 어느 타입이 들어와도 괜찮습니다.<br>
+<br>
+아래는 조금 알아듣기 힘드실 수도 있는데 모르겠으면 그냥 넘어가주세요.<br>
+<br>
+패키지를 사용하려면 인터페이스 타입이기 때문에 import 한 뒤에 사용하려면 클래스에 <color2>implements</color2>라는 인터페이스를 상속받는 용어를 써주셔야 사용이 가능합니다.<br>
+그리고 인터페이스이기 때문에 미리 선언된<br>
+<color2>void write(DataOutput out) throws IOExeption;</color2> 와 <color2>void readFields(DataInput in) throws IOException;</color2> 함수를 재정의 해주셔야 합니다.<br>
+<br>
+혹은 다른 사용법도 있는데, 데이터의 형식을 지정한 사용법 입니다.<br>
+<color2>import org.apache.hadoop.io.BooleanWritable;</color2> Boolean(true / false>타입<br>
+<color2>import org.apache.hadoop.io.ByteWritable;</color2> byte타입<br>
+<color2>import org.apache.hadoop.io.DoubleWritable;</color2> double 타입<br>
+<color2>import org.apache.hadoop.io.FloatWritable;</color2> float 타입<br>
+<color2>import org.apache.hadoop.io.IntWritable;</color2> int 타입<br>
+<color2>import org.apache.hadoop.io.LongWritable;</color2> long 타입<br>
+<color2>import org.apache.hadoop.io.TextWritable;</color2> UTF8 형식의 문자열<br>
+<color2>import org.apache.hadoop.io.NullWritable;</color2> 데이터 값이 필요 없을 경우<br>
+<br>
+이런식으로 사용할 수도 있습니다.<br>
+좀 더 자세한건 나중에 실습에서 확인하도록 하겠습니다.<br>
+<br>
+그 다음은 <color4>InputFormat</color4>이 나옵니다. 아까는 <color4>Writerable</color4>이라서 파일을 저장하는 것이었다면, 이번엔 파일을 읽어들이는 형식 입니다.<br>
+사용방법은 <color2>import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;</color2>을 선언하고, 그 아래에 어떻게 읽어들일 것인지 결정하게 됩니다.<br>
+InputFormat의 유형으로는<br>
+<color2>import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;</color2> 개행을 기준으로 레코드를 분류<br>
+<color2>import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;</color2> 임의의 키값을 지정해 키와 벨류의 목록으로 레코드를 분류<br>
+<color2>import org.apache.hadoop.mapreduce.lib.input.NLineInputFormat;</color2> 입력받을 파일의 라인 수를 제한하고 싶을 때 사용<br>
+<color2>import org.apache.hadoop.mapreduce.lib.input.DelegatigInputFormat;</color2> 여러 개의 서로 다른 입력 포맷을 사용하는 경우<br>
+<color2>import org.apache.hadoop.mapreduce.lib.input.CombineInputFormat;</color2> 여러개의 파일을 스플릿으로 묶어서 사용하고 싶을 때<br>
+<color2>import org.apache.hadoop.mapreduce.lib.input.SequenceInputFormat;</color2> SequenceFile을 입력 데이터로 사용할 때 사용<br>
+<color2>import org.apache.hadoop.mapreduce.lib.input.SequenceFileAsBinaryInputFormat;</color2>  SequenceFile을 바이너리 객체로 변환하여 사용<br>
+<color2>import org.apache.hadoop.mapreduce.lib.input.SequenceFileAsTextInputFormat;</color2> SequenceFile을 Text객체로 변환하여 사용<br>
+<br>
+다음은 맵과 리듀스 중 맵에 대한 설명이 나옵니다.<br>
+파일 이름은 <color4>Mapper.java</color4>이며 사용법은 <color2>import org.apache.hadoop.mapreduce.Maper;</color2> 로 선언하여 사용합니다.<br>
+public 클래스 뒤에 <color2>extends Mapper&lt;입력 키, 입력 밸류, 출력 키, 출력 밸류&gt;</color2> 이렇게 값을 입력하여줘야 합니다.<br>
+맵리듀스는 여러 타입의 데이터를 수행해야 하기 때문에 key - value 형식으로 단순화하여 빠르게 처리하기 때문에 저런 형식으로 되어있습니다.<br>
+출력한 키와 밸류는 리듀서에게 넘겨줍니다.<br>
+자세한 사용법은 실습을 하며 확인하도록 합시다.<br>
+<br>
+다음은 맵과 리듀스 중 리듀스에 대한 설명이 나옵니다.<br>
+파일 이름은 <color4>Reducer.java</color4>이며 사용법은 <color2>import org.apache.hadoop.mapreduce.Reducer;</color2>로 선언하여 사용합니다.<br>
+public 클래스 뒤에 <color2>extends Reducer&lt;입력 키, 입력 밸류, 출력 키, 출력 밸류&gt;</color2> 이렇게 값을 입력하여줘야 합니다.<br>
+리듀서의 입력받는 키와 밸류는 매퍼로부터 받는 것이며, 출력되는 키와 밸류는 파일로 넘어가게 됩니다.<br>
+자세한 사용법은 실습을 하며 확인하도록 합시다.<br>
+<br>
+맵리듀스로 파일을 분석하고 나면 처음에 파일을 읽어들일 때 <color4>InputFormat</color4>을 정했듯 저장할 파일의 <color4>OutputFormat</color4>도 정해야 합니다.<br>
+<color2>import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;</color2> 텍스트 파일에 key - value 형식으로 레코드를 저장합니다.<br>
+<color2>import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;</color2> 시퀀스 파일로 저장할 때 사용합니다.<br>
+<color2>import org.apache.hadoop.mapreduce.lib.output.SequenceFileAsBinaryOutputFormat;</color2> 바이너리 형식의 시퀀스 파일로 저장할 때 사용합니다.<br>
+<color2>import org.apache.hadoop.mapreduce.lib.output.FilterOutputFormat;</color2> OutputFormat 클래스의 래퍼 클래스로 편리하게 사용할 수 있는 메서드를 제공한다는데.... 나중에 사용해봐야 알 것 같습니다.<br>
+<color2>import org.apache.hadoop.mapreduce.lib.output.LazyOutputOutputFormat;</color2> 출력 데이터가 있을 때만 저장합니다.<br>
+<color2>import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;</color2> 출력 데이터가 없을 때 사용합니다.<br>
+<br>
+팁에 시퀀스 파일에 대한 설명이 있는데, 파일 형식을 key - value 형태로 저장하는 바이너리 파일이라고 합니다.<br>
+쓰고, 읽고, 정렬하는 기능을 제공합니다.<br>
+<br>
+그럼, 이 전의 내용들을 실습을 하며 알아보는 시간을 진행하도록 하겠습니다.<br>
+118페이지의 예제부터 작성하며 해설을 하겠습니다.<br>
+파일은 /home/hadoop/hadoop-examples 에 저장하겠습니다. 터미널 창에서 <color2>cd</color2> 명령어를 입력하고 엔터를 누른 뒤 <color2>mkdir hadoop-examples</color2> 이라고 입력해주세요.<br>
+<br>
+<color4>WordCountMapper.java</color4>
+
+<terminal>
+import java.io.IOException;     // 에러 처리
+import java.util.StringTokenizer;  // String 형식의 문자열을 분리시킨다.
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;  // 매퍼
+
+public class WordCountMapper extends Mapper&lt;LongWritable, Text, Text, IntWritable&gt; {  // 입력 키: long 타입, 입력 밸류: text, 출력 키: text, 출력 밸류: int
+                                                                                            // import에 매퍼를 선언했으므로 매퍼를 상속받아야 함.
+    private final static IntWritable one = new IntWritable(1);  // one이라는 객체를 생성하여 1 이라는 int 값을 지정
+    private Text word = new Text(); // word라는 이름의 출력 키 타입을 생성
+
+    public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {   // 입력 키: key, 입력 밸류: value, Context: context, throws 다음 구문은 에러가 나도 계속 진행하겠다는 뜻(fault tolerant)
+        StringTokenizer itr = new StringTokenizer(value.toString());    // 입력 밸류를 띄어쓰기 단위로 나눔
+        while (itr.hasMoreTokens()) {   // 띄어쓰기로 나눈 것들이 끝날 때 까지(더 이상 뒤에 아무것도 없을 때 까지)
+            word.set(itr.nextToken());  // 출력 키에 띄어쓰기로 나눈 것을 하나씩 저장
+            context.write(word, one);   // key는 word, value는 one(해당 key... 단어 1개라는 뜻)을 출력 레코드로 파라미터에 추가
+        }
+    }
+}
+</terminal>
+
+<color4>WordCountReducer.java</color4>
+
+<terminal>
+import java.io.IOException;     // 에러 처리
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer; // 리듀서
+
+public class WordCountReducer extends Reducer&lt;Text, IntWritable, Text, IntWritable&gt; { // 입력 키: text, 입력 밸류: int 타입, 출력 키: text, 출력 밸류: int 타입
+                                                                                            // import에 리듀서를 선언했으므로 리듀서를 상속받아야 함.
+    private IntWritable result = new IntWritable(); // 출력 밸류의 이름을 result로 선언
+
+    public void reduce(Text key, Iterable&lt;IntWritable&gt; values, Context context) throws IOException, InterruptedException {    // 입력 키: key, 입력 밸류: iterator 속성의 int타입, fault tolerant
+        int sum = 0;
+        for (IntWritable val : values) {    // 입력받은 밸류가 있는 동안 반복
+            sum += val.get();   // sum 변수에 입력받은 밸류의 갯수를 구함
+        }
+        result.set(sum);    // 출력할 밸류에 입력받은 밸류가 몇개인지 입력함.
+        context.write(key, result); // key(해당 텍스트), result(갯수) 를 출력 파라미터에 저장
+        // 위에 있는 매퍼의 마지막 부분을 보면 context.write가 반복문 속에 있다는 것을 알 수 있습니다. 출력 파라미터가 여러개라는 소리입니다.
+        // 그 출력 파라미터 갯수만큼 리듀서가 생겨서 각각의 출력 파라미터를 분석해서 출력하게 됩니다.
+    }
+}
+</terminal>
+
+<color4>WordCount.java</color4>
+
+<terminal>
+import org.apache.hadoop.conf.Configuration;    // 하둡의 설정 파일을 참고하겠다.
+import org.apache.hadoop.fs.Path;   // 경로를 지정 할 것이다.
+import org.apache.hadoop.io.IntWritable;    // int 형식을 사용할 것이다.
+import org.apache.hadoop.io.Text;           // text 형식도 사용할 것이다.
+import org.apache.hadoop.mapreduce.Job; // 잡 컨트롤을 할 것이다.
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;   // 파일을 입력 받을 것이다.
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;    // 텍스트 형식으로 입력 받을 것이다.
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat; // 파일을 출력 할 것이다.
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat; // 텍스트 형식으로 출력 할 것이다.
+
+public class WordCount {
+    public static void main(String[] args) throws Exception {   // fault tolerant
+        Configuration conf = new Configuration();
+        if (args.length != 2) { // 자바 실행 코드 뒤에 2개의 배열이 오지 않았을 경우 에러
+            System.err.println("Usage: WordCount &lt;input&gt; &lt;output&gt;");    // java WordCount.java [input] [output] 이런식으로 사용해야 한다는 에러구문 출력
+            System.exit(2);
+        }
+
+        Job job = new Job(conf, "WordCount");   // 하둡에서 실행할 때 이름을 WordCount로 하겠다는 뜻
+
+        job.setJarByClass(WordCount.class);
+        job.setMapperClass(WordCountMapper.class);
+        job.setReducerClass(WordCountReducer.class);
+        // jar은 압축파일이라서 class 파일들을 담고있으므로 각각의 역할을 부여함
+        job.setInputFormatClass(TextInputFormat.class); // 입력 타입이 text
+        job.setOutputFormatClass(TextOutputFormat.class);   // 출력 타입이 text
+
+        job.setOutputKeyClass(Text.class);  // 출력 키(단어)의 타입은 text
+        job.setOutputValueClass(IntWritable.class); // 출력 밸류(단어의 갯수)의 타입은 int
+
+        FileInputFormat.addInputPath(job, new Path(args[0]));   // 실행 뒤에 오는 첫번 째 배열이 입력 파일의 경로
+        FileOutputFormat.setOutputPath(job, new Path(args[1])); // 실행 뒤에 오는 두번 째 배열이 출력되는 파일의 저장경로
+
+        job.waitForCompletion(true);    // 완료되어야 끝남. 완료되기 전에 멋대로 끝나지 않음.
+    }
+}
+</terminal>
+
+파일의 내용은 붙여넣기 하셔도 상관없지만 주석은 좀 열심히 읽어주셨으면 하는 바램입니다.<br>
+열심히 나름 알기쉽게 달아놓는다고 했는데 다들 잘 알아보실지...<br>
+<br>
+그리고 실행하기 전에 $HADOOP_HOME에 <color4>input.txt</color4> 라는 파일을 만들어주시고, 파일 내용은<br>
+<color2>
+    read a book<br>
+    write a book<br>
+</color2>
+이라고 저장해주세요.<br>
+<br>
+어쩃든 작성했으니 한번 실행해보겠습니다.<br>
+터미널의 경로를 hadoop-examples 폴더로 하고 아래 명령어를 입력해주세요.<br>
+
+<terminal>
+[hadoop@namenode hadoop-examples]$ javac -cp $HADOOP_HOME/hadoop-core*.jar WordCount*.java
+[hadoop@namenode hadoop-examples]$ jar -cvf $HADOOP_HOME/WordCount.jar WordCount*.class
+Manifest를 추가함 
+추가하는 중: WordCount.class(입력 = 1648) (출력 = 863)(47%를 감소함) 
+추가하는 중: WordCountMapper.class(입력 = 1801) (출력 = 754)(58%를 감소함) 
+추가하는 중: WordCountReducer.class(입력 = 1700) (출력 = 717)(57%를 감소함)
+[hadoop@namenode hadoop-examples]$ cd $HADOOP_HOME
+[hadoop@namenode hadoop]$ ./bin/hadoop fs -put input.txt input.txt
+put: Target input.txt already exists
+</terminal>
+
+어라? 에러가 나왔습니다.<br>
+에러 로그를 해석해봅시다.<br>
+<color2>put: Target input.txt already exists</color2><br>
+put명령어를 수행하는데 input.txt파일이 이미 존재한다는 내용입니다.<br>
+<br>
+처음 실행했던 예제 기억하세요? 거기서 input.txt 파일을 생성했었죠? 그래서 그럴겁니다.<br>
+그럼 삭제하고 진행해봅시다.<br>
+
+<terminal>
+[hadoop@namenode hadoop]$ ./bin/hadoop fs -rm input.txt
+Deleted hdfs://namenode:9000/user/hadoop/input.txt
+[hadoop@namenode hadoop]$ ./bin/hadoop fs -put input.txt input.txt
+[hadoop@namenode hadoop]$ ./bin/hadoop jar WordCount.jar WordCount input.txt wordcount_output
+18/01/22 10:40:29 WARN mapred.JobClient:        Use GenericOptionsParser for parsing the arguments. Applications should implement Tool for the same. 
+18/01/22 10:40:29 INFO input.FileInputFormat:   Total input paths to process : 1 
+18/01/22 10:40:29 INFO util.NativeCodeLoader:   Loaded the native-hadoop library 
+18/01/22 10:40:29 WARN snappy.LoadSnappy:       Snappy native library not loaded 
+18/01/22 10:40:29 INFO mapred.JobClient:        Running job: job_201801220631_0016 
+18/01/22 10:40:31 INFO mapred.JobClient:        map 0% reduce 0% 
+18/01/22 10:40:35 INFO mapred.JobClient:        map 100% reduce 0% 
+18/01/22 10:40:42 INFO mapred.JobClient:        map 100% reduce 33% 
+18/01/22 10:40:44 INFO mapred.JobClient:        map 100% reduce 100% 
+18/01/22 10:40:44 INFO mapred.JobClient:        Job complete: job_201801220631_0016 
+18/01/22 10:40:44 INFO mapred.JobClient:        Counters: 29 
+18/01/22 10:40:44 INFO mapred.JobClient:        Map-Reduce Framework 
+18/01/22 10:40:44 INFO mapred.JobClient:        Spilled Records=12 
+18/01/22 10:40:44 INFO mapred.JobClient:        Map output materialized bytes=67 
+18/01/22 10:40:44 INFO mapred.JobClient:        Reduce input records=6 
+18/01/22 10:40:44 INFO mapred.JobClient:        Virtual memory (bytes) snapshot=3917852672 
+18/01/22 10:40:44 INFO mapred.JobClient:        Map input records=2 
+18/01/22 10:40:44 INFO mapred.JobClient:        SPLIT_RAW_BYTES=107 
+18/01/22 10:40:44 INFO mapred.JobClient:        Map output bytes=49 
+18/01/22 10:40:44 INFO mapred.JobClient:        Reduce shuffle bytes=67 
+18/01/22 10:40:44 INFO mapred.JobClient:        Physical memory (bytes) snapshot=253546496
+18/01/22 10:40:44 INFO mapred.JobClient:        Reduce input groups=4 
+18/01/22 10:40:44 INFO mapred.JobClient:        Combine output records=0
+18/01/22 10:40:44 INFO mapred.JobClient:        Reduce output records=4 
+18/01/22 10:40:44 INFO mapred.JobClient:        Map output records=6
+18/01/22 10:40:44 INFO mapred.JobClient:        Combine input records=0 
+18/01/22 10:40:44 INFO mapred.JobClient:        CPU time spent (ms)=750 
+18/01/22 10:40:44 INFO mapred.JobClient:        Total committed heap usage (bytes)=160501760 
+18/01/22 10:40:44 INFO mapred.JobClient:        File Input Format Counters 
+18/01/22 10:40:44 INFO mapred.JobClient:        Bytes Read=24 
+18/01/22 10:40:44 INFO mapred.JobClient:        FileSystemCounters 
+18/01/22 10:40:44 INFO mapred.JobClient:        HDFS_BYTES_READ=131 
+18/01/22 10:40:44 INFO mapred.JobClient:        FILE_BYTES_WRITTEN=115019 
+18/01/22 10:40:44 INFO mapred.JobClient:        FILE_BYTES_READ=67 
+18/01/22 10:40:44 INFO mapred.JobClient:        HDFS_BYTES_WRITTEN=26 
+18/01/22 10:40:44 INFO mapred.JobClient:        Job Counters 
+18/01/22 10:40:44 INFO mapred.JobClient:        Launched map tasks=1 
+18/01/22 10:40:44 INFO mapred.JobClient:        Launched reduce tasks=1 
+18/01/22 10:40:44 INFO mapred.JobClient:        SLOTS_MILLIS_REDUCES=8770
+18/01/22 10:40:44 INFO mapred.JobClient:        Total time spent by all reduces waiting after reserving slots (ms)=0 
+18/01/22 10:40:44 INFO mapred.JobClient:        SLOTS_MILLIS_MAPS=4739 
+18/01/22 10:40:44 INFO mapred.JobClient:        Total time spent by all maps waiting after reserving slots (ms)=0 
+18/01/22 10:40:44 INFO mapred.JobClient:        Data-local map tasks=1 
+18/01/22 10:40:44 INFO mapred.JobClient:        File Output Format Counters 
+18/01/22 10:40:44 INFO mapred.JobClient:        Bytes Written=26
+[hadoop@namenode hadoop]$ ./bin/hadoop fs -cat wordcount_output/part-r-00000
+a       2
+book    2
+read    1
+write   1
+</terminal>
+
+이렇게 실행이 되는것을 확인할 수 있습니다.<br>
+<br>
+제가 하둡 폴더 내에서 작업을 안하고, 다른 폴더에서 작업을 한 뒤 <color4>jar</color4>파일만 따로 하둡 폴더로 옮긴것에는 이유가 있습니다.<br>
+하둡폴더 내에서 작업을 한 뒤에 실행을 하면 아래와 같은 에러를 만나시게 될겁니다.<br>
+
+<terminal>
+[hadoop@namenode hadoop]$ ./bin/hadoop jar WordCount.jar WordCount input.txt wordcount_output 
+18/01/22 10:50:03 WARN mapred.JobClient: Use GenericOptionsParser for parsing the arguments. Applications should implement Tool for the same. 
+18/01/22 10:50:03 WARN mapred.JobClient: No job jar file set. User classes may not be found. See JobConf(Class) or JobConf#setJar(String). 
+18/01/22 10:50:03 INFO input.FileInputFormat: Total input paths to process : 1 
+18/01/22 10:50:03 INFO util.NativeCodeLoader: Loaded the native-hadoop library 
+18/01/22 10:50:03 WARN snappy.LoadSnappy: Snappy native library not loaded 
+18/01/22 10:50:03 INFO mapred.JobClient: Running job: job_201801220631_0017 
+18/01/22 10:50:04 INFO mapred.JobClient: map 0% reduce 0% 
+18/01/22 10:50:11 INFO mapred.JobClient: Task Id : attempt_201801220631_0017_m_000000_0, Status : FAILED 
+java.lang.RuntimeException: java.lang.ClassNotFoundException: WordCountMapper 
+    at org.apache.hadoop.conf.Configuration.getClass(Configuration.java:857) 
+    at org.apache.hadoop.mapreduce.JobContext.getMapperClass(JobContext.java:199)
+    at org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:718) 
+    at org.apache.hadoop.mapred.MapTask.run(MapTask.java:364)
+    at org.apache.hadoop.mapred.Child$4.run(Child.java:255) 
+    at java.security.AccessController.doPrivileged(Native Method) 
+    at javax.security.auth.Subject.doAs(Subject.java:422) 
+    at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1190)
+    at org.apache.hadoop.mapred.Child.main(Child.java:249) 
+Caused by: java.lang.ClassNotFoundException: WordCountMapper 
+    at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+    at java.lang.ClassLoader.loadClass(ClassLoader.java:424) 
+    at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:338)
+    at java.lang.ClassLoader.loadClass(ClassLoader.java:357) 
+    at java.lang.Class.forName0(Native Method) 
+    at java.lang.Class.forName(Class.java:348)
+    at org.apache.hadoop.conf.Configuration.getClassByName(Configuration.java:810) 
+    at org.apache.hadoop.conf.Configuration.getClass(Configuration.java:855)
+    ... 8 more 
+
+18/01/22 10:50:16 INFO mapred.JobClient: Task Id : attempt_201801220631_0017_m_000000_1, Status : FAILED 
+java.lang.RuntimeException: java.lang.ClassNotFoundException: WordCountMapper 
+    at org.apache.hadoop.conf.Configuration.getClass(Configuration.java:857)
+    at org.apache.hadoop.mapreduce.JobContext.getMapperClass(JobContext.java:199) 
+    at org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:718)
+    at org.apache.hadoop.mapred.MapTask.run(MapTask.java:364) 
+    at org.apache.hadoop.mapred.Child$4.run(Child.java:255) 
+    at java.security.AccessController.doPrivileged(Native Method) 
+    at javax.security.auth.Subject.doAs(Subject.java:422) 
+    at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1190)
+    at org.apache.hadoop.mapred.Child.main(Child.java:249) 
+Caused by: java.lang.ClassNotFoundException: WordCountMapper 
+    at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+    at java.lang.ClassLoader.loadClass(ClassLoader.java:424) 
+    at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:338)
+    at java.lang.ClassLoader.loadClass(ClassLoader.java:357) 
+    at java.lang.Class.forName0(Native Method) 
+    at java.lang.Class.forName(Class.java:348)
+    at org.apache.hadoop.conf.Configuration.getClassByName(Configuration.java:810) 
+    at org.apache.hadoop.conf.Configuration.getClass(Configuration.java:855)
+    ... 8 more 
+
+18/01/22 10:50:20 INFO mapred.JobClient: Task Id : attempt_201801220631_0017_m_000000_2, Status : FAILED 
+java.lang.RuntimeException: java.lang.ClassNotFoundException: WordCountMapper 
+    at org.apache.hadoop.conf.Configuration.getClass(Configuration.java:857)
+    at org.apache.hadoop.mapreduce.JobContext.getMapperClass(JobContext.java:199) 
+    at org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:718)
+    at org.apache.hadoop.mapred.MapTask.run(MapTask.java:364) 
+    at org.apache.hadoop.mapred.Child$4.run(Child.java:255) 
+    at java.security.AccessController.doPrivileged(Native Method) 
+    at javax.security.auth.Subject.doAs(Subject.java:422) 
+    at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1190)
+    at org.apache.hadoop.mapred.Child.main(Child.java:249) 
+Caused by: java.lang.ClassNotFoundException: WordCountMapper 
+    at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+    at java.lang.ClassLoader.loadClass(ClassLoader.java:424) 
+    at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:338)
+    at java.lang.ClassLoader.loadClass(ClassLoader.java:357) 
+    at java.lang.Class.forName0(Native Method) 
+    at java.lang.Class.forName(Class.java:348)
+    at org.apache.hadoop.conf.Configuration.getClassByName(Configuration.java:810) 
+    at org.apache.hadoop.conf.Configuration.getClass(Configuration.java:855)
+    ... 8 more 
+
+18/01/22 10:50:26 INFO mapred.JobClient: Job complete: job_201801220631_0017 
+18/01/22 10:50:26 INFO mapred.JobClient: Counters: 7 
+18/01/22 10:50:26 INFO mapred.JobClient: Job Counters 
+18/01/22 10:50:26 INFO mapred.JobClient: Launched map tasks=4
+18/01/22 10:50:26 INFO mapred.JobClient: SLOTS_MILLIS_REDUCES=0 
+18/01/22 10:50:26 INFO mapred.JobClient: Total time spent by all reduces waiting after reserving slots (ms)=0 
+18/01/22 10:50:26 INFO mapred.JobClient: Failed map tasks=1 
+18/01/22 10:50:26 INFO mapred.JobClient: SLOTS_MILLIS_MAPS=22448 
+18/01/22 10:50:26 INFO mapred.JobClient: Total time spent by all maps waiting after reserving slots (ms)=0 
+18/01/22 10:50:26 INFO mapred.JobClient: Data-local map tasks=4
+</terminal>
+
+직접 에러를 겪어보고 드리는 조언입니다. 궁금하시면 여러분도 한번 하둡 폴더 내에서 작업 한 뒤에 실행해보세요.<br>
+<br>
+그럼 Part. 1의 내용은 여기서 마치겠습니다.<br>
+기본적인 맵리듀스 프로그래밍에 대해 개념이 잡히는 시간이 되셨으면 좋겠습니다. 감사합니다.<br>
+<br>
+<a href="/hadoop/page/2_1.html" onclick="
+    event.preventDefault();
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = () => {
+        document.querySelector('main').innerHTML = xhttp.responseText;
+    }
+
+    xhttp.open('GET', '/hadoop/page/2_1.html', true);
+    xhttp.send();
+
+    document.title = 'Hadoop Guide Part. 1 - Step. 9';
+    history.pushState('/hadoop/page/2_1.html' + ' ' + 'Part. 2 - Step. 1', null, '#2_1');
+
+    document.querySelector('side').children[0].classList.remove('on');
+    document.querySelector('side').children[1].classList.add('on');
+    document.querySelector('side').children[0].children[9].classList.remove('on');
+    document.querySelector('side').children[1].children[1].classList.add('on');
+" class="button">다음단계로 가기</a>
