@@ -1,1 +1,300 @@
-not ready
+드디어 2장으로 들어왔습니다.<br>
+책을 가지고 이 글을 같이 보시는 분이라면 비행기 운항 지연 자료를 분석해서 시각화 하는 예제가 나옴을 알 수 있습니다.<br>
+그런데, 예제의 결과를 보면 시각화를 엑셀로 했다는걸 아실 수 있을겁니다.<br>
+<br>
+<color4>하둡을 이용해 얻은 결과물을 무엇으로 시각화 하시나요?</color4> 라는 설문조사에서 근소한 차이로 1위가 <color2>엑셀</color2>이고<br>
+2위가 <color2>R</color2> 입니다.<br>
+<br>
+엑셀이 편하긴 할겁니다. 딱히 뭔가 더 배워야 할 것도 없을거고요.<br>
+딱히 다른 방법을 몰라서 거기에 안주하는 경우도 많을테고요.(아... 편하게 살고싶어... 라던가요....)<br>
+<br>
+그런데 그 설문조사에서 6% 차이로 R이 2위인데, 뭔데 그렇게 편한 엑셀을 근소한 차이로 뒤쫒고 있나.... 하고 살펴보니<br>
+R은 자료의 시각화에 특화된 프로그래밍 언어고, 제공하는 시각화 방법이 엑셀에서 할 수 없는 여러 요소들이 있기 때문이었습니다.<br>
+<br>
+그래서 R에 대해 한번 알아보고 시작할까 합니다.<br>
+앞으로 하둡으로 분석한 데이터의 시각화도 R로 할 겸요.<br>
+<br>
+터미널을 실행하고 아래 명령어를 입력해주세요.<br>
+
+<terminal>
+<strong>[hadoop@namenode]$</strong> sudo yum install -y R
+</terminal>
+
+모든 프로그래밍 언어는 설치를 해야 사용 가능합니다.<br>
+우리가 하둡 사용하려고 자바 설치한 것 처럼요.<br>
+<br>
+R은 파이썬처럼 터미널 환경에서 한줄씩 입력할 수 있는 IDLE환경을 제공하는데, R설치가 끝나고나면 아래 명령어를 한번 입력해보세요.<br>
+
+<terminal>
+<strong>[hadoop@namenode]$</strong> R
+
+R version 3.4.3 (2017-11-30) -- "Kite-Eating Tree"
+Copyright (C) 2017 The R Foundation for Statistical Computing
+Platform: x86_64-redhat-linux-gnu (64-bit)
+
+R은 자유 소프트웨어이며, 어떠한 형태의 보증없이 배포됩니다.
+또한, 일정한 조건하에서 이것을 재배포 할 수 있습니다.
+배포와 관련된 상세한 내용은 'license()' 또는 'licence()'을 통하여 확인할 수 있습니다.
+
+R은 많은 기여자들이 참여하는 공동프로젝트입니다.
+'contributors()'라고 입력하시면 이에 대한 더 많은 정보를 확인하실 수 있습니다.
+그리고, R 또는 R 패키지들을 출판물에 인용하는 방법에 대해서는 'citation()'을 통해 확인하시길 부탁드립니다.
+
+'demo()'를 입력하신다면 몇가지 데모를 보실 수 있으며, 'help()'를 입력하시면 온라인 도움말을 이용하실 수 있습니다.
+또한, 'help.start()'의 입력을 통하여 HTML 브라우저에 의한 도움말을 사용하실수 있습니다
+R의 종료를 원하시면 'q()'을 입력해주세요.
+
+>
+</terminal>
+
+그냥 터미널창에 R하고 입력하면 파이썬 들어가듯이 R 명령창으로 들어가게 됩니다.<br>
+그럼, 본격적으로 R의 기능 체험을 시작해봅시다.<br>
+아래 명령어를 입력해주세요.<br>
+
+<terminal>
+> iris
+    Sepal.Length Sepal.Width Petal.Length Petal.Width    Species
+1            5.1         3.5          1.4         0.2     setosa
+2            4.9         3.0          1.4         0.2     setosa
+3            4.7         3.2          1.3         0.2     setosa
+4            4.6         3.1          1.5         0.2     setosa
+5            5.0         3.6          1.4         0.2     setosa
+6            5.4         3.9          1.7         0.4     setosa
+<blur>(생략)</blur>
+147          6.3         2.5          5.0         1.9  virginica
+148          6.5         3.0          5.2         2.0  virginica
+149          6.2         3.4          5.4         2.3  virginica
+150          5.9         3.0          5.1         1.8  virginica
+</terminal>
+
+<color2>iris</color2>라는 R에서 기본적으로 제공하는 예제가 나옵니다.<br>
+굉장히 시각화하기 좋은 예제입니다.<br>
+가만 보시면 관계형 DB처럼 column과 row로 구성되어있음을 알 수 있으실겁니다.<br>
+그럼 column 요소들을 하나씩 볼까요?<br>
+<br>
+Sepal.Length(꽃받침 길이), Sepal.Width(꽃받침 넓이), Petal.Length(꽃잎 길이), Petal.Width(꽃잎 넓이), Species(종)<br>
+이렇게 있습니다.<br>
+<br>
+x축을 꽃받침 길이, y축을 꽃받침 넓이로 해서 한번 시각화를 진행해보겠습니다.<br>
+일단 아래 명령어를 입력해주세요.<br>
+
+<terminal>
+> install.packages("ggplot2")
+‘/usr/lib64/R/library’의 위치에 패키지(들)을 설치합니다.
+(왜냐하면 ‘lib’가 지정되지 않았기 때문입니다)
+install.packages("ggplot2")에서 경고가 발생했습니다 : 
+  'lib = "/usr/lib64/R/library"'는 기록이 가능하지 않습니다
+Would you like to use a personal library instead?  (y/n) n
+Error in install.packages("ggplot2") : 패키지들을 설치할 수 없습니다.
+</terminal>
+
+어라? 왠지 꺼림칙한 에러문구가 나와서 n을 선택해버렸습니다.<br>
+보통 저런식으로 기록이 가능하지 않다 라거나 권한이 없습니다. 라거나 Permission Denied 같은 문구가 나오면<br>
+<color2>관리자 권한</color2>이 필요한가 하는 생각을 해보셔야 합니다.<br>
+<color4>q()</color4><br>
+하고 입력하고 R 명령창을 빠져나온 뒤에<br>
+<color4>sudo R</color4><br>
+이라고 입력하고 다시 들어가주세요. 그 뒤에 다시 시작해봅시다.<br>
+
+<terminal>
+> install.packages("ggplot2")
+‘/usr/lib64/R/library’의 위치에 패키지(들)을 설치합니다.
+(왜냐하면 ‘lib’가 지정되지 않았기 때문입니다)
+--- 현재 세션에서 사용할 CRAN 미러를 선택해 주세요 ---
+</terminal>
+
+<img src="/hadoop/img2/1_1.jpg" alt="">
+
+아, 이제 성공적으로 나오는 것 같네요.<br>
+받을 미러 사이트를 입력하라는 창이 뜹니다.<br>
+왼쪽에 뜬 창을 휠을 굴리며 이리저리 찾아봤는데 일본은 보이는데 한국이 안보이네요, 맨 밑에 있는 <color4>(other mirrors)</color4>를 선택해주세요.<br>
+그럼 다시 리스트가 나오는데 거기에 <color4>Korea (Seoul 1)</color4>이 보이실겁니다.<br>
+
+<img src="/hadoop/img2/1_2.jpg" alt="">
+
+저기에 한국 리스트가 보입니다. 아 반가워라. 받고싶은곳을 눌러서 다운받아주세요.<br>
+다 되면 받을게 하나 더 있어요.<br>
+
+<terminal>
+> install.packages("dplyr")
+</terminal>
+
+처음에 받은 <color4>ggplot2</color4>는 시각화 툴이고 <color4>dplyr</color4>은 데이터 프레임 조작 패키지 입니다.<br>
+필요한 툴을 설치했으니 진짜로 시각화 시작해볼게요! 이제 잘 따라오세요!<br>
+
+<terminal>
+> library(ggplot2)
+> library(dplyr)
+
+다음의 패키지를 부착합니다: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+> ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) + geom_point()
+</terminal>
+
+<img src="/hadoop/img2/1_3.jpg" alt="">
+
+어머나 신기해라! 뭐가 점들이 나왔어요!<br>
+근데.... 뭐가 뭔지....<br>
+그럼 다음 단계를 진행해봅시다.
+
+<terminal>
+> ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) + geom_point(aes(colour = Species))
+</terminal>
+
+<img src="/hadoop/img2/1_4.jpg" alt="">
+
+우와! 이제 뭐가 뭔지 조금은 알 것 같아요!<br>
+색깔별로 정리되고 옆에 무슨 종이 무슨 색깔로 분류되었는지 나오니까 보기좋네요!<br>
+이정도만 해도 괜찮아보이는데 아직도 기능이 많이 있답니다!<br>
+
+<terminal>
+> ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) + geom_point(aes(colour = Species, size = Petal.Width))
+</terminal>
+
+<img src="/hadoop/img2/1_5.jpg" alt="">
+
+오오! 꽃잎 크기별로 점 크기도 분류했어요!<br>
+그런데 점 크기가 커져서 겹치는 점들이 생겼어요.<br>
+투명도를 줘봅시다.<br>
+
+<terminal>
+> ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) + geom_point(aes(colour = Species, size = Petal.Width, alpha = 0.1))
+</terminal>
+
+<img src="/hadoop/img2/1_6.jpg" alt="">
+
+투명도가 추가되니까 겹치는 점은 좀 더 진하게 보이네요! 좀 더 자료의 가독성이 좋아졌어요!<br>
+한김에 꽃받침 말고 꽃잎으로 x축 y축을 구성해서 또 확인해보죠!<br>
+
+<terminal>
+> ggplot(data = iris, aes(x = Petal.Length, y = Petal.Width)) + geom_point(aes(colour = Species, size = Sepal.Width, alpha = 0.1))
+</terminal>
+
+<img src="/hadoop/img2/1_7.jpg" alt="">
+
+오오... 왠지 신기하고 좋은 것 같아요.<br>
+그런데 저렇게 점으로 보는 것 말고도 다른 방법들도 있으니 또 차근차근 살펴봅시다.<br>
+
+<terminal>
+> ggplot(data = iris, aes(x = Petal.Length, y = Petal.Width)) + geom_boxplot(aes(colour = Species, size = Sepal.Width, alpha = 0)) + geom_jitter(alpha = 0.1)
+</terminal>
+
+<img src="/hadoop/img2/1_8.jpg" alt="">
+
+이렇게 박스 형태로도 평균값을 정리해서 보는것도 가능합니다.<br>
+
+<terminal>
+> ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) + geom_line(aes(group = Species, colour = Species))
+</terminal>
+
+<img src="/hadoop/img2/1_9.jpg" alt="">
+
+이런식으로 라인으로 보는것도 가능하구요<br>
+각각의 그룹을 나눠서 하나씩 따로 보는것도 가능해요<br>
+
+<terminal>
+> ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) + geom_line(aes(group = Species, colour = Species)) + facet_wrap(~ Species)
+> ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) + geom_line(aes(group = Species, colour = Species)) + facet_grid(~ Species)
+</terminal>
+
+<img src="/hadoop/img2/1_10.jpg" alt="">
+
+이렇게 하면 따로따로 나오죠?<br>
+x축 y축이 영어로 나오는걸 한글로 바꿀수도 있어요!<br>
+
+<terminal>
+> ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) + geom_point(aes(colour = Species, size = Sepal.Width, alpha = 0.1)) + labs(title = "IRIS 꽃잎 통계", x = "꽃잎 길이", y= "꽃잎 넓이") + theme_bw()
+</terminal>
+
+<img src="/hadoop/img2/1_11.jpg" alt="">
+
+만약에 x축에 값이 너무 길어서 겹쳐보이는 경우가 있을수도 있겠죠? 그러면 세로로 돌려야 할텐데 그 방법도 적어드리겠습니다.<br>
+
+<terminal>
+> ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) + geom_point(aes(colour = Species, size = Sepal.Width, alpha = 0.1)) + labs(title = "IRIS 꽃잎 통계", x = "꽃잎 길이", y= "꽃잎 넓이") + theme_bw() + theme(axis.text.x = element_text(angle=90))
+</terminal>
+
+<img src="/hadoop/img2/1_12.jpg" alt="">
+
+x축의 글자가 90도 돌아갔죠? 만약 x축의 값이 너무 길어서 글자가 겹쳐보이면 이렇게 해결하시면 돼요.<br>
+그리고 이렇게 만든 시각화 자료를 이미지 파일로 저장도 가능하답니다.<br>
+
+<terminal>
+> iris_sample = ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) + geom_point(aes(colour = Species, size = Sepal.Width, alpha = 0.1)) + labs(title = "IRIS 꽃잎 통계", x = "꽃잎 길이", y= "꽃잎 넓이") + theme_bw() + theme(axis.text.x = element_text(angle=90))
+> ggsave("iris_sample.png", iris_sample, width=5, height=5)
+</terminal>
+
+<img src="/hadoop/img2/1_13.jpg" alt="">
+
+저장 위치는 터미널에서 <color4>pwd</color4> 명령어를 입력해서 나오는 곳의 위치에 저장됩니다.<br>
+ggsave에서 width, height값이 작을수록 글자와 그래프가 크게 나오고 값이 클 수록 글자와 그래프 크기가 작게 나옵니다.<br>
+그러니까 알아듣기 쉽게 말하자면 width와 height값을 너무 크게 주면 글자가 너무 작아서 알아보기 힘들고,<br>
+너무 작게 주면 글자와 그래프가 너무 크게 나와서 알아볼 수가 없게 되니까 적절한 크기를 찾는게 좋습니다.<br>
+대략 5 ~ 10 정도가 좋은 것 같습니다.<br>
+<br>
+이 샘플의 코드를 한번 저장해볼까요?<br>
+Visual Studio Code를 켜서 아래 그림의 부분을 눌러주세요.<br>
+
+<img src="/hadoop/img2/1_14.jpg" alt="">
+
+<img src="/hadoop/img2/1_15.jpg" alt="">
+
+위에 검색창에 R 이라고 입력하고 기다리면 리스트가 나오는데 맨 위에 나오는걸 설치 눌러주세요.<br>
+그 뒤에 [다시 로드] 하는 버튼이 나오면 눌러주세요<br>
+<br>
+그리고 저번에 작업했던 hadoop-examples 폴더에 <color4>iris.R</color4> 이라는 파일을 생성해주세요.<br>
+파일 안에 아래 코드를 입력해주세요.<br>
+
+<terminal>
+<color3>library</color3>(ggplot2)
+<color3>library</color3>(dplyr)
+iris_sample = ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) + 
+geom_point(aes(colour = Species, size = Sepal.Width, alpha = 0.1)) + 
+labs(title = <color7>"IRIS 꽃잎 통계"</color7>, x = <color7>"꽃잎 길이"</color7>, y= <color7>"꽃잎 넓이"</color7>) + 
+theme_bw() + 
+theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(), panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank())
+</terminal>
+
+이렇게 입력한 뒤에 저장하고 <key>Ctrl</key> + <key>Shift</key> + <key>s</key> 를 누른 뒤에, <key>Ctrl</key> + <key>enter</key> 를 눌러주세요.<br>
+
+<img src="/hadoop/img2/1_16.jpg" alt="">
+
+이런식으로 코드를 한줄씩 치는게 아니라 저장해놓고 한번에 실행도 가능하답니다.<br>
+<br>
+그럼 뭔가 하나 만들어봅시다.<br>
+wordcount 예제를 이용해보죠<br>
+아래 코드를 입력해주세요<br>
+
+<terminal>
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -rmr wordcount_output
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -put ./conf/hadoop_env.sh hadoop_env.sh
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop jar WordCount.jar WordCount hadoop_env.sh wordcount_output
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -get wordcount_output/part-r-00000 wordcount.txt
+<strong>[hadoop@namenode hadoop]$</strong> mv wordcount.txt /home/hadoop/hadoop-examples
+</terminal>
+
+이렇게 한 뒤에 hadoop-examples 폴더에 wordcount.R 파일을 만들고 아래 코드를 입력해주세요.<br>
+
+<terminal>
+<color3>library</color3>(ggplot2)
+<color3>library</color3>(dplyr)
+wordcount = <color3>read</color3>.<color3>delim</color3>(<color7>"wordcount.txt"</color7>, header = FALSE, sep = "", col.names = c("name", "count"))
+wordcount = wordcount[<color3>order</color3>(-wordcount$count),]
+ggplot(data = wordcount[1:5,], aes(x = name, y = count)) + geom_point(aes(colour = name, size = count))
+</terminal>
+
+이렇게 입력한 뒤에 저장하고 <key>Ctrl</key> + <key>Shift</key> + <key>s</key> 를 누른 뒤에, <key>Ctrl</key> + <key>enter</key> 를 눌러주세요.<br>
+wordcount를 한 뒤에 TOP5만 보고싶다 하고 결과를 본겁니다.<br>
+
+<img src="/hadoop/img2/1_17.jpg" alt="">
+
+여기까지 R언어의 맛을 쬐끔만 맛보앗으니, 다음 예제부터 이런식으로 R을 이용해 시각화를 진행하도록 하겠습니다.<br>
+감사합니다.<br>
