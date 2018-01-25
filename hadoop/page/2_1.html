@@ -275,8 +275,8 @@ wordcount 예제를 이용해보죠<br>
 
 <terminal>
 <strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -rmr wordcount_output
-<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -put ./conf/hadoop_env.sh hadoop_env.sh
-<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop jar WordCount.jar WordCount hadoop_env.sh wordcount_output
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -put ./conf/hadoop-env.sh hadoop-env.sh
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop jar WordCount.jar WordCount hadoop-env.sh wordcount_output
 <strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -get wordcount_output/part-r-00000 wordcount.txt
 <strong>[hadoop@namenode hadoop]$</strong> mv wordcount.txt /home/hadoop/hadoop-examples
 </terminal>
@@ -288,11 +288,11 @@ wordcount 예제를 이용해보죠<br>
 <color3>library</color3>(dplyr)
 wordcount = <color3>read</color3>.<color3>delim</color3>(<color7>"wordcount.txt"</color7>, header = FALSE, sep = "", col.names = c("name", "count"))
 wordcount = wordcount[<color3>order</color3>(-wordcount$count),]
-ggplot(data = wordcount[1:5,], aes(x = name, y = count)) + geom_point(aes(colour = name, size = count))
+ggplot(data = wordcount[1:10,], aes(x = name, y = count)) + geom_bar(stat = "identity", aes(fill = name))
 </terminal>
 
 이렇게 입력한 뒤에 저장하고 <key>Ctrl</key> + <key>Shift</key> + <key>s</key> 를 누른 뒤에, <key>Ctrl</key> + <key>enter</key> 를 눌러주세요.<br>
-wordcount를 한 뒤에 TOP5만 보고싶다 하고 결과를 본겁니다.<br>
+wordcount를 한 뒤에 TOP10만 보고싶다 하고 결과를 본겁니다.<br>
 
 <img src="/hadoop/img2/1_17.jpg" alt="">
 
