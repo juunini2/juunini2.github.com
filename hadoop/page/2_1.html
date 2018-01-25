@@ -288,7 +288,7 @@ wordcount 예제를 이용해보죠<br>
 <color3>library</color3>(dplyr)
 wordcount = <color3>read</color3>.<color3>delim</color3>(<color7>"wordcount.txt"</color7>, header = FALSE, sep = "", col.names = c("name", "count"))
 wordcount = wordcount[<color3>order</color3>(-wordcount$count),]
-ggplot(data = wordcount[1:10,], aes(x = name, y = count)) + geom_bar(stat = "identity", aes(fill = name))
+ggplot(data = wordcount[1:10,], aes(x = name, y = count)) + geom_bar(stat = "identity", aes(fill = name)) + scale_y_continuous(breaks=seq(0, 100, 1))
 </terminal>
 
 이렇게 입력한 뒤에 저장하고 <key>Ctrl</key> + <key>Shift</key> + <key>s</key> 를 누른 뒤에, <key>Ctrl</key> + <key>enter</key> 를 눌러주세요.<br>
@@ -298,3 +298,23 @@ wordcount를 한 뒤에 TOP10만 보고싶다 하고 결과를 본겁니다.<br>
 
 여기까지 R언어의 맛을 쬐끔만 맛보앗으니, 다음 예제부터 이런식으로 R을 이용해 시각화를 진행하도록 하겠습니다.<br>
 감사합니다.<br>
+<br>
+<a href="/hadoop/page/2_2.html" onclick="
+    event.preventDefault();
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = () => {
+        document.querySelector('main').innerHTML = xhttp.responseText;
+    }
+
+    xhttp.open('GET', '/hadoop/page/2_2.html', true);
+    xhttp.send();
+
+    document.title = 'Hadoop Guide Part. 2 - Step. 2';
+    history.pushState('/hadoop/page/2_2.html' + ' ' + 'Part. 2 - Step. 2', null, '#2_2');
+
+    document.querySelector('side').children[1].classList.add('on');
+    document.querySelector('side').children[1].children[1].classList.remove('on');
+    document.querySelector('side').children[1].children[2].classList.add('on');
+" class="button">다음단계로 가기</a>
