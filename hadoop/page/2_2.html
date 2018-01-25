@@ -1,1 +1,122 @@
-not ready
+저번 글에 이어서 이번 글에도 약간 R로 할 수 있는 시각화에 대해 좀 더 보여드리고 넘어갈까 합니다.<br>
+저번 글 마지막에 wordcount를 했었지요?<br>
+그 wordcount를 이용해서 <color4>wordcloud</color4>라는걸 해보려 합니다.<br>
+<br>
+자... 뭐가 좋을까요... 유튜브 1위에 빛나는 강남스타일을 wordcount 해볼까요?<br>
+<br>
+강남스타일 검색해서 가사를 쭉 긁어온 뒤에 하둡 폴더에 <color4>gangnamstyle.txt</color4>로 만들어서 넣어주세요.<br>
+다 하셨으면 저번에 만들었던 wordcount예제를 돌려봅시다.<br>
+아래 명령어를 입력해주세요.<br>
+
+<terminal>
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -put gangnamstyle.txt gangnamstyle.txt
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop jar WordCount.jar WordCount gangnamstyle.txt gangnamstyle_wordcount
+<blur>(과정 로그 생략)</blur>
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -get gangnamstyle_wordcount/part-r-00000 gangnamstyle_wordcount.txt
+<strong>[hadoop@namenode hadoop]$</strong> mv gangnamstyle_wordcount.txt /home/hadoop/hadoop-examples
+</terminal>
+
+그 뒤에 R명령창을 띄운 뒤에 아래 명령어를 입력해주세요.<br>
+
+<terminal>
+&gt; install.packages("wordcloud")
+&gt; install.packages("RColorBrewer")
+</terminal>
+
+그리고 visual studio code를 실행시켜서 <color2>hadoop-examples</color2> 폴더에 <color4>gangnamstyle.R</color4> 이라는 파일을 만들고 아래 코드를 넣어주세요.<br>
+
+<terminal>
+library(wordcloud)
+library(RColorBrewer)
+wordcount = read.delim("gangnamstyle_wordcount.txt", header = FALSE, sep = "", col.names = c("name", "count"))
+wordcloud(wordcount$name, wordcount$count)
+</terminal>
+
+혹시나 root권한으로 R을 실행한 뒤에 패키지를 설치해서 에러가 나면 그냥 유저 권한으로 들어가서 설치해보세요. 저는 그렇게 해결했답니다.<br>
+
+<img src="/hadoop/img2/2_1.jpg" alt="">
+
+우와~ 아직 검은색 글자밖에 없지만 워드클라우드가 나왔어요!<br>
+기능을 하나씩 추가해봅시다!<br>
+
+<terminal>
+library(wordcloud)
+library(RColorBrewer)
+wordcount = read.delim("gangnamstyle_wordcount.txt", header = FALSE, sep = "", col.names = c("name", "count"))
+wordcloud(wordcount$name, wordcount$count, random.order = FALSE)
+</terminal>
+
+<img src="/hadoop/img2/2_2.jpg" alt="">
+
+<color4>random.order</color4> 옵션에 TRUE를 주면 단어를 랜덤배치하고 FALSE를 주면 지금 보는 것 처럼 큰 단어를 중앙에 배치한답니다.<br>
+여러 옵션이 있는데요,<br>
+scale 가장 빈도가 큰 단어와 가장 빈도가 작은단어 폰트사이의 크기차이 scale=c(10,1)<br>
+minfreq 출력될 단어들의 최소빈도<br>
+maxwords 출력될 단어들의 최대빈도(inf:제한없음)<br>
+random.order(true면 랜덤, false면 빈도수가 큰 단어를 중앙에 배치하고 작은순)<br>
+random.color(true면 색 랜덤, false면 빈도순)<br>
+rot.per(90도 회전된 각도로 출력되는 단어비율)<br>
+colors 가장 작은빈도부터 큰 빈도까지의 단어색<br>
+family 글씨체<br>
+출처: http://kutar37.tistory.com/27<br>
+<br>
+이런 옵션들이 있어요.<br>
+그리고 그 다음 단계로는 글자에 색을 입힐 차례인데요, 터미널에 R을 열고 아래 명령어를 한번 입력해보세요.<br>
+
+<terminal>
+> library(RColorBrewer)
+> display.brewer.all()
+</terminal>
+
+<img src="/hadoop/img2/2_3.jpg" alt="">
+
+그러면 이런 팔레트가 나와요.<br>
+저기서 마음에 드는걸 골라요. 저는 set3이 마음에 드네요.<br>
+
+<terminal>
+library(wordcloud)
+library(RColorBrewer)
+wordcount = read.delim("gangnamstyle_wordcount.txt", header = FALSE, sep = "", col.names = c("name", "count"))
+wordcloud(wordcount$name, wordcount$count, random.order = FALSE, random.color = TRUE, colors = brewer.pal(12, "Set3"), scale = c(5, 0))
+</terminal>
+
+<img src="/hadoop/img2/2_4.jpg" alt="">
+
+켤 때 마다 다르게 나오는데 신기해서 몇번이나 켜봤어요.<br>
+색깔도 다른것도 골라보고 해보면 재밌답니다.<br>
+아, 그런데 워드클라우드는 그냥 재미있는 시각화고.... 사실 진짜 저게 몇개인지 궁금하다면<br>
+
+<terminal>
+library(ggplot2)
+library(dplyr)
+wordcount = read.delim("gangnamstyle_wordcount.txt", header = FALSE, sep = "", col.names = c("name", "count"))
+wordcount = wordcount[order(-wordcount$count),]
+ggplot(data = wordcount[1:10,], aes(x = name, y = count)) + geom_bar(stat = "identity", aes(fill = name)) + scale_y_continuous(breaks=seq(0, 100, 1))
+</terminal>
+
+<img src="/hadoop/img2/2_5.jpg" alt="">
+
+이렇게 하면 된답니다.<br>
+강남스타일 노래에 생각보다 '강남스타일'이 많이 안나오네요... 에이... Gee를 했을걸 그랬나...<br>
+아무튼 이렇게 워드클라우드를 마치겠습니다.<br>
+다음 글에서는 138페이지부터 나오는 비행기 이착륙 지연 데이터를 다루도록 하겠습니다.<br>
+<br>
+<a href="/hadoop/page/2_3.html" onclick="
+    event.preventDefault();
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = () => {
+        document.querySelector('main').innerHTML = xhttp.responseText;
+    }
+
+    xhttp.open('GET', '/hadoop/page/2_3.html', true);
+    xhttp.send();
+
+    document.title = 'Hadoop Guide Part. 2 - Step. 3';
+    history.pushState('/hadoop/page/2_3.html' + ' ' + 'Part. 2 - Step. 3', null, '#2_3');
+
+    document.querySelector('side').children[1].classList.add('on');
+    document.querySelector('side').children[1].children[1].classList.remove('on');
+    document.querySelector('side').children[1].children[2].classList.add('on');
+" class="button">다음단계로 가기</a>
