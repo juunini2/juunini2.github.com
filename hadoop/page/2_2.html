@@ -26,9 +26,9 @@
 그리고 visual studio code를 실행시켜서 <color2>hadoop-examples</color2> 폴더에 <color4>gangnamstyle.R</color4> 이라는 파일을 만들고 아래 코드를 넣어주세요.<br>
 
 <terminal>
-library(wordcloud)
-library(RColorBrewer)
-wordcount = read.delim("gangnamstyle_wordcount.txt", header = FALSE, sep = "", col.names = c("name", "count"))
+<color3>library</color3>(wordcloud)
+<color3>library</color3>(RColorBrewer)
+wordcount = read.delim(<color7>"gangnamstyle_wordcount.txt"</color7>, header = FALSE, sep = "", col.names = c(<color7>"name", "count"</color7>))
 wordcloud(wordcount$name, wordcount$count)
 </terminal>
 
@@ -40,9 +40,9 @@ wordcloud(wordcount$name, wordcount$count)
 기능을 하나씩 추가해봅시다!<br>
 
 <terminal>
-library(wordcloud)
-library(RColorBrewer)
-wordcount = read.delim("gangnamstyle_wordcount.txt", header = FALSE, sep = "", col.names = c("name", "count"))
+<color3>library</color3>(wordcloud)
+<color3>library</color3>(RColorBrewer)
+wordcount = read.delim(<color7>"gangnamstyle_wordcount.txt"</color7>, header = FALSE, sep = "", col.names = c(<color7>"name", "count"</color7>))
 wordcloud(wordcount$name, wordcount$count, random.order = FALSE)
 </terminal>
 
@@ -74,9 +74,9 @@ family 글씨체<br>
 저기서 마음에 드는걸 골라요. 저는 set3이 마음에 드네요.<br>
 
 <terminal>
-library(wordcloud)
-library(RColorBrewer)
-wordcount = read.delim("gangnamstyle_wordcount.txt", header = FALSE, sep = "", col.names = c("name", "count"))
+<color3>library</color3>(wordcloud)
+<color3>library</color3>(RColorBrewer)
+wordcount = read.delim(<color7>"gangnamstyle_wordcount.txt"</color7>, header = FALSE, sep = "", col.names = c(<color7>"name", "count"</color7>))
 wordcloud(wordcount$name, wordcount$count, random.order = FALSE, random.color = TRUE, colors = brewer.pal(12, "Set3"), scale = c(5, 0.5), min.freq = 1)
 </terminal>
 
@@ -87,9 +87,9 @@ wordcloud(wordcount$name, wordcount$count, random.order = FALSE, random.color = 
 아, 그런데 워드클라우드는 그냥 재미있는 시각화고.... 사실 진짜 저게 몇개인지 궁금하다면<br>
 
 <terminal>
-library(ggplot2)
-library(dplyr)
-wordcount = read.delim("gangnamstyle_wordcount.txt", header = FALSE, sep = "", col.names = c("name", "count"))
+<color3>library</color3>(ggplot2)
+<color3>library</color3>(dplyr)
+wordcount = read.delim(<color7>"gangnamstyle_wordcount.txt"</color7>, header = FALSE, sep = "", col.names = c(<color7>"name", "count"</color7>))
 wordcount = wordcount[order(-wordcount$count),]
 ggplot(data = wordcount[1:10,], aes(x = name, y = count)) + geom_bar(stat = "identity", aes(fill = name)) + scale_y_continuous(breaks=seq(0, 100, 1))
 </terminal>

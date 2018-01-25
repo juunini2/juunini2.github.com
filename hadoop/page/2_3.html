@@ -1,1 +1,289 @@
-not ready
+비행기 이착륙 지연 데이터를 받을건데요<br>
+저번에 제가 쉘스크립트 언급한적이 있잖아요?<br>
+책에서 반복문을 통해서 알아서 다운로드 받고 압축을 푸는 쉘스크립트를 써뒀더라구요.<br>
+책에는 여기에 받으세요~ 했는데 우리는 다른데 저장합시다.<br>
+<color4>hadoop-examples</color4> 폴더에 <color4>airplain</color4> 이라는 폴더를 만들어주세요.<br>
+그리고 <color4>airplain</color4> 폴더에 <color4>download.sh</color4> 라는 파일을 만들고 내용을 아래처럼 입력해주세요.<br>
+
+<terminal>
+<blur><i>#! /bin/sh</i></blur>
+
+<color4>for</color4> <color7>((</color7>i = <color2>1987</color2> <color7>; i</color7> <= <color2>2008</color2> <color7>; i</color7>++<color7>))</color7> <color4>do</color4>
+    wget http://stat-computing.org/dataexpo/2009/$i.csv.bz2
+    bzip2 -d $i.csv.bz2
+    sed -e <color7>'1d'</color7> $i.csv > $i_temp.csv
+    mv $i_temp.csv $i.csv
+<color4>done</color4>
+</terminal>
+
+첫줄에 <blur><i>#! /bin/sh</i></blur> 은 쉘스크립트 라고 하는 주석 선언문입니다.<br>
+for 문은 다들 좀 친숙하시죠? 1989년도 데이터부터 2008년도 데이터까지 받겠다는 의미입니다.<br>
+<color4>$i</color4> 는 아마도 파이썬이나 루비에서 <color4>{$i}</color4> 하고 변수를 입력하는 의미인가봅니다.<br>
+다운받고, 압축 풀고, sed -e 는 파일의 다중편집 명령어입니다. 파일 안에 '1d' 라는 단어가 temp가 더 적으면 temp를 $i로 바꾸라는 명령어입니다.<br>
+사실 뭔지 잘 모르겠습니다. bz2 파일 안에 2008.csv 와 2008_temp.csv 파일이 같이 있는데 비교하는 것 같습니다.<br>
+쨋든 작가가 친절하게 써놨으니 그냥 이렇게 해보죠.<br>
+일단 터미널로 해당 폴더 경로로 들어가주세요... 아니 그냥 제가 밑에 써드릴게요.<br>
+
+<terminal>
+<strong>[hadoop@namenode ~]$</strong> cd /home/hadoop/hadoop-examples/airplain
+<strong>[hadoop@namenode airplain]$</strong> sudo chmod -R 777 download.sh
+<strong>[hadoop@namenode airplain]$</strong> ./download.sh
+</terminal>
+
+다 받는데 좀 걸릴겁니다.<br>
+한 30분 쉬고오시죠 ^^;<br>
+<br>
+다 되고나면 다운로드 받은 파일을 HDFS로 옮겨야 합니다.<br>
+
+<terminal>
+<strong>[hadoop@namenode ~]$</strong> cd $HADOOP_HOME
+</terminal>
+
+혹시나 이렇게 했는데 하둡 폴더로 가지 않으면 <color4>source /etc/profile</color4> 하고 한번 입력해주세요.<br>
+
+<terminal>
+<strong>[hadoop@namenode ~]$</strong> cd $HADOOP_HOME
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -mkdir airplain
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -put /home/hadoop/hadoop-examples/airplain/*.csv airplain
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -ls airplain
+
+</terminal>
+
+복사를 마쳤으니 이제 분석할 코드를 구현해봅시다.<br>
+라고 하고 책을 들여다보니 콤마를 기준으로 배열로 쪼개던데 저 .cvs 파일에 뭐가 들었는지도 모르고 앵무새마냥 따라 코드를 입력하는건 의미없는 것 같으니<br>
+.csv 파일을 한번 열어서 뭔지 살펴보겠습니다.<br>
+
+<img src="/hadoop/img2/3_1.jpg" alt="">
+
+파일들이 콤마 단위로 테이블화 되어있는것을 확인할 수 있습니다.<br>
+각각이 뭔지 하나씩 보겠습니다. 배열로 인식하여 쓰도록 하겠습니다. 첫번째 컬럼은 [0] 이런식으로요.<br>
+<br>
+[0] : 년도 입니다.<br>
+[1] : 월 입니다.<br>
+[2] : 일 입니다.<br>
+[3] : ??뭔지 모르겠습니다. 10 이하의 숫자가 쓰여져 있는데 짐작이 안가네요.<br>
+[4] : ?? 700대의 숫자가 쓰여있습니다.....이것과 아래 3개 중 뭔가가 승객 수 일 것 같네요.<br>
+[5] : ?? 700대의 숫자가 쓰여있습니다.<br>
+[6] : ?? 900대의 근접한 숫자가 쓰여있습니다.<br>
+[7] : ?? 800대의 숫자가 쓰여있습니다.<br>
+[8] : PS...?? 항공사 코드라고 합니다.<br>
+[9] : 1451....?? 경로 번호?<br>
+[10] : NA.....??<br>
+[11] : 70 ~ 90 대의 숫자가 쓰여있습니다.<br>
+[12] : 70 ~ 90 대의 숫자가 쓰여있습니다.<br>
+[13] : NA.....??<br>
+[14] : 양수 일 때도 있고 음수 일 떄도 있고....?? 도착 지연시간이라고 합니다. 양수는 지연, 음수는 빨리 도착한건가?<br>
+[15] : 양수 일 때도 있고 음수 일 떄도 있고....?? 출발 지연시간이라고 합니다. 양수는 지연, 음수는 빨리 출발한건가?<br>
+[16] : SAN...도착지?<br>
+[17] : SFO...출발지?<br>
+[18] : 447....운항거리 라고 합니다..<br>
+[19] : NA.....??<br>
+[20] : NA.....??<br>
+[21] : 0<br>
+[22] : NA.....??<br>
+[23] : 0<br>
+[24] : NA.....??<br>
+[25] : NA.....??<br>
+[26] : NA.....??<br>
+[27] : NA.....??<br>
+[28] : NA.....??<br>
+<br>
+일단 책에 나와있는 코드와 이걸 대조했을 때 우리가 정확히 알아낼 수 있는건<br>
+[0] 년도, [1] 월, [2] 일, [8] 항공사 코드, [14] 도착 지연시간, [15] 출발 지연시간, [16] 도착지?, [17] 출발지? [18] 운항거리<br>
+이렇게 알 수 있습니다.<br>
+<br>
+알아냈으니 책에 나와있는대로가 아닌 제 입맛대로 코드를 바꿔서 짜보도록 하겠습니다.<br>
+아는 정보는 다 출력해내도록 하죠.<br>
+공통 클래스를 구현한다고 하는데 이쪽이 조금 편해보이는 느낌이긴 합니다.<br>
+공통 클래스를 먼저 작성해보죠. 저는 책이랑 조금 다르게 코드를 짤겁니다. 파일 이름도 다를거구요.<br>
+아, 그리고 이번 예제를 미리 훑어보고 알게된 점은, key - value 설정이라고 해서 딱 하나의 값만 담을 수 있는게 아니라<br>
+key 안에도, value 안에도 여러 값을 담을 수 있다는 것 입니다.<br>
+<br>
+<color4>AirlineParser.java</color4>
+
+<terminal>
+package Airline;
+
+import org.apache.hadoop.io.Text;
+
+public class AirlineParser {
+    private int year;   // 년도 [0]
+    private int month;  // 월 [1]
+    private int day;    // 일 [2]
+
+    private int departureDelayTime = 0; // 출발 지연 시간 [15]
+    private int arriveDelayTime = 0;    // 도착 지연 시간 [14]
+    private int distance = 0;   // 운항 거리 [18]
+
+    private boolean departureDelay = true;  // 도착 지연 여부
+    private boolean arriveDelay = true; // 출발 지연 여부
+    private boolean driving = true; // distance가 0이면 출발을 안한것 0이 아니면 출발을 한 것
+
+    private String carrier; // 항공사 코드 [8]
+    private String departure;   // 출발지 [17]
+    private String arrival;     // 도착지 [16]
+
+    public AirlineParser (Text text) {
+        try {
+            String[] column = text.toString().split(",");   // 콤마를 기준으로 배열로 쪼갬. 매퍼는 파일을 한줄씩 읽기떄문에 그 다음줄에 대한 걱정은 하지 말것.
+            
+            year = Integer.parseInt(column[0]);     // 년
+            month = Integer.parseInt(column[1]);    // 월
+            day = Integer.parseInt(column[2]);      // 일
+            carrier = column[8];                    // 항공사 코드
+            departure = column[17];                 // 출발지
+            arrival = column[16];                   // 도착지
+
+            if (Integer.parseInt(column[15]) > 0 || !column[15].equals("NA")) { // 출발 지연 또는 출발을 안한지 여부
+                departureDelayTime = Integer.parseInt(column[15]);
+            } else {
+                departureDelay = false;
+            }
+
+            if (Integer.parseInt(column[14]) > 0 || !column[14].equals("NA")) { // 도착 지연 또는 출발은 안했으니 도착을 안한것에 대한 여부
+                arriveDelayTime = Integer.parseInt(column[14]);
+            } else {
+                arriveDelay = false;
+            }
+
+        } catch (Exception e) {
+            System.out.println("에러 로그 : " + e.getMessage());
+        }
+    }
+
+    public int Year() { return year; }
+    public int Month() { return month; }
+    public int Day() { return day; }
+
+    public String Carrier() { return carrier; }
+    public String Departure() { return departure; }
+    public String Arrival() { return arrival; }
+
+    public int DepartureDelayTime() { return departureDelayTime; }
+    public int ArriveDelayTime() { return arriveDelayTime; }
+    public int Distance() { return distance; }
+
+    public boolean DepartureDelay() { return departureDelay; }
+    public boolean ArriveDelay() { return arriveDelay; }
+}
+</terminal>
+
+<color4>AirlineMapper.java</color4>
+
+<terminal>
+import java.io.IOException;
+import java.util.StringTokenizer;
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+
+import Airline.AirlineParser;
+
+public class AirlineMapper extends Mapper&lt;LongWritable, Text, Text, IntWritable&gt; {
+
+    private IntWritable[] outputValue = new IntWritable()[2];    // 1을 안넣습니다. 여러개 넣을거라 배열로 할겁니다. [0] 출발지연, [1] 도착지연
+    private Text outputKey = new Text();
+
+    public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+        AirlineParser parser = new AirlineParser(value);
+
+        outputKey.set(parser.Year() + "\t" + parser.Month() + "\t" + parser.Day() + "\t" + parser.Carrier() + "\t" + parser.DepartureDelayTime() + "\t" + parser.ArriveDelayTime() + "\t" + parser.Distance());
+        // outputKey에 [년, 월, 일, 항공사 코드, 출발 지연 시간, 도착 지연 시간, 운항거리] 가 들어간다.
+        // 책에는 콤마로 되어있지만 2_1에서 워드카운트 분석을 R로 해보셔서 아시겠지만 띄어쓰기나 탭으로 구분되는게 좋습니다.
+
+        if (parser.DepartureDelay() != false || parser.ArriveDelay() != false) {   // 출발지연, 도착지연 모두 했을 때
+            outputValue[0].set(1);
+            outputValue[1].set(1);
+            context.write(outputKey, outputValue);
+        } else if (parser.DepartureDelay() != false || parser.ArriveDelay() == false) { // 출발만 지연됐을 때
+            outputValue[0].set(1);
+            outputValue[1].set(0);
+            context.write(outputKey, outputValue);
+        } else if (parser.DepartureDelay() == false || parser.ArriveDelay() != false) { // 도착만 지연됐을 때
+            outputValue[0].set(0);
+            outputValue[1].set(1);
+            context.write(outputKey, outputValue);
+        }
+    }
+}
+</terminal>
+
+<color4>AirlineReducer.java</color4>
+
+<terminal>
+import java.io.IOException;
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer;
+
+public class AirlineReducer extends Reducer&lt;Text, IntWritable, Text, Text&gt; {
+
+    public Text result = new Text();    // 텍스트 타입으로 설정한다.
+
+    public void reduce(Text key, Iterable&lt;IntWritable&gt; values, Context context) throws IOException, InterruptedException {
+
+        int sum1 = 0;   // 받는 밸류 타입이 배열이라서 두개를 썼음.
+        int sum2 = 0;
+
+        for (IntWritable value : values) {
+            sum1 += value[0].get(); // 출발 지연
+            sum2 += value[1].get(); // 도착 지연
+        }
+
+        result.set(sum1 + "\t" + sum2); // 출발지연 + 도착지연
+        context.write(key, result);
+    }
+}
+</terminal>
+
+<color4>AirlineCount.java</color4>
+
+<terminal>
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+
+public class AirlineCount {
+    public static void main(String[] args) throws Exception {
+
+        Configuration conf = new Configuration();
+
+        if (args.length != 2) {
+            System.err.println("Usage: DepartureDelayCount &lt;input&gt; &lt;output&gt;");
+			System.exit(2);
+        }
+
+        Job job = new Job(conf, "AirlineCount");    // Configuration과 해당 클래스
+
+        FileInputFormat.addInputPath(job, new Path(args[0]));    // input 경로(디렉터리)
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));  // output 경로(디렉터리)
+
+        job.setJarByClass(AirlineCount.class);
+        job.setMapperClass(AirlineMapper.class);
+        job.setReducerClass(AirlineReducer.class);
+
+        job.setInputFormatClass(TextInputFormat.class);
+        job.setOutputFormatClass(TextOutputFormat.class);
+
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(Text.class);    // 리듀서에 보면 밸류도 Text로 했음.
+
+        job.waitForCompletion(true);
+    }
+}
+</terminal>
+
+다 했으면 컴파일을 합니다.<br>
+
+<terminal>
+<strong>[hadoop@namenode airplain]$</strong> javac -cp $HADOOP_HOME/hadoop-core-1.2.1.jar Airline*.java
+<strong>[hadoop@namenode airplain]$</strong> jar -cvf $HADOOP_HOME/AirlineCount.jar Airline*.class
+</terminal>
