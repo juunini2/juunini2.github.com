@@ -208,9 +208,7 @@ public class AirlineCount extends Configured implements Tool {
 
     public int run(String[] args) throws Exception {
 
-        String[] otherArgs = new GenericOptionsParser(getConf(), args).getRemainingArgs();
-
-        if (otherArgs.length != 2) {
+        if (args.length != 2) {
             System.err.println("Usage: AirlineCount &lt;input&gt; &lt;output&gt;");
             System.exit(2);
         }
