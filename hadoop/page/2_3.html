@@ -221,13 +221,13 @@ public class AirlineCount extends Configured implements Tool {
         job.setReducerClass(AirlineReducer.class);
 
         job.setInputFormatClass(TextInputFormat.class);
-		job.setOutputFormatClass(TextOutputFormat.class);
+	job.setOutputFormatClass(TextOutputFormat.class);
 
-		job.setOutputKeyClass(Text.class);
+	job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
 
         FileInputFormat.addInputPath(job, new Path(args[0]));
-		FileOutputFormat.setOutputPath(job, new Path(args[1]));
+	FileOutputFormat.setOutputPath(job, new Path(args[1]));
         
         MultipleOutputs.addNamedOutput(job, "departure", TextOutputFormat.class, Text.class, IntWritable.class);
         MultipleOutputs.addNamedOutput(job, "arrival", TextOutputFormat.class, Text.class, IntWritable.class);
