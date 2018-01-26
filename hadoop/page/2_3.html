@@ -123,10 +123,10 @@ public class AirlineMapper extends Mapper&lt;LongWritable, Text, Text, IntWritab
         // 년, 월, 일, 항공사 코드, 출발지, 도착지, count
 
         if (!column[15].equals("NA") && Integer.parseInt(column[15]) > 0) {  // 출발 지연일 때
-            outputKey.set("D" + "," + Integer.parseInt(column[0]) + "," + Integer.parseInt(column[1]) + "," + Integer.parseInt(column[2]) + "," + column[8] + "," + column[17] + "," + column[16]);
+            outputKey.set("D" + "," + Integer.parseInt(column[0]) + "," + Integer.parseInt(column[1]) + "," + column[17]);
             context.write(outputKey, outputValue);
         } else if (!column[14].equals("NA") && Integer.parseInt(column[14]) > 0) {  // 도착 지연일 때
-            outputKey.set("A" + "," + Integer.parseInt(column[0]) + "," + Integer.parseInt(column[1]) + "," + Integer.parseInt(column[2]) + "," + column[8] + "," + column[17] + "," + column[16]);
+            outputKey.set("A" + "," + Integer.parseInt(column[0]) + "," + Integer.parseInt(column[1]) + "," + column[17]);
             context.write(outputKey, outputValue);
         }
     }
