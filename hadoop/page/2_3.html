@@ -143,7 +143,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 
-public class AirlineReducer3 extends Reducer&lt;Text, IntWritable, Text, IntWritable&gt; {
+public class AirlineReducer extends Reducer&lt;Text, IntWritable, Text, IntWritable&gt; {
     private MultipleOutputs&lt;Text, IntWritable&gt; mos;
     private Text outputKey = new Text();
     private IntWritable result = new IntWritable();
