@@ -148,30 +148,30 @@ Found 22 items
 <color4>AirlineMapper.java</color4>
 
 <terminal>
-import java.io.IOException;
+<color4>import</color4> <color2>java.io.IOException;</color2>
 
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Mapper;
+<color4>import</color4> <color2>org.apache.hadoop.io.IntWritable;</color2>
+<color4>import</color4> <color2>org.apache.hadoop.io.LongWritable;</color2>
+<color4>import</color4> <color2>org.apache.hadoop.io.Text;</color2>
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.Mapper;</color2>
 
-public class AirlineMapper extends Mapper&lt;LongWritable, Text, Text, IntWritable&gt; {
+<color2>public</color2> <color2>class</color2> AirlineMapper <color2>extends</color2> <color4>Mapper</color4>&lt;<color2>LongWritable</color2>, <color2>Text</color2>, <color2>Text</color2>, <color2>IntWritable</color2>&gt; {
 
-    private IntWritable outputValue = new IntWritable(1);
-    private Text outputKey = new Text();
+    <color2>private</color2> <color2>IntWritable</color2> outputValue = <color6>new</color6> <color3>IntWritable</color3>(<color2>1</color2>);
+    <color2>private</color2> <color2>Text</color2> outputKey = <color6>new</color6> <color3>Text</color3>();
 
-    public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+    <color2>public</color2> <color2>void</color2> <color3>map</color3>(<color2>LongWritable</color2> <blur>key</blur>, <color2>Text</color2> <blur>value</blur>, <color2>Context</color2> <blur>context</blur>) <color2>throws</color2> <color2>IOException</color2>, <color2>InterruptedException</color2> {
 
-        String[] column = value.toString().split(",");
+        <color2>String</color2>[] column = <color4>value</color4>.<color3>toString</color3>().<color3>split</color3>(<color7>","</color7>);
 
-        // 년[0], 월[1], 일[2], 출발지[17], 도착지[16]
+        <blur><i>// 년[0], 월[1], 일[2], 출발지[17], 도착지[16]</i></blur>
 
-        if (!column[15].equals("NA") && Integer.parseInt(column[15]) > 0) {  // 출발 지연일 때
-            outputKey.set("D" + "," + Integer.parseInt(column[0]) + "," + Integer.parseInt(column[1]) + "," + column[17]);
-            context.write(outputKey, outputValue);
-        } else if (!column[14].equals("NA") && Integer.parseInt(column[14]) > 0) {  // 도착 지연일 때
-            outputKey.set("A" + "," + Integer.parseInt(column[0]) + "," + Integer.parseInt(column[1]) + "," + column[16]);
-            context.write(outputKey, outputValue);
+        <color6>if</color6> (!column[<color2>15</color2>].<color3>equals</color3>(<color7>"NA"</color7>) && <color4>Integer</color4>.<color3>parseInt</color3>(column[<color2>15</color2>]) <color2>> 0</color2>) {  <blur><i>// 출발 지연일 때</i></blur>
+            <color4>outputKey</color4>.<color3>set</color3>(<color7>"D"</color7> + <color7>","</color7> + <color4>Integer</color4>.<color3>parseInt</color3>(column[<color2>0</color2>]) + <color7>","</color7> + <color4>Integer</color4>.<color3>parseInt</color3>(column[<color2>1</color2>]) + <color7>","</color7> + column[<color2>17</color2>]);
+            <color4>context</color4>.<color3>write</color3>(outputKey, outputValue);
+        } <color6>else if</color6> (!column[<color2>14</color2>].<color3>equals</color3>(<color7>"NA"</color7>) && <color4>Integer</color4>.<color3>parseInt</color3>(column[<color2>14</color2>]) <color2>> 0</color2>) {  <blur><i>// 도착 지연일 때</i></blur>
+            <color4>outputKey</color4>.<color3>set</color3>(<color7>"A"</color7> + <color7>","</color7> + <color4>Integer</color4>.<color3>parseInt</color3>(column[<color2>0</color2>]) + <color7>","</color7> + <color4>Integer</color4>.<color3>parseInt</color3>(column[<color2>1</color2>]) + <color7>","</color7> + column[<color2>16</color2>]);
+            <color4>context</color4>.<color3>write</color3>(outputKey, outputValue);
         }
     }
 }
@@ -180,47 +180,47 @@ public class AirlineMapper extends Mapper&lt;LongWritable, Text, Text, IntWritab
 <color4>AirlineReducer.java</color4>
 
 <terminal>
-import java.io.IOException;
+<color4>import</color4> <color2>java.io.IOException;</color2>
 
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
+<color4>import</color4> <color2>org.apache.hadoop.io.IntWritable;</color2>
+<color4>import</color4> <color2>org.apache.hadoop.io.Text;</color2>
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.Reducer;</color2>
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;</color2>
 
-public class AirlineReducer extends Reducer&lt;Text, IntWritable, Text, IntWritable&gt; {
-    private MultipleOutputs&lt;Text, IntWritable&gt; mos;
-    private Text outputKey = new Text();
-    private IntWritable result = new IntWritable();
+<color2>public</color2> <color2>class</color2> AirlineReducer <color2>extends</color2> <color2>Reducer</color2>&lt;<color2>Text</color2>, <color2>IntWritable</color2>, <color2>Text</color2>, <color2>IntWritable</color2>&gt; {
+    <color2>private</color2> <color2>MultipleOutputs</color2>&lt;<color2>Text</color2>, <color2>IntWritable</color2>&gt; mos;
+    <color2>private</color2> <color2>Text</color2> outputKey = <color6>new</color6> <color3>Text</color3>();
+    <color2>private</color2> <color2>IntWritable</color2> result = <color6>new</color6> <color3>IntWritable</color3>();
 
-    @Override   // Reducer 클래스의 setup 함수를 오버라이드 합니다. 멀티파일로 저장해야 하기 때문이니까요.
-    public void setup(Context context) throws IOException, InterruptedException {
-        mos = new MultipleOutputs&lt;Text, IntWritable&gt;(context);
+    <color2>@Override</color2>  <blur><i> // Reducer 클래스의 setup 함수를 오버라이드 합니다. 멀티파일로 저장해야 하기 때문이니까요.</i></blur>
+    <color2>public</color2> <color2>void</color2> <color3>setup</color3>(<color2>Context</color2> context) <color2>throws</color2> <color2>IOException</color2>, <color2>InterruptedException</color2> {
+        mos = <color6>new</color6> <color2>MultipleOutputs</color2>&lt;<color2>Text</color2>, <color2>IntWritable</color2>&gt;(context);
     }
 
-    public void reduce(Text key, Iterable&lt;IntWritable&gt; values, Context context) throws IOException, InterruptedException {
-        String[] column = key.toString().split(",");
-        outputKey.set(column[1] + "\t" + column[2] + "\t" + column[3]); // [0]은 출발지연과 도착지연 구분자이기 때문에 키에서 빼버림
+    <color2>public</color2> <color2>void</color2> <color3>reduce</color3>(<color2>Text</color2> <blur>key</blur>, <color2>Iterable</color2>&lt;<color2>IntWritable</color2>&gt; <blur>values</blur>, <color2>Context</color2> <blur>context</blur>) <color2>throws</color2> <color2>IOException</color2>, <color2>InterruptedException</color2> {
+        <color2>String</color2>[] column = <color2>key</color2>.<color3>toString</color3>().<color3>split</color3>(<color7>","</color7>);
+        <color2>outputKey</color2>.set(column[1] + <color7>"\t"</color7> + column[2] + <color7>"\t"</color7> + column[3]); <blur><i>// [0]은 출발지연과 도착지연 구분자이기 때문에 키에서 빼버림</i></blur>
 
-        if (column[0].equals("D")) {  // 출발 지연
-            int sum = 0;
-            for (IntWritable value : values) {
-                sum += value.get();
+        <color6>if</color6> (column[0].<color3>equals</color3>(<color7>"D"</color7>)) {  <blur><i>// 출발 지연</i></blur>
+            <color2>int</color2> sum = 0;
+            <color6>for</color6> (<color2>IntWritable</color2> value : values) {
+                sum += <color2>value</color2>.<color3>get</color3>();
             }
-            result.set(sum);
-            mos.write("departure", outputKey, result);  // departure 라는 이름으로 보냄
-        } else {    // 도착 지연
-            int sum = 0;
-            for (IntWritable value : values) {
-                sum += value.get();
+            <color2>result</color2>.<color3>set</color3>(sum);
+            <color2>mos</color2>.<color3>write</color3>(<color7>"departure"</color7>, outputKey, result);  <blur><i>// departure 라는 이름으로 보냄</i></blur>
+        } <color6>else</color6> {    <blur><i>// 도착 지연</i></blur>
+            <color2>int</color2> sum = 0;
+            <color6>for</color6> (<color2>IntWritable</color2> value : values) {
+                sum += <color2>value</color2>.<color3>get</color3>();
             }
-            result.set(sum);
-            mos.write("arrival", outputKey, result);    // arrival 라는 이름으로 보냄
+            <color2>result</color2>.<color3>set</color3>(sum);
+            <color2>mos</color2>.<color3>write</color3>(<color7>"arrival"</color7>, outputKey, result);    <blur><i>// arrival 라는 이름으로 보냄</i></blur>
         }
     }
 
-    @Override   // Reducer클래스의 cleanup함수를 오버라이드 합니다. 멀티파일을 종료시켜야지요.
-    public void cleanup(Context context) throws IOException, InterruptedException {
-        mos.close();
+    <color2>@Override</color2>   <blur><i>// Reducer클래스의 cleanup함수를 오버라이드 합니다. 멀티파일을 종료시켜야지요.</i></blur>
+    <color2>public</color2> <color2>void</color2> <color3>cleanup</color3>(<color2>Context</color2> context) <color2>throws</color2> <color2>IOException</color2>, <color2>InterruptedException</color2> {
+        <color2>mos</color2>.<color3>close</color3>();
     }
 }
 </terminal>
@@ -228,54 +228,54 @@ public class AirlineReducer extends Reducer&lt;Text, IntWritable, Text, IntWrita
 <color4>AirlineCount.java</color4>
 
 <terminal>
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import org.apache.hadoop.util.GenericOptionsParser;
-import org.apache.hadoop.util.Tool;
-import org.apache.hadoop.util.ToolRunner;
-import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
+<color4>import</color4> <color2>org.apache.hadoop.conf.Configuration;</color2>
+<color4>import</color4> <color2>org.apache.hadoop.conf.Configured;</color2>
+<color4>import</color4> <color2>org.apache.hadoop.fs.Path;</color2>
+<color4>import</color4> <color2>org.apache.hadoop.io.Text;</color2>
+<color4>import</color4> <color2>org.apache.hadoop.io.IntWritable;</color2>
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.Job;</color2>
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.lib.input.FileInputFormat;</color2>
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.lib.input.TextInputFormat;</color2>
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;</color2>
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;</color2>
+<color4>import</color4> <color2>org.apache.hadoop.util.GenericOptionsParser;</color2>
+<color4>import</color4> <color2>org.apache.hadoop.util.Tool;</color2>
+<color4>import</color4> <color2>org.apache.hadoop.util.ToolRunner;</color2>
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;</color2>
 
-public class AirlineCount extends Configured implements Tool {
+<color2>public</color2> <color2>class</color2> AirlineCount <color2>extends</color2> <color4>Configured</color4> <color2>implements</color2> <color4>Tool</color4> {
 
-    public static void main(String[] args) throws Exception {
-        int res = ToolRunner.run(new Configuration(), new AirlineCount(), args);
-        System.out.println("Result : " + res);
+    <color2>public</color2> <color2>static</color2> <color2>void</color2> <color3>main</color3>(<color2>String</color2>[] args) <color2>throws</color2> <color2>Exception</color2> {
+        <color2>int</color2> res = <color4>ToolRunner</color4>.<color3>run</color3>(<color6>new</color6> <color3>Configuration</color3>(), <color6>new</color6> <color3>AirlineCount</color3>(), args);
+        <color4>System</color4>.<color4>out</color4>.<color3>println</color3>(<color7>"Result : "</color7> + res);
     }
 
-    public int run(String[] args) throws Exception {
+    <color2>public</color2> <color2>int</color2> <color3>run</color3>(<color2>String</color2>[] args) <color2>throws</color2> <color2>Exception</color2> {
 
-        if (args.length != 2) {
-            System.err.println("Usage: AirlineCount &lt;input&gt; &lt;output&gt;");
-            System.exit(2);
+        <color6>if</color6> (<color4>args</color4>.length <color2>!= 2</color2>) {
+            <color4>System</color4>.<color4>err</color4>.<color3>println</color3>(<color7>"Usage: AirlineCount &lt;input&gt; &lt;output&gt;"</color7>);
+            <color4>System</color4>.<color3>exit</color3>(<color2>2</color2>);
         }
 
-        Job job = new Job(getConf(), "AirlineCount");
-        job.setJarByClass(AirlineCount.class);
-        job.setMapperClass(AirlineMapper.class);
-        job.setReducerClass(AirlineReducer.class);
+        <color2>Job</color2> job = <color6>new</color6> <color3>Job</color3>(<color3>getConf</color3>(), <color7>"AirlineCount"</color7>);
+        <color4>job</color4>.<color3>setJarByClass</color3>(<color4>AirlineCount</color4>.class);
+        <color4>job</color4>.<color3>setMapperClass</color3>(<color4>AirlineMapper</color4>.class);
+        <color4>job</color4>.<color3>setReducerClass</color3>(<color4>AirlineReducer</color4>.class);
 
-        job.setInputFormatClass(TextInputFormat.class);
-	    job.setOutputFormatClass(TextOutputFormat.class);
+        <color4>job</color4>.<color3>setInputFormatClass</color3>(<color4>TextInputFormat</color4>.class);
+	    <color4>job</color4>.<color3>setOutputFormatClass</color3>(<color4>TextOutputFormat</color4>.class);
 
-	    job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(IntWritable.class);
+	    <color4>job</color4>.<color3>setOutputKeyClass</color3>(<color4>Text</color4>.class);
+        <color4>job</color4>.<color3>setOutputValueClass</color3>(<color4>IntWritable</color4>.class);
 
-        FileInputFormat.addInputPath(job, new Path(args[0]));
-	    FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        <color4>FileInputFormat</color4>.<color3>addInputPath</color3>(job, <color6>new</color6> <color3>Path</color3>(args[<color2>0</color2>]));
+	    <color4>FileOutputFormat</color4>.<color3>setOutputPath</color3>(job, <color6>new</color6> <color3>Path</color3>(args[<color2>1</color2>]));
         
-        MultipleOutputs.addNamedOutput(job, "departure", TextOutputFormat.class, Text.class, IntWritable.class);    // departure로 시작하는 파일을 생성하여 저장함
-        MultipleOutputs.addNamedOutput(job, "arrival", TextOutputFormat.class, Text.class, IntWritable.class);      // arrival로 시작하는 파일을 생성하여 저장함
+        <color4>MultipleOutputs</color4>.<color3>addNamedOutput</color3>(job, <color7>"departure"</color7>, <color4>TextOutputFormat</color4>.class, <color4>Text</color4>.class, <color4>IntWritable</color4>.class);    <blur><i>// departure로 시작하는 파일을 생성하여 저장함</i></blur>
+        <color4>MultipleOutputs</color4>.<color3>addNamedOutput</color3>(job, <color7>"arrival"</color7>, <color4>TextOutputFormat</color4>.class, <color4>Text</color4>.class, <color4>IntWritable</color4>.class);      <blur><i>// arrival로 시작하는 파일을 생성하여 저장함</i></blur>
 
-        job.waitForCompletion(true);
-        return 0;
+        <color4>job</color4>.<color3>waitForCompletion</color3>(<color2>true</color2>);
+        <color6>return</color6> <color2>0</color2>;
     }
 }
 </terminal>
