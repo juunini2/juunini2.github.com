@@ -263,9 +263,9 @@ Found 22 items
         <color4>job</color4>.<color3>setReducerClass</color3>(<color4>AirlineReducer</color4>.class);
 
         <color4>job</color4>.<color3>setInputFormatClass</color3>(<color4>TextInputFormat</color4>.class);
-	    <color4>job</color4>.<color3>setOutputFormatClass</color3>(<color4>TextOutputFormat</color4>.class);
+        <color4>job</color4>.<color3>setOutputFormatClass</color3>(<color4>TextOutputFormat</color4>.class);
 
-	    <color4>job</color4>.<color3>setOutputKeyClass</color3>(<color4>Text</color4>.class);
+        <color4>job</color4>.<color3>setOutputKeyClass</color3>(<color4>Text</color4>.class);
         <color4>job</color4>.<color3>setOutputValueClass</color3>(<color4>IntWritable</color4>.class);
 
         <color4>FileInputFormat</color4>.<color3>addInputPath</color3>(job, <color6>new</color6> <color3>Path</color3>(args[<color2>0</color2>]));
@@ -440,6 +440,8 @@ ATL, ORD, DFW, IAH, LAX 이렇게 봅시다.<br>
 
 지역별로 다른 결과가 나오기는 합니다.<br>
 역시나 좀 더 심층적으로 분석하기엔 실습인데 일도 아니고 너무 피곤한 작업이 되지 않을까 싶어 여기서 그만두도록 하겠습니다.<br>
+이만큼 해서 우리가 유추해낼 수 있는 정보가 무엇일까요?<br>
+우리가 조사한 지역이 기후가 안좋거나 어느 여러가지 요인에 의에 <color4>이륙과 착륙 둘 다 지연이 자주 된다</color4>는 사실을 알 수 있었습니다.<br>
 여기까지 멀티파일로 저장하기와 통계내용을 R을 이용해 여러 각도로 볼 수 있다는 것을 해본 시간이었습니다.<br>
 <br>
 책에 보면 체인에 대한 내용이 나오는데, 하둡2와 하둡1의 체인은 비슷한데 조금 달라서 그냥 하둡2를 시작하면 그 때 언급하고 보여드리겠습니다.<br>
