@@ -269,7 +269,7 @@ Found 22 items
         <color4>job</color4>.<color3>setOutputValueClass</color3>(<color4>IntWritable</color4>.class);
 
         <color4>FileInputFormat</color4>.<color3>addInputPath</color3>(job, <color6>new</color6> <color3>Path</color3>(args[<color2>0</color2>]));
-	    <color4>FileOutputFormat</color4>.<color3>setOutputPath</color3>(job, <color6>new</color6> <color3>Path</color3>(args[<color2>1</color2>]));
+        <color4>FileOutputFormat</color4>.<color3>setOutputPath</color3>(job, <color6>new</color6> <color3>Path</color3>(args[<color2>1</color2>]));
         
         <color4>MultipleOutputs</color4>.<color3>addNamedOutput</color3>(job, <color7>"departure"</color7>, <color4>TextOutputFormat</color4>.class, <color4>Text</color4>.class, <color4>IntWritable</color4>.class);    <blur><i>// departure로 시작하는 파일을 생성하여 저장함</i></blur>
         <color4>MultipleOutputs</color4>.<color3>addNamedOutput</color3>(job, <color7>"arrival"</color7>, <color4>TextOutputFormat</color4>.class, <color4>Text</color4>.class, <color4>IntWritable</color4>.class);      <blur><i>// arrival로 시작하는 파일을 생성하여 저장함</i></blur>
