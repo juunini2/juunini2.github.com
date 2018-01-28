@@ -1,0 +1,401 @@
+이 전 글에서는 보조 정렬에 대해 다루었습니다.<br>
+데이터를 도출하는데 보조적으로 정렬을 더한다는 기능이었습니다.<br>
+이번에 다룰 정렬은 부분 정렬 입니다.<br>
+부분 정렬은 <color4>검색</color4> 에 용이한 정렬입니다.<br>
+일단 시작해봅시다.<br>
+이번 글의 파일들은 hadoop-examples 폴더에 search 폴더를 만들어서 진행하겠습니다.<br>
+일단 sort폴더 내에 <color4>AirlineParser.java</color4> 파일을 여기로 복사해주세요.
+<br>
+<color4>SequenceFileCreator.java</color4>
+
+<terminal>
+package Airline;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.SequenceFile.CompressionType;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.compress.GzipCodec;
+import org.apache.hadoop.mapred.*;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
+
+import Airline.AirlineParser;
+
+import java.io.IOException;
+
+public class SequenceFileCreator extends Configured implements Tool {
+    static class DistanceMapper extends MapReduceBase implements Mapper&lt;LongWritable, Text, IntWritable, Text&gt; {  // 매퍼 클래스
+
+        private IntWritable outputKey = new IntWritable();
+
+        public void map(LongWritable key, Text value, OutputCollector&lt;IntWritable, Text&gt; output, Reporter reporter) throws IOException {
+
+            try {
+                AirlineParser parser = new AirlineParser(value);
+                if (parser.isDistanceAvailable()) {
+                    outputKey.set(parser.getDistance());    // 키값에 거리를 넣음. 거리를 기준으로 정렬됨.
+                    output.collect(outputKey, value);       // 매퍼나 리듀서, 드라이버 클래스 없이 그냥 시퀀스 파일로 변환만 하기 때문에 컬렉터가 수행함
+                }
+            } catch (ArrayIndexOutOfBoundsException ae) {
+                outputKey.set(0);
+                output.collect(outputKey, value);
+                ae.printStackTrace();
+            } catch (Exception e) {
+                outputKey.set(0);
+                output.collect(outputKey, value);
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public int run(String[] args) throws Exception {    // 드라이버 클래스
+        JobConf conf = new JobConf(SequenceFileCreator.class);
+        conf.setJobName("SequenceFileCreator");
+
+        conf.setMapperClass(DistanceMapper.class);  // 위에 있는 스태틱 클래스가 매퍼 기능을 함
+        conf.setNumReduceTasks(0);   // 리듀스 기능 수행 안함
+
+        FileInputFormat.setInputPaths(conf, new Path(args[0]));
+        FileOutputFormat.setOutputPath(conf, new Path(args[1]));
+
+        conf.setOutputFormat(SequenceFileOutputFormat.class);   // 시퀀스 파일로 출력
+        conf.setOutputKeyClass(IntWritable.class);              // 키값은 거리. int값으로도 표현 가능
+        conf.setOutputValueClass(Text.class);                   // 출력값은 문서 라인 전체.... Text로 해야함
+
+        SequenceFileOutputFormat.setCompressOutput(conf, true);                         // 시퀀스로 압축
+        SequenceFileOutputFormat.setOutputCompressorClass(conf, GzipCodec.class);       // Gzip 코덱을 이용하여 압축
+        SequenceFileOutputFormat.setOutputCompressionType(conf, CompressionType.BLOCK); // 블록단위로.
+
+        JobClient.runJob(conf);
+        return 0;
+    }
+
+    public static void main(String[] args) throws Exception {
+        int res = ToolRunner.run(new Configuration(), new SequenceFileCreator(), args);
+        System.out.println("###Result : " + res);
+    }
+}
+</terminal>
+
+방금 작업한 파일을 자세히 보면 한 자바 파일 안에 매퍼와 드라이버 클래스가 같이 있음을 알 수 있습니다.<br>
+파일을 시퀀스 파일로 변환해주는 코드이니 한번 실행해봅시다.<br>
+
+<terminal>
+<strong>[hadoop@namenode search]$</strong> javac -cp $HADOOP_HOME/hadoop-core-1.2.1.jar -d . *.java
+<strong>[hadoop@namenode search]$</strong> jar -cvf $HADOOP_HOME/SequenceFileCreator.jar ./Airline/*.class
+Manifest를 추가함
+추가하는 중: Airline/AirlineParser.class(입력 = 2223) (출력 = 1079)(51%를 감소함)
+추가하는 중: Airline/SequenceFileCreator$DistanceMapper.class(입력 = 2024) (출력 = 828)(59%를 감소함)
+추가하는 중: Airline/SequenceFileCreator.class(입력 = 2686) (출력 = 1164)(56%를 감소함)
+<strong>[hadoop@namenode search]$</strong> cd $HADOOP_HOME
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop jar SequenceFileCreator.jar Airline.SequenceFileCreator airplain/2008.csv 2008_sequencefile
+.
+.
+.
+18/01/28 05:06:50 INFO mapred.JobClient:  map 100% reduce 0%
+18/01/28 05:06:50 INFO mapred.JobClient: Job complete: job_201801272358_0012
+18/01/28 05:06:50 INFO mapred.JobClient: Counters: 20
+.
+.
+.
+</terminal>
+
+제가 아까 언급하대로 리듀서는 작동하지 않습니다.<br>
+단지 시퀀스 파일로 변환할 뿐이지 리듀서로 합계를 내거나 하지는 않기 때문입니다.<br>
+잘 됐는지 이제 확인해봅시다.<br>
+
+<terminal>
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -ls 2008_sequencefile
+Found 13 items
+-rw-r--r--   3 hadoop supergroup          0 2018-01-28 05:06 /user/hadoop/2008_sequencefile/_SUCCESS
+drwxr-xr-x   - hadoop supergroup          0 2018-01-28 05:05 /user/hadoop/2008_sequencefile/_logs
+-rw-r--r--   3 hadoop supergroup   18795517 2018-01-28 05:05 /user/hadoop/2008_sequencefile/part-00000
+-rw-r--r--   3 hadoop supergroup   19043636 2018-01-28 05:05 /user/hadoop/2008_sequencefile/part-00001
+-rw-r--r--   3 hadoop supergroup   18346427 2018-01-28 05:05 /user/hadoop/2008_sequencefile/part-00002
+-rw-r--r--   3 hadoop supergroup   18560235 2018-01-28 05:05 /user/hadoop/2008_sequencefile/part-00003
+-rw-r--r--   3 hadoop supergroup   18389695 2018-01-28 05:06 /user/hadoop/2008_sequencefile/part-00004
+-rw-r--r--   3 hadoop supergroup   18268623 2018-01-28 05:06 /user/hadoop/2008_sequencefile/part-00005
+-rw-r--r--   3 hadoop supergroup   18389093 2018-01-28 05:06 /user/hadoop/2008_sequencefile/part-00006
+-rw-r--r--   3 hadoop supergroup   18544770 2018-01-28 05:06 /user/hadoop/2008_sequencefile/part-00007
+-rw-r--r--   3 hadoop supergroup   17387259 2018-01-28 05:06 /user/hadoop/2008_sequencefile/part-00008
+-rw-r--r--   3 hadoop supergroup   18226586 2018-01-28 05:06 /user/hadoop/2008_sequencefile/part-00009
+-rw-r--r--   3 hadoop supergroup    4855394 2018-01-28 05:06 /user/hadoop/2008_sequencefile/part-00010
+</terminal>
+
+part-0 부터 10 까지 11개의 시퀀스 파일이 생성되었습니다.<br>
+궁금하니까 내용이나 한번 볼까요?<br>
+
+<terminal>
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -cat 2008_sequencefile/part-00000 | head -10
+.
+.
+.
+N�Bp�n�[�$E��l���:�DKX*�z#s��*N�_�(� ����2���13&K�8?Wo@���N���Qd�%9�"u�< @|y^��{xj�s�5E�qJ�B�%�~x�$ڥ���M��h.F����d+���%2C��[ӡvrA�!�ISfm�u�,�HX����lѩ�t��x�����ٰ��4|���0�+�l���6����|�X%0�p��4��y8���n]+"�6�l_$)��c��d;��H��#���Y�2��I��NJgc)0�����j=,/��&���;��K	c')��m�_�K,̝�n 2Ӄ}
+�Φ���)C��Ƶ,La#�~�[%�q��K��&���Ge��%*%�q<��ʄ��O�D��
+cat: Unable to write to output stream.
+</terminal>
+
+으으... cat로 읽을 수 없군요 text로 읽어봅시다.<br>
+
+<terminal>
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -text 2008_sequencefile/part-00000 | head -10
+18/01/28 05:11:16 INFO util.NativeCodeLoader: Loaded the native-hadoop library
+18/01/28 05:11:16 INFO zlib.ZlibFactory: Successfully loaded & initialized native-zlib library
+18/01/28 05:11:16 INFO compress.CodecPool: Got brand-new decompressor
+18/01/28 05:11:16 INFO compress.CodecPool: Got brand-new decompressor
+18/01/28 05:11:16 INFO compress.CodecPool: Got brand-new decompressor
+18/01/28 05:11:16 INFO compress.CodecPool: Got brand-new decompressor
+810	2008,1,3,4,2003,1955,2211,2225,WN,335,N712SW,128,150,116,-14,8,IAD,TPA,810,4,8,0,,0,NA,NA,NA,NA,NA
+810	2008,1,3,4,754,735,1002,1000,WN,3231,N772SW,128,145,113,2,19,IAD,TPA,810,5,10,0,,0,NA,NA,NA,NA,NA
+515	2008,1,3,4,628,620,804,750,WN,448,N428WN,96,90,76,14,8,IND,BWI,515,3,17,0,,0,NA,NA,NA,NA,NA
+515	2008,1,3,4,926,930,1054,1100,WN,1746,N612SW,88,90,78,-6,-4,IND,BWI,515,3,7,0,,0,NA,NA,NA,NA,NA
+515	2008,1,3,4,1829,1755,1959,1925,WN,3920,N464WN,90,90,77,34,34,IND,BWI,515,3,10,0,,0,2,0,0,0,32
+688	2008,1,3,4,1940,1915,2121,2110,WN,378,N726SW,101,115,87,11,25,IND,JAX,688,4,10,0,,0,NA,NA,NA,NA,NA
+1591	2008,1,3,4,1937,1830,2037,1940,WN,509,N763SW,240,250,230,57,67,IND,LAS,1591,3,7,0,,0,10,0,0,0,47
+1591	2008,1,3,4,1039,1040,1132,1150,WN,535,N428WN,233,250,219,-18,-1,IND,LAS,1591,7,7,0,,0,NA,NA,NA,NA,NA
+451	2008,1,3,4,617,615,652,650,WN,11,N689SW,95,95,70,2,2,IND,MCI,451,6,19,0,,0,NA,NA,NA,NA,NA
+451	2008,1,3,4,1620,1620,1639,1655,WN,810,N648SW,79,95,70,-16,0,IND,MCI,451,3,6,0,,0,NA,NA,NA,NA,NA
+text: Unable to write to output stream.
+</terminal>
+
+이제 제대로 나오네요!<br>
+그냥 텍스트 파일은 cat로 읽을 수 있지만 시퀀스 압축된 파일은 text 명령어로 읽어야 한다는걸 알게됐습니다.<br>
+<br>
+맵 파일을 만드는 파일을 만들어봅시다.<br>
+<br>
+<color4>MapFileCreator.java</color4>
+
+<terminal>
+package Airline;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.SequenceFile.CompressionType;
+import org.apache.hadoop.io.compress.GzipCodec;
+import org.apache.hadoop.mapred.FileInputFormat;
+import org.apache.hadoop.mapred.FileOutputFormat;
+import org.apache.hadoop.mapred.JobClient;
+import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapred.MapFileOutputFormat;
+import org.apache.hadoop.mapred.SequenceFileInputFormat;
+import org.apache.hadoop.mapred.SequenceFileOutputFormat;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
+
+public class MapFileCreator extends Configured implements Tool {
+
+    public static void main(String[] args) throws Exception {
+        int res = ToolRunner.run(new Configuration(), new MapFileCreator(), args);
+        System.out.println("###result : " + res);
+    }
+
+    public int run(String[] args) throws Exception {    // 드라이버 클래스
+        JobConf conf = new JobConf(MapFileCreator.class);
+        conf.setJobName("MapFileCreator");
+
+        FileInputFormat.setInputPaths(conf, new Path(args[0]));
+        FileOutputFormat.setOutputPath(conf, new Path(args[1]));
+
+        conf.setInputFormat(SequenceFileInputFormat.class); // 입력 파일이 시퀀스 파일
+        conf.setOutputFormat(MapFileOutputFormat.class);    // 출력 파일은 맵 파일
+        conf.setOutputKeyClass(IntWritable.class);          // 키 값은 distance였던 것을 그대로 상속
+
+        SequenceFileOutputFormat.setCompressOutput(conf, true);                     // 시퀀스 파일로 압축
+        SequenceFileOutputFormat.setOutputCompressorClass(conf, GzipCodec.class);   // GzipCodec 으로 압축
+        SequenceFileOutputFormat.setOutputCompressionType(conf, CompressionType.BLOCK);
+
+        JobClient.runJob(conf);
+        return 0;
+    }
+}
+</terminal>
+
+다 했으면 맵파일 생성을 해봅시다.<br>
+
+<terminal>
+<strong>[hadoop@namenode search]$</strong> javac -cp $HADOOP_HOME/hadoop-core-1.2.1.jar -d . MapFileCreator.java
+<strong>[hadoop@namenode search]$</strong> jar -cvf $HADOOP_HOME/MapFileCreator.jar ./Airline/MapFileCreator.class
+<strong>[hadoop@namenode search]$</strong> cd $HADOOP_HOME
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop jar MapFileCreator.jar Airline.MapFileCreator 2008_sequencefile/part-* 2008_mapfile
+.
+.
+.
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -ls 2008_mapfile
+Found 3 items
+-rw-r--r--   3 hadoop supergroup          0 2018-01-28 05:26 /user/hadoop/2008_mapfile/_SUCCESS
+drwxr-xr-x   - hadoop supergroup          0 2018-01-28 05:24 /user/hadoop/2008_mapfile/_logs
+<strong>drwxr-xr-x</strong>   - hadoop supergroup          0 2018-01-28 05:26 /user/hadoop/2008_mapfile/part-00000
+</terminal>
+
+제가 아래 저 부분을 두껍게 강조해놨죠?<br>
+d로 시작하면 파일이 아니라 디렉터리라는 뜻입니다.<br>
+
+<terminal>
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -ls 2008_mapfile/part-00000
+Found 2 items
+-rw-r--r--   3 hadoop supergroup  161302998 2018-01-28 05:25 /user/hadoop/2008_mapfile/part-00000/data
+-rw-r--r--   3 hadoop supergroup       7907 2018-01-28 05:25 /user/hadoop/2008_mapfile/part-00000/index
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -text 2008_mapfile/part-00000/data | head -10
+18/01/28 05:30:32 INFO util.NativeCodeLoader: Loaded the native-hadoop library
+18/01/28 05:30:32 INFO zlib.ZlibFactory: Successfully loaded & initialized native-zlib library
+18/01/28 05:30:32 INFO compress.CodecPool: Got brand-new decompressor
+18/01/28 05:30:32 INFO compress.CodecPool: Got brand-new decompressor
+18/01/28 05:30:32 INFO compress.CodecPool: Got brand-new decompressor
+18/01/28 05:30:32 INFO compress.CodecPool: Got brand-new decompressor
+11	2008,8,10,7,1315,1220,1415,1320,OH,5572,N819CA,60,60,14,55,55,JFK,LGA,11,8,38,0,,0,55,0,0,0,0
+11	2008,5,15,4,2037,1800,2125,1900,OH,4988,N806CA,48,60,31,145,157,JFK,LGA,11,10,7,0,,0,145,0,0,0,0
+17	2008,3,8,6,NA,1105,NA,1128,AA,1368,,NA,23,NA,NA,NA,EWR,LGA,17,NA,NA,1,B,0,NA,NA,NA,NA,NA
+21	2008,5,9,5,48,100,117,130,AA,588,N061AA,29,30,11,-13,-12,MIA,FLL,21,6,12,0,,0,NA,NA,NA,NA,NA
+21	2008,2,8,5,NA,1910,NA,1931,AA,1668,,NA,21,NA,NA,NA,FLL,MIA,21,NA,NA,1,A,0,NA,NA,NA,NA,NA
+24	2008,11,27,4,943,940,1014,956,9E,5816,91469E,31,16,9,18,3,IAH,HOU,24,5,17,0,,0,0,0,18,0,0
+24	2008,3,12,3,955,931,1021,948,9E,2009,91619E,26,17,10,33,24,IAH,HOU,24,7,9,0,,0,0,0,9,0,24
+24	2008,1,2,3,1245,1025,1340,1125,OH,5610,N806CA,55,60,11,135,140,IAD,DCA,24,5,39,0,,0,135,0,0,0,0
+28	2008,2,22,5,2046,2050,NA,2156,OO,3698,N298SW,NA,66,NA,NA,-4,SLC,OGD,28,NA,12,0,,1,NA,NA,NA,NA,NA
+30	2008,1,6,7,2226,2200,2301,2240,CO,348,N56859,35,40,11,21,26,SJC,SFO,30,7,17,0,,0,0,0,0,0,21
+text: Unable to write to output stream.
+</terminal>
+
+맵파일로 잘 만들어졌습니다.<br>
+index파일도 궁금한데 한번 볼까요?<br>
+
+<terminal>
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -text 2008_mapfile/part-00000/index | head -10
+18/01/28 05:31:20 INFO util.NativeCodeLoader: Loaded the native-hadoop library
+18/01/28 05:31:20 INFO zlib.ZlibFactory: Successfully loaded & initialized native-zlib library
+18/01/28 05:31:20 INFO compress.CodecPool: Got brand-new decompressor
+18/01/28 05:31:20 INFO compress.CodecPool: Got brand-new decompressor
+18/01/28 05:31:20 INFO compress.CodecPool: Got brand-new decompressor
+18/01/28 05:31:20 INFO compress.CodecPool: Got brand-new decompressor
+11	125
+31	125
+31	125
+31	125
+31	125
+31	125
+36	125
+41	125
+41	125
+49	125
+text: Unable to write to output stream.
+</terminal>
+
+음.... 잘 모르겠군요. 뭐 아무튼 내용이 있구나 하는건 알았습니다.<br>
+부분 정렬의 목적은 검색이라는 말씀을 드렸죠? 이제 검색하는 소스를 짜보겠습니다.<br>
+<br>
+<color4>SearchValueList.java</color4>
+
+<terminal>
+package Airline;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.MapFile.Reader;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.mapred.MapFileOutputFormat;
+import org.apache.hadoop.mapred.Partitioner;
+import org.apache.hadoop.mapred.lib.HashPartitioner;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
+
+public class SearchValueList extends Configured implements Tool {
+
+    public static void main(String[] args) throws Exception {
+        int res = ToolRunner.run(new Configuration(), new SearchValueList(), args);
+        System.out.println("###result : " + res);
+    }
+
+    public int run(String[] args) throws Exception {
+        Path path = new Path(args[0]);  // 입력받은 첫번 째 배열(입력 파일 경로)
+        FileSystem fs = path.getFileSystem(getConf());
+
+        Reader[] readers = MapFileOutputFormat.getReaders(fs, path, getConf()); // 입력 파일 경로(맵 파일)을 배열 형식으로 받아들임
+
+        IntWritable key = new IntWritable();
+        key.set(Integer.parseInt(args[1])); // 두번 째 배열을 key값으로 삼음
+
+        Text value = new Text();
+
+        Partitioner&lt;IntWritable, Text&gt; partitioner = new HashPartitioner&lt;IntWritable, Text&gt;();  // key, value를 이용해 해쉬 파티셔너 생성
+        Reader reader = readers[partitioner.getPartition(key, value, readers.length)];  // 배열 형식으로 받아들인 맵 파일에서 파티셔너를 이용해 검색
+
+        Writable entry = reader.get(key, value);
+        if (entry == null) {    // 검색 결과가 없을 때
+            System.out.println("The requested key was not found.");
+        }
+
+        IntWritable nextKey = new IntWritable();
+        do {
+            System.out.println(value.toString());   // 검색 결과 출력
+        } while (reader.next(nextKey, value) && key.equals(nextKey));   // 검색어가 다음 배열의 key값과 같을 때 까지
+
+        return 0;
+    }
+}
+</terminal>
+
+다 했으니 컴파일하고 검색을 실행해봅시다!<br>
+
+<terminal>
+<strong>[hadoop@namenode search]$</strong> javac -cp $HADOOP_HOME/hadoop-core-1.2.1.jar -d . SearchValueList.java
+<strong>[hadoop@namenode search]$</strong> jar -cvf $HADOOP_HOME/SearchValueList.jar ./Airline/SearchValueList.class
+Manifest를 추가함
+추가하는 중: Airline/SearchValueList.class(입력 = 2656) (출력 = 1216)(54%를 감소함)
+<strong>[hadoop@namenode search]$</strong> cd $HADOOP_HOME
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -rmr 2008_mapfile/_*
+Deleted hdfs://namenode:9000/user/hadoop/2008_mapfile/_logs
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop jar SearchValueList.jar Airline.SearchValueList 2008_mapfile 100 | head -10
+18/01/28 06:01:58 INFO util.NativeCodeLoader: Loaded the native-hadoop library
+18/01/28 06:01:58 INFO zlib.ZlibFactory: Successfully loaded & initialized native-zlib library
+18/01/28 06:01:58 INFO compress.CodecPool: Got brand-new decompressor
+18/01/28 06:01:58 INFO compress.CodecPool: Got brand-new decompressor
+18/01/28 06:01:58 INFO compress.CodecPool: Got brand-new decompressor
+18/01/28 06:01:58 INFO compress.CodecPool: Got brand-new decompressor
+18/01/28 06:01:58 INFO compress.CodecPool: Got brand-new decompressor
+18/01/28 06:01:58 INFO compress.CodecPool: Got brand-new decompressor
+18/01/28 06:01:58 INFO compress.CodecPool: Got brand-new decompressor
+18/01/28 06:01:58 INFO compress.CodecPool: Got brand-new decompressor
+2008,1,29,2,1735,1740,1807,1814,HA,545,N477HA,32,34,22,-7,-5,OGG,HNL,<color4>100</color4>,5,5,0,,0,NA,NA,NA,NA,NA
+2008,1,30,3,1740,1740,1815,1814,HA,545,N477HA,35,34,22,1,0,OGG,HNL,<color4>100</color4>,7,6,0,,0,NA,NA,NA,NA,NA
+2008,1,31,4,1737,1740,1809,1814,HA,545,N484HA,32,34,22,-5,-3,OGG,HNL,<color4>100</color4>,5,5,0,,0,NA,NA,NA,NA,NA
+2008,1,1,2,1629,1635,1705,1712,HA,546,N479HA,36,37,22,-7,-6,HNL,OGG,<color4>100</color4>,5,9,0,,0,NA,NA,NA,NA,NA
+2008,1,2,3,1630,1635,1709,1712,HA,546,N481HA,39,37,24,-3,-5,HNL,OGG,<color4>100</color4>,4,11,0,,0,NA,NA,NA,NA,NA
+2008,1,3,4,1629,1635,1708,1712,HA,546,N481HA,39,37,24,-4,-6,HNL,OGG,<color4>100</color4>,5,10,0,,0,NA,NA,NA,NA,NA
+2008,1,4,5,1632,1635,1710,1712,HA,546,N487HA,38,37,23,-2,-3,HNL,OGG,<color4>100</color4>,7,8,0,,0,NA,NA,NA,NA,NA
+2008,1,5,6,1627,1635,1701,1712,HA,546,N484HA,34,37,22,-11,-8,HNL,OGG,<color4>100</color4>,5,7,0,,0,NA,NA,NA,NA,NA
+2008,1,6,7,1632,1635,1706,1712,HA,546,N479HA,34,37,20,-6,-3,HNL,OGG,<color4>100</color4>,6,8,0,,0,NA,NA,NA,NA,NA
+2008,1,7,1,1630,1635,1705,1712,HA,546,N479HA,35,37,21,-7,-5,HNL,OGG,<color4>100</color4>,5,9,0,,0,NA,NA,NA,NA,NA
+</terminal>
+
+distance값이 100인 것만 출력된 것을 확인할 수 있습니다.<br>
+이런식으로 특정 값에 대한 검색이 필요한 경우에는 부분 정렬을 이용하는것이 좋을 것 입니다.<br>
+이번 글은 여기까지 하고, 다음 글에서는 전체 정렬을 다루도록 하겠습니다.<br>
+<br>
+<a href="/hadoop/page/2_6.html" onclick="
+    event.preventDefault();
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = () => {
+        document.querySelector('main').innerHTML = xhttp.responseText;
+    }
+
+    xhttp.open('GET', '/hadoop/page/2_6.html', true);
+    xhttp.send();
+
+    document.title = 'Hadoop Guide Part. 2 - Step. 6';
+    history.pushState('/hadoop/page/2_6.html' + ' ' + 'Part. 2 - Step. 6', null, '#2_6');
+
+    document.querySelector('side').children[1].classList.add('on');
+    document.querySelector('side').children[1].children[5].classList.remove('on');
+    document.querySelector('side').children[1].children[6].classList.add('on');
+" class="button">다음단계로 가기</a>

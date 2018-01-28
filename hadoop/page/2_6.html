@@ -1,0 +1,132 @@
+이번 글에서는 전체 정렬에 대해서 다루겠습니다.<br>
+이번 글의 파일은 hadoop-examples 폴더 안에 totalSort 라는 폴더를 만들어서 진행하겠습니다.<br>
+<br>
+<color4>SequenceFileTotalSort.java</color4>
+
+<terminal>
+import java.net.URI;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.filecache.DistributedCache;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.SequenceFile.CompressionType;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.compress.GzipCodec;
+import org.apache.hadoop.mapred.FileInputFormat;
+import org.apache.hadoop.mapred.FileOutputFormat;
+import org.apache.hadoop.mapred.JobClient;
+import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapred.SequenceFileInputFormat;
+import org.apache.hadoop.mapred.SequenceFileOutputFormat;
+import org.apache.hadoop.mapred.lib.InputSampler;
+import org.apache.hadoop.mapred.lib.TotalOrderPartitioner;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
+
+public class SequenceFileTotalSort extends Configured implements Tool {
+
+    public static void main(String[] args) throws Exception {
+        int res = ToolRunner.run(new Configuration(), new SequenceFileTotalSort(), args);
+        System.out.println("###result : " + res);
+    }
+
+    public int run(String[] args) throws Exception {
+
+        JobConf conf = new JobConf(getConf(), SequenceFileTotalSort.class);
+        conf.setJobName("SequenceFileTotalSort");
+
+        conf.setInputFormat(SequenceFileInputFormat.class);     // input 파일의 형식은 시퀀스 파일이어야 함
+        conf.setOutputFormat(SequenceFileOutputFormat.class);   // output 형식도 시퀀스 파일로 나감
+        conf.setOutputKeyClass(IntWritable.class);              // key 값은 distance. int
+        conf.setPartitionerClass(TotalOrderPartitioner.class);
+
+        // 시퀀스 포맷 옵션
+        SequenceFileOutputFormat.setCompressOutput(conf, true);
+        SequenceFileOutputFormat.setOutputCompressorClass(conf, GzipCodec.class);
+        SequenceFileOutputFormat.setOutputCompressionType(conf, CompressionType.BLOCK);
+
+        FileInputFormat.setInputPaths(conf, new Path(args[0]));
+        FileOutputFormat.setOutputPath(conf, new Path(args[1]));
+
+        Path inputDir = FileInputFormat.getInputPaths(conf)[0];
+        inputDir = inputDir.makeQualified(inputDir.getFileSystem(conf));
+        Path partitionFile = new Path(inputDir, "_partitions");
+        TotalOrderPartitioner.setPartitionFile(conf, partitionFile);
+
+        InputSampler.Sampler&lt;IntWritable, Text&gt; sampler = new InputSampler.RandomSampler&lt;IntWritable, Text&gt;(0.1, 1000, 10); // 10개의 입력 스플릿에서 0.1% 확률로 1000건의 데이터를 샘플링
+        InputSampler.writePartitionFile(conf, sampler);
+        // 샘플 데이터 추출
+
+        URI partitionUri = new URI(partitionFile.toString() + "#_partitions");
+        DistributedCache.addCacheFile(partitionUri, conf);
+        DistributedCache.createSymlink(conf);
+
+        JobClient.runJob(conf);
+
+        return 0;
+    }
+}
+</terminal>
+
+컴파일하고 실행해봅시다.<br>
+
+<terminal>
+<strong>[hadoop@namenode totalSort]$</strong> javac -cp $HADOOP_HOME/hadoop-core-1.2.1.jar SequenceFileTotalSort.java
+<strong>[hadoop@namenode totalSort]$</strong> jar -cvf $HADOOP_HOME/SequenceFileTotalSort.jar SequenceFileTotalSort.class
+Manifest를 추가함
+추가하는 중: SequenceFileTotalSort.class(입력 = 3881) (출력 = 1581)(59%를 감소함)
+<strong>[hadoop@namenode totalSort]$</strong> cd $HADOOP_HOME
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop jar SequenceFileTotalSort.jar SequenceFileTotalSort 2008_sequencefile 2008_totalsort
+.
+.
+.
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -ls 2008_totalsort
+Found 3 items
+-rw-r--r--   3 hadoop supergroup          0 2018-01-28 06:32 /user/hadoop/2008_totalsort/_SUCCESS
+drwxr-xr-x   - hadoop supergroup          0 2018-01-28 06:31 /user/hadoop/2008_totalsort/_logs
+-rw-r--r--   3 hadoop supergroup  161302998 2018-01-28 06:32 /user/hadoop/2008_totalsort/part-00000
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -text 2008_totalsort/part-00000 | head -10
+18/01/28 06:33:33 INFO util.NativeCodeLoader: Loaded the native-hadoop library
+18/01/28 06:33:33 INFO zlib.ZlibFactory: Successfully loaded & initialized native-zlib library
+18/01/28 06:33:33 INFO compress.CodecPool: Got brand-new decompressor
+18/01/28 06:33:33 INFO compress.CodecPool: Got brand-new decompressor
+18/01/28 06:33:33 INFO compress.CodecPool: Got brand-new decompressor
+18/01/28 06:33:33 INFO compress.CodecPool: Got brand-new decompressor
+11	2008,8,10,7,1315,1220,1415,1320,OH,5572,N819CA,60,60,14,55,55,JFK,LGA,11,8,38,0,,0,55,0,0,0,0
+11	2008,5,15,4,2037,1800,2125,1900,OH,4988,N806CA,48,60,31,145,157,JFK,LGA,11,10,7,0,,0,145,0,0,0,0
+17	2008,3,8,6,NA,1105,NA,1128,AA,1368,,NA,23,NA,NA,NA,EWR,LGA,17,NA,NA,1,B,0,NA,NA,NA,NA,NA
+21	2008,5,9,5,48,100,117,130,AA,588,N061AA,29,30,11,-13,-12,MIA,FLL,21,6,12,0,,0,NA,NA,NA,NA,NA
+21	2008,2,8,5,NA,1910,NA,1931,AA,1668,,NA,21,NA,NA,NA,FLL,MIA,21,NA,NA,1,A,0,NA,NA,NA,NA,NA
+24	2008,11,27,4,943,940,1014,956,9E,5816,91469E,31,16,9,18,3,IAH,HOU,24,5,17,0,,0,0,0,18,0,0
+24	2008,3,12,3,955,931,1021,948,9E,2009,91619E,26,17,10,33,24,IAH,HOU,24,7,9,0,,0,0,0,9,0,24
+24	2008,1,2,3,1245,1025,1340,1125,OH,5610,N806CA,55,60,11,135,140,IAD,DCA,24,5,39,0,,0,135,0,0,0,0
+28	2008,2,22,5,2046,2050,NA,2156,OO,3698,N298SW,NA,66,NA,NA,-4,SLC,OGD,28,NA,12,0,,1,NA,NA,NA,NA,NA
+30	2008,1,6,7,2226,2200,2301,2240,CO,348,N56859,35,40,11,21,26,SJC,SFO,30,7,17,0,,0,0,0,0,0,21
+text: Unable to write to output stream.
+</terminal>
+
+distance 순으로 정렬이 되었습니다.<br>
+정렬에 대해 전부 알아보았습니다.<br>
+다음 글에서는 조인에 대해 알아보도록 하겠습니다.<br>
+<br>
+<a href="/hadoop/page/2_7.html" onclick="
+    event.preventDefault();
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = () => {
+        document.querySelector('main').innerHTML = xhttp.responseText;
+    }
+
+    xhttp.open('GET', '/hadoop/page/2_7.html', true);
+    xhttp.send();
+
+    document.title = 'Hadoop Guide Part. 2 - Step. 7';
+    history.pushState('/hadoop/page/2_7.html' + ' ' + 'Part. 2 - Step. 7', null, '#2_7');
+
+    document.querySelector('side').children[1].classList.add('on');
+    document.querySelector('side').children[1].children[6].classList.remove('on');
+    document.querySelector('side').children[1].children[7].classList.add('on');
+" class="button">다음단계로 가기</a>

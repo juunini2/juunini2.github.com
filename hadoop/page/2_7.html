@@ -1,0 +1,232 @@
+이번 글에서는 조인에 대해 알아보겠습니다.<br>
+두 개의 연관이 있는 데이터를 연결시키는 것이 조인입니다.<br>
+조인을 실습하기 위해 항공기 이착륙 지연에 사용되었던 내용 중 항공사 코드에 대한 내용을 다운로드 받도록 하겠습니다.<br>
+hadoop-examples/airplain 폴더에서 작업해주세요.
+
+<terminal>
+<strong>[hadoop@namenode airplain]$</strong> wget http://stat-computing.org/dataexpo/2009/carriers.csv
+--2018-01-28 06:39:43--  http://stat-computing.org/dataexpo/2009/carriers.csv
+Resolving stat-computing.org (stat-computing.org)... 52.218.128.139
+Connecting to stat-computing.org (stat-computing.org)|52.218.128.139|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 43758 (43K) [text/csv]
+Saving to: ‘carriers.csv’
+
+100%[======================================>] 43,758       120KB/s   in 0.4s   
+
+2018-01-28 06:39:44 (120 KB/s) - ‘carriers.csv’ saved [43758/43758]
+
+<strong>[hadoop@namenode airplain]$</strong> sed -e '1d' carriers.csv > carries_new.csv
+<strong>[hadoop@namenode airplain]$</strong> mv carries_new.csv carriers.csv
+<strong>[hadoop@namenode airplain]$</strong> cd $HADOOP_HOME
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -put /home/hadoop/hadoop-examples/airplain/carriers.csv ./
+<strong>[hadoop@namenode hadoop]$</strong> cd /home/hadoop/hadoop-examples/airplain
+<strong>[hadoop@namenode airplain]$</strong> rm carriers.csv
+</terminal>
+
+HDFS로 복사가 완료되었습니다.<br>
+조인에는 맵 사이드 조인과 리듀스 사이드 조인이 있습니다.<br>
+맵 사이드 조인은 상대적으로 저용량 파일을 조인할 때 사용합니다.<br>
+리듀스 사이드 조인은 대용량 파일을 조인할 때 사용하고요.<br>
+먼저 맵 사이드 조인부터 해보겠습니다.<br>
+맵 사이드 조인은 이름답게 리듀서를 실행하지 않습니다.<br>
+<br>
+작업은 hadoop-examples폴더에 mapSideJoin 이라는 폴더 안에서 작업하겠습니다.<br>
+우선 다른 폴더에서 AirlineParser.java 파일을 복사해서 넣어주세요.<br>
+<br>
+아.... 시작하려고 보니 책에는 CarrierCodeParser 라는 클래스 파일을 import 하라고 했는데 책 어딜 봐도 없습니다.<br>
+휴우... 없으면 뭐... 인터넷에 올라가있는 소스를 보고 비교해서 만드는 수 밖에 없지요.<br>
+<br>
+<color4>MapSideJoinMapper.java</color4>
+
+<terminal>
+package Airline;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Hashtable;
+
+import org.apache.hadoop.filecache.DistributedCache;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+
+import Airline.AirlineParser;
+
+public class MapSideJoinMapper extends Mapper&lt;LongWritable, Text, Text, Text&gt; {   // 조인 할 것이기 때문에 key인 줄 번호만 Long으로 받고 나머지는 Text로
+
+    private Hashtable&lt;String, String&gt; joinMap = new Hashtable&lt;String, String&gt;();
+
+    private Text outputKey = new Text();
+
+    @Override
+    public void setup(Context context) throws IOException, InterruptedException {
+        try {
+
+            Path[] cacheFiles = DistributedCache.getLocalCacheFiles(context.getConfiguration());
+
+            if (cacheFile != null && cacheFiles.length > 0) {
+
+                String line;
+                String[] tokens;
+                BufferedReader br = new BufferedReader(new FileReader(cacheFiles[0].toString()));
+
+                try {
+                    while ((line = br.readLine()) != null) {
+                        tokens = line.toString().replaceAll("\"", "").split(",");
+                        joinMap.put(tokens[0], tokens[1]);
+                    }
+                } finally {
+                    br.close();
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+
+        AirlineParser = parser = new AirlineParser(value);
+        outputKey.set(parser.getUniqueCarrier());
+        context.write(outputKey, new Text(joinMap.get(parser.getUniqueCarrier()) + "\t" + value.toString()));
+
+    }
+}
+</terminal>
+
+<color4>MapSideJoin.java</color4>
+
+<terminal>
+package Airline;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.filecache.DistributedCache;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.util.GenericOptionsParser;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
+
+public class MapSideJoin extends Configured implements Tool {
+
+    public int run(String[] args) throws Exception {
+        String[] otherArgs = new GenericOptionParser(getConf(), args).getRemainingArgs();
+
+        if (otherArgs.length != 3) {    // 배열이 3개가 들어와야 함
+            System.err.println("Usage: MapSideJoin [metadata] [in] [out]");
+            System.exit(2);
+        }
+
+        Job job = new Job(getConf(), "MapSideJoin");
+
+        DistributedCache.addCacheFile(new Path(otherArgs[0]).toUri(), job.getConfiguration());  // 분산 캐시 설정
+
+        FileInputFormat.addInputPath(job, new Path(otherArgs[1]));
+        FileOutputFormat.setOutputPath(job, new Path(otherArgs[2]));
+
+        job.setJarByClass(MapSideJoin.class);
+        job.setMapperClass(MapSideJoinMapper.class);
+        job.setNumReduceTasks(0);   // 리듀서 사용 안함
+
+        job.setInputFormatClass(TextInputFormat.class);
+        job.setOutputFormatClass(TextOutputFormat.class);
+
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(Text.class);
+
+        job.waitForCompletion(true);
+        return 0;
+    }
+
+    public static void main(String[] args) throws Exception {
+		int res = ToolRunner.run(new Configuration(), new MapSideJoin(), args);
+		System.out.println("## RESULT : " + res);
+	}
+}
+</terminal>
+
+컴파일 하고 실행해봅시다.<br>
+
+<terminal>
+<strong>[hadoop@namenode mapSideJoin]$</strong> javac -cp $HADOOP_HOME/hadoop-core-1.2.1.jar:$HADOOP_HOME/lib/commons-cli-1.2.jar -d . *.java
+<strong>[hadoop@namenode mapSideJoin]$</strong> jar -cvf $HADOOP_HOME/MapSideJoin.jar ./Airline/*.class
+Manifest를 추가함
+추가하는 중: Airline/AirlineParser.class(입력 = 2223) (출력 = 1079)(51%를 감소함)
+추가하는 중: Airline/MapSideJoin.class(입력 = 2677) (출력 = 1267)(52%를 감소함)
+추가하는 중: Airline/MapSideJoinMapper.class(입력 = 3307) (출력 = 1365)(58%를 감소함)
+<strong>[hadoop@namenode mapSideJoin]$</strong> cd $HADOOP_HOME
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop jar MapSideJoin.jar Airline.MapSideJoin carriers.csv airplain/2008.csv map_join
+.
+.
+.
+18/01/28 07:40:31 INFO mapred.JobClient:  map 100% reduce 0%
+18/01/28 07:40:31 INFO mapred.JobClient: Job complete: job_201801272358_0015
+18/01/28 07:40:31 INFO mapred.JobClient: Counters: 19
+18/01/28 07:40:31 INFO mapred.JobClient:   Map-Reduce Framework
+18/01/28 07:40:31 INFO mapred.JobClient:     Spilled Records=0
+.
+.
+.
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -ls map_join
+Found 13 items
+-rw-r--r--   3 hadoop supergroup          0 2018-01-28 07:40 /user/hadoop/map_join/_SUCCESS
+drwxr-xr-x   - hadoop supergroup          0 2018-01-28 07:39 /user/hadoop/map_join/_logs
+-rw-r--r--   3 hadoop supergroup   87401259 2018-01-28 07:39 /user/hadoop/map_join/part-m-00000
+-rw-r--r--   3 hadoop supergroup   87045872 2018-01-28 07:39 /user/hadoop/map_join/part-m-00001
+-rw-r--r--   3 hadoop supergroup   88157694 2018-01-28 07:39 /user/hadoop/map_join/part-m-00002
+-rw-r--r--   3 hadoop supergroup   88954716 2018-01-28 07:39 /user/hadoop/map_join/part-m-00003
+-rw-r--r--   3 hadoop supergroup   87780517 2018-01-28 07:40 /user/hadoop/map_join/part-m-00004
+-rw-r--r--   3 hadoop supergroup   87481529 2018-01-28 07:40 /user/hadoop/map_join/part-m-00005
+-rw-r--r--   3 hadoop supergroup   87195853 2018-01-28 07:40 /user/hadoop/map_join/part-m-00006
+-rw-r--r--   3 hadoop supergroup   87122067 2018-01-28 07:40 /user/hadoop/map_join/part-m-00007
+-rw-r--r--   3 hadoop supergroup   86756011 2018-01-28 07:40 /user/hadoop/map_join/part-m-00008
+-rw-r--r--   3 hadoop supergroup   89365213 2018-01-28 07:40 /user/hadoop/map_join/part-m-00009
+-rw-r--r--   3 hadoop supergroup   23207941 2018-01-28 07:40 /user/hadoop/map_join/part-m-00010
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -cat map_join/part-m-00000 | head -10
+WN	Southwest Airlines Co.	2008,1,3,4,2003,1955,2211,2225,WN,335,N712SW,128,150,116,-14,8,IAD,TPA,810,4,8,0,,0,NA,NA,NA,NA,NA
+WN	Southwest Airlines Co.	2008,1,3,4,754,735,1002,1000,WN,3231,N772SW,128,145,113,2,19,IAD,TPA,810,5,10,0,,0,NA,NA,NA,NA,NA
+WN	Southwest Airlines Co.	2008,1,3,4,628,620,804,750,WN,448,N428WN,96,90,76,14,8,IND,BWI,515,3,17,0,,0,NA,NA,NA,NA,NA
+WN	Southwest Airlines Co.	2008,1,3,4,926,930,1054,1100,WN,1746,N612SW,88,90,78,-6,-4,IND,BWI,515,3,7,0,,0,NA,NA,NA,NA,NA
+WN	Southwest Airlines Co.	2008,1,3,4,1829,1755,1959,1925,WN,3920,N464WN,90,90,77,34,34,IND,BWI,515,3,10,0,,0,2,0,0,0,32
+WN	Southwest Airlines Co.	2008,1,3,4,1940,1915,2121,2110,WN,378,N726SW,101,115,87,11,25,IND,JAX,688,4,10,0,,0,NA,NA,NA,NA,NA
+WN	Southwest Airlines Co.	2008,1,3,4,1937,1830,2037,1940,WN,509,N763SW,240,250,230,57,67,IND,LAS,1591,3,7,0,,0,10,0,0,0,47
+WN	Southwest Airlines Co.	2008,1,3,4,1039,1040,1132,1150,WN,535,N428WN,233,250,219,-18,-1,IND,LAS,1591,7,7,0,,0,NA,NA,NA,NA,NA
+WN	Southwest Airlines Co.	2008,1,3,4,617,615,652,650,WN,11,N689SW,95,95,70,2,2,IND,MCI,451,6,19,0,,0,NA,NA,NA,NA,NA
+WN	Southwest Airlines Co.	2008,1,3,4,1620,1620,1639,1655,WN,810,N648SW,79,95,70,-16,0,IND,MCI,451,3,6,0,,0,NA,NA,NA,NA,NA
+cat: Unable to write to output stream.
+</terminal>
+
+요렇게 항공사 코드와 항공사의 풀네임을 조인시켜줍니다.<br>
+맵 사이드 조인은 부분 정렬 처럼 상대적으로 작은 용량의 데이터를 조인하는데에 좋습니다.<br>
+좀 더 용량이 커지면 리듀스 사이드 조인을 해야합니다.<br>
+다음 글에서는 리듀스 사이드 조인을 다루도록 하겠습니다.<br>
+<br>
+<a href="/hadoop/page/2_8.html" onclick="
+    event.preventDefault();
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = () => {
+        document.querySelector('main').innerHTML = xhttp.responseText;
+    }
+
+    xhttp.open('GET', '/hadoop/page/2_8.html', true);
+    xhttp.send();
+
+    document.title = 'Hadoop Guide Part. 2 - Step. 8';
+    history.pushState('/hadoop/page/2_8.html' + ' ' + 'Part. 2 - Step. 8', null, '#2_8');
+
+    document.querySelector('side').children[1].classList.add('on');
+    document.querySelector('side').children[1].children[7].classList.remove('on');
+    document.querySelector('side').children[1].children[8].classList.add('on');
+" class="button">다음단계로 가기</a>
