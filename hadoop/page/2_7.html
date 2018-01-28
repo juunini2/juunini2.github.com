@@ -40,59 +40,59 @@ HDFS로 복사가 완료되었습니다.<br>
 <color4>MapSideJoinMapper.java</color4>
 
 <terminal>
-package Airline;
+<color4>package</color4> <color2>Airline</color2>;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Hashtable;
+<color4>import</color4> <color2>java.io.BufferedReader</color2>;
+<color4>import</color4> <color2>java.io.FileReader</color2>;
+<color4>import</color4> <color2>java.io.IOException</color2>;
+<color4>import</color4> <color2>java.util.Hashtable</color2>;
 
-import org.apache.hadoop.filecache.DistributedCache;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Mapper;
+<color4>import</color4> <color2>org.apache.hadoop.filecache.DistributedCache</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.fs.Path</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.LongWritable</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.Text</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.Mapper</color2>;
 
-import Airline.AirlineParser;
+<color4>import</color4> <color2>Airline.AirlineParser</color2>;
 
-public class MapSideJoinMapper extends Mapper&lt;LongWritable, Text, Text, Text&gt; {   // 조인 할 것이기 때문에 key인 줄 번호만 Long으로 받고 나머지는 Text로
+<color2>public</color2> <color2>class</color2> MapSideJoinMapper <color2>extends</color2> <color4>Mapper</color4>&lt;<color2>LongWritable</color2>, <color2>Text</color2>, <color2>Text</color2>, <color2>Text</color2>&gt; {   <blur><i>// 조인 할 것이기 때문에 key인 줄 번호만 Long으로 받고 나머지는 Text로</i></blur>
 
-    private Hashtable&lt;String, String&gt; joinMap = new Hashtable&lt;String, String&gt;();
+    <color2>private</color2> <color2>Hashtable</color2>&lt;<color2>String</color2>, <color2>String</color2>&gt; joinMap = <color6>new</color6> <color2>Hashtable</color2>&lt;<color2>String</color2>, <color2>String</color2>&gt;();
 
-    private Text outputKey = new Text();
+    <color2>private</color2> <color2>Text</color2> outputKey = <color6>new</color6> <color3>Text</color3>();
 
-    @Override
-    public void setup(Context context) throws IOException, InterruptedException {
-        try {
+    <color2>@Override</color2>
+    <color2>public</color2> <color2>void</color2> <color3>setup</color3>(<color2>Context</color2> context) <color2>throws</color2> <color2>IOException</color2>, <color2>InterruptedException</color2> {
+        <color6>try</color6> {
 
-            Path[] cacheFiles = DistributedCache.getLocalCacheFiles(context.getConfiguration());
+            <color2>Path</color2>[] cacheFiles = <color4>DistributedCache</color4>.<color3>getLocalCacheFiles</color3>(<color4>context</color4>.getConfiguration());
 
-            if (cacheFile != null && cacheFiles.length > 0) {
+            <color6>if</color6> (cacheFile <color2>!= null &&</color2> <color4>cacheFiles</color4>.length <color2>> 0</color2>) {
 
-                String line;
-                String[] tokens;
-                BufferedReader br = new BufferedReader(new FileReader(cacheFiles[0].toString()));
+                <color2>String</color2> line;
+                <color2>String</color2>[] tokens;
+                <color2>BufferedReader</color2> br = <color6>new</color6> <color3>BufferedReader</color3>(<color6>new</color6> <color3>FileReader</color3>(cacheFiles[<color2>0</color2>].<color3>toString</color3>()));
 
-                try {
-                    while ((line = br.readLine()) != null) {
-                        tokens = line.toString().replaceAll("\"", "").split(",");
-                        joinMap.put(tokens[0], tokens[1]);
+                <color6>try</color6> {
+                    <color6>while</color6> ((line = <color4>br</color4>.<color3>readLine</color3>()) <color2>!= null</color2>) {
+                        tokens = <color4>line</color4>.<color3>toString</color3>().<color3>replaceAll</color3>(<color7>"\""</color7>, <color7>""</color7>).<color3>split</color3>(<color7>","</color7>);
+                        <color4>joinMap</color4>.<color3>put</color3>(tokens[<color2>0</color2>], tokens[<color2>1</color2>]);
                     }
-                } finally {
-                    br.close();
+                } <color6>finally</color6> {
+                    <color4>br</color4>.<color3>close</color3>();
                 }
             }
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } <color6>catch</color6> (<color2>IOException</color2> e) {
+            <color4>e</color4>.<color3>printStackTrace</color3>();
         }
     }
 
-    public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+    <color2>public</color2> <color2>void</color2> <color3>map</color3>(<color2>LongWritable</color2> key, <color2>Text</color2> value, <color2>Context</color2> context) <color2>throws</color2> <color2>IOException</color2>, <color2>InterruptedException</color2> {
 
-        AirlineParser = parser = new AirlineParser(value);
-        outputKey.set(parser.getUniqueCarrier());
-        context.write(outputKey, new Text(joinMap.get(parser.getUniqueCarrier()) + "\t" + value.toString()));
+        <color2>AirlineParser</color2> parser = <color6>new</color6> <color3>AirlineParser</color3>(value);
+        <color4>outputKey</color4>.<color3>set</color3>(<color4>parser</color4>.<color3>getUniqueCarrier</color3>());
+        <color4>context</color4>.<color3>write</color3>(outputKey, <color6>new</color6> <color3>Text</color3>(<color4>joinMap</color4>.<color3>get</color3>(<color4>parser</color4>.<color3>getUniqueCarrier</color3>()) + <color7>"\t"</color7> + <color4>value</color4>.<color3>toString</color3>()));
 
     }
 }
@@ -101,56 +101,56 @@ public class MapSideJoinMapper extends Mapper&lt;LongWritable, Text, Text, Text&
 <color4>MapSideJoin.java</color4>
 
 <terminal>
-package Airline;
+<color4>package</color4> <color2>Airline</color2>;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.filecache.DistributedCache;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import org.apache.hadoop.util.GenericOptionsParser;
-import org.apache.hadoop.util.Tool;
-import org.apache.hadoop.util.ToolRunner;
+<color4>import</color4> <color2>org.apache.hadoop.conf.Configuration</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.conf.Configured</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.filecache.DistributedCache</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.fs.Path</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.Text</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.Job</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.lib.input.FileInputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.lib.input.TextInputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.lib.output.FileOutputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.lib.output.TextOutputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.util.GenericOptionsParser</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.util.Tool</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.util.ToolRunner</color2>;
 
-public class MapSideJoin extends Configured implements Tool {
+<color2>public</color2> <color2>class</color2> MapSideJoin <color2>extends</color2> <color4>Configured</color4> <color2>implements</color2> <color4>Tool</color4> {
 
-    public int run(String[] args) throws Exception {
-        String[] otherArgs = new GenericOptionParser(getConf(), args).getRemainingArgs();
+    <color2>public</color2> <color2>int</color2> <color3>run</color3>(<color2>String</color2>[] args) <color2>throws</color2> <color2>Exception</color2> {
+        <color2>String</color2>[] otherArgs = <color6>new</color6> <color3>GenericOptionParser</color3>(<color3>getConf</color3>(), args).<color3>getRemainingArgs</color3>();
 
-        if (otherArgs.length != 3) {    // 배열이 3개가 들어와야 함
-            System.err.println("Usage: MapSideJoin [metadata] [in] [out]");
-            System.exit(2);
+        <color6>if</color6> (<color4>otherArgs</color4>.length <color2>!= 3</color2>) {    <blur><i>// 배열이 3개가 들어와야 함</i></blur>
+            <color4>System</color4>.<color4>err</color4>.<color3>println</color3>(<color7>"Usage: MapSideJoin [metadata] [in] [out]"</color7>);
+            <color4>System</color4>.<color3>exit</color3>(<color2>2</color2>);
         }
 
-        Job job = new Job(getConf(), "MapSideJoin");
+        <color2>Job</color2> job = <color6>new</color6> <color3>Job</color3>(<color3>getConf</color3>(), <color7>"MapSideJoin"</color7>);
 
-        DistributedCache.addCacheFile(new Path(otherArgs[0]).toUri(), job.getConfiguration());  // 분산 캐시 설정
+        <color4>DistributedCache</color4>.<color3>addCacheFile</color3>(<color6>new</color6> <color3>Path</color3>(otherArgs[<color2>0</color2>]).<color3>toUri</color3>(), <color4>job</color4>.<color3>getConfiguration</color3>());  <blur><i>// 분산 캐시 설정</i></blur>
 
-        FileInputFormat.addInputPath(job, new Path(otherArgs[1]));
-        FileOutputFormat.setOutputPath(job, new Path(otherArgs[2]));
+        <color4>FileInputFormat</color4>.<color3>addInputPath</color3>(job, <color6>new</color6> <color3>Path</color3>(otherArgs[<color2>1</color2>]));
+        <color4>FileOutputFormat</color4>.<color3>setOutputPath</color3>(job, <color6>new</color6> <color3>Path</color3>(otherArgs[<color2>2</color2>]));
 
-        job.setJarByClass(MapSideJoin.class);
-        job.setMapperClass(MapSideJoinMapper.class);
-        job.setNumReduceTasks(0);   // 리듀서 사용 안함
+        <color4>job</color4>.<color3>setJarByClass</color3>(<color4>MapSideJoin</color4>.class);
+        <color4>job</color4>.<color3>setMapperClass</color3>(<color4>MapSideJoinMapper</color4>.class);
+        <color4>job</color4>.<color3>setNumReduceTasks</color3>(<color2>0</color2>);   <blur><i>// 리듀서 사용 안함</i></blur>
 
-        job.setInputFormatClass(TextInputFormat.class);
-        job.setOutputFormatClass(TextOutputFormat.class);
+        <color4>job</color4>.<color3>setInputFormatClass</color3>(<color4>TextInputFormat</color4>.class);
+        <color4>job</color4>.<color3>setOutputFormatClass</color3>(<color4>TextOutputFormat</color4>.class);
 
-        job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(Text.class);
+        <color4>job</color4>.<color3>setOutputKeyClass</color3>(<color4>Text</color4>.class);
+        <color4>job</color4>.<color3>setOutputValueClass</color3>(<color4>Text</color4>.class);
 
-        job.waitForCompletion(true);
-        return 0;
+        <color4>job</color4>.<color3>waitForCompletion</color3>(<color2>true</color2>);
+        <color6>return</color6> 0;
     }
 
-    public static void main(String[] args) throws Exception {
-		int res = ToolRunner.run(new Configuration(), new MapSideJoin(), args);
-		System.out.println("## RESULT : " + res);
+    <color2>public</color2> <color2>static</color2> <color2>void</color2> <color3>main</color3>(<color2>String</color2>[] args) <color2>throws</color2> <color2>Exception</color2> {
+		<color2>int</color2> res = <color4>ToolRunner</color4>.<color3>run</color3>(<color6>new</color6> <color3>Configuration</color3>(), <color6>new</color6> <color3>MapSideJoin</color3>(), args);
+		<color4>System</color4>.<color4>out</color4>.<color3>println</color3>(<color7>"## RESULT : "</color7> + res);
 	}
 }
 </terminal>

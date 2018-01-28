@@ -9,74 +9,74 @@
 <color4>SequenceFileCreator.java</color4>
 
 <terminal>
-package Airline;
+<color4>package</color4> Airline;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.SequenceFile.CompressionType;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.compress.GzipCodec;
-import org.apache.hadoop.mapred.*;
-import org.apache.hadoop.util.Tool;
-import org.apache.hadoop.util.ToolRunner;
+<color4>import</color4> <color2>org.apache.hadoop.conf.Configuration</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.conf.Configured</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.fs.Path</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.IntWritable</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.LongWritable</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.SequenceFile.CompressionType</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.Text</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.compress.GzipCodec</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapred.*</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.util.Tool</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.util.ToolRunner</color2>;
 
-import Airline.AirlineParser;
+<color4>import</color4> <color2>Airline.AirlineParser</color2>;
 
-import java.io.IOException;
+<color4>import</color4> <color2>java.io.IOException</color2>;
 
-public class SequenceFileCreator extends Configured implements Tool {
-    static class DistanceMapper extends MapReduceBase implements Mapper&lt;LongWritable, Text, IntWritable, Text&gt; {  // 매퍼 클래스
+<color2>public</color2> <color2>class</color2> SequenceFileCreator <color2>extends</color2> <color4>Configured</color4> <color2>implements</color2> <color4>Tool</color4> {
+    <color2>static</color2> <color2>class</color2> DistanceMapper <color2>extends</color2> <color4>MapReduceBase</color4> <color2>implements</color2> <color4>Mapper</color4>&lt;<color2>LongWritable</color2>, <color2>Text</color2>, <color2>IntWritable</color2>, <color2>Text</color2>&gt; {  <blur><i>// 매퍼 클래스</i></blur>
 
-        private IntWritable outputKey = new IntWritable();
+        <color2>private</color2> <color2>IntWritable</color2> outputKey = <color6>new</color6> <color3>IntWritable</color3>();
 
-        public void map(LongWritable key, Text value, OutputCollector&lt;IntWritable, Text&gt; output, Reporter reporter) throws IOException {
+        <color2>public</color2> <color2>void</color2> <color3>map</color3>(<color2>LongWritable</color2> key, <color2>Text</color2> value, <color2>OutputCollector</color2>&lt;<color2>IntWritable</color2>, <color2>Text</color2>&gt; output, <color2>Reporter</color2> reporter) <color2>throws</color2> <color2>IOException</color2> {
 
-            try {
-                AirlineParser parser = new AirlineParser(value);
-                if (parser.isDistanceAvailable()) {
-                    outputKey.set(parser.getDistance());    // 키값에 거리를 넣음. 거리를 기준으로 정렬됨.
-                    output.collect(outputKey, value);       // 매퍼나 리듀서, 드라이버 클래스 없이 그냥 시퀀스 파일로 변환만 하기 때문에 컬렉터가 수행함
+            <color6>try</color6> {
+                <color2>AirlineParser</color2> parser = <color6>new</color6> <color3>AirlineParser</color3>(value);
+                <color6>if</color6> (<color4>parser</color4>.<color3>isDistanceAvailable</color3>()) {
+                    <color4>outputKey</color4>.<color3>set</color3>(parser.<color3>getDistance</color3>());    <blur><i>// 키값에 거리를 넣음. 거리를 기준으로 정렬됨.</i></blur>
+                    <color4>output</color4>.<color3>collect</color3>(outputKey, value);       <blur><i>// 매퍼나 리듀서, 드라이버 클래스 없이 그냥 시퀀스 파일로 변환만 하기 때문에 컬렉터가 수행함</i></blur>
                 }
-            } catch (ArrayIndexOutOfBoundsException ae) {
-                outputKey.set(0);
-                output.collect(outputKey, value);
-                ae.printStackTrace();
-            } catch (Exception e) {
-                outputKey.set(0);
-                output.collect(outputKey, value);
-                e.printStackTrace();
+            } <color6>catch</color6> (<color2>ArrayIndexOutOfBoundsException</color2> ae) {
+                <color4>outputKey</color4>.<color3>set</color3>(<color2>0</color2>);
+                <color4>output</color4>.<color3>collect</color3>(outputKey, value);
+                <color4>ae</color4>.<color3>printStackTrace</color3>();
+            } <color6>catch</color6> (<color2>Exception</color2> e) {
+                <color4>outputKey</color4>.<color3>set</color3>(<color2>0</color2>);
+                <color4>output</color4>.<color3>collect</color3>(outputKey, value);
+                <color4>e</color4>.<color3>printStackTrace</color3>();
             }
         }
     }
 
-    public int run(String[] args) throws Exception {    // 드라이버 클래스
-        JobConf conf = new JobConf(SequenceFileCreator.class);
-        conf.setJobName("SequenceFileCreator");
+    <color2>public</color2> <color2>int</color2> <color3>run</color3>(<color2>String</color2>[] args) <color2>throws</color2> <color2>Exception</color2> {    <blur><i>// 드라이버 클래스</i></blur>
+        <color2>JobConf</color2> conf = <color6>new</color6> <color3>JobConf</color3>(<color6>SequenceFileCreator</color6>.class);
+        <color6>conf</color6>.<color3>setJobName</color3>(<color7>"SequenceFileCreator"</color7>);
 
-        conf.setMapperClass(DistanceMapper.class);  // 위에 있는 스태틱 클래스가 매퍼 기능을 함
-        conf.setNumReduceTasks(0);   // 리듀스 기능 수행 안함
+        <color6>conf</color6>.<color3>setMapperClass</color3>(<color6>DistanceMapper</color6>.class);  <blur><i>// 위에 있는 스태틱 클래스가 매퍼 기능을 함</i></blur>
+        <color6>conf</color6>.<color3>setNumReduceTasks</color3>(<color2>0</color2>);   <blur><i>// 리듀스 기능 수행 안함</i></blur>
 
-        FileInputFormat.setInputPaths(conf, new Path(args[0]));
-        FileOutputFormat.setOutputPath(conf, new Path(args[1]));
+        <color6>FileInputFormat</color6>.<color3>setInputPaths</color3>(conf, <color6>new</color6> Path(args[<color2>0</color2>]));
+        <color6>FileOutputFormat</color6>.<color3>setOutputPath</color3>(conf, <color6>new</color6> Path(args[<color2>1</color2>]));
 
-        conf.setOutputFormat(SequenceFileOutputFormat.class);   // 시퀀스 파일로 출력
-        conf.setOutputKeyClass(IntWritable.class);              // 키값은 거리. int값으로도 표현 가능
-        conf.setOutputValueClass(Text.class);                   // 출력값은 문서 라인 전체.... Text로 해야함
+        <color6>conf</color6>.<color3>setOutputFormat</color3>(<color6>SequenceFileOutputFormat</color6>.class);   <blur><i>// 시퀀스 파일로 출력</i></blur>
+        <color6>conf</color6>.<color3>setOutputKeyClass</color3>(<color6>IntWritable</color6>.class);              <blur><i>// 키값은 거리. int값으로도 표현 가능</i></blur>
+        <color6>conf</color6>.<color3>setOutputValueClass</color3>(<color6>Text</color6>.class);                   <blur><i>// 출력값은 문서 라인 전체.... Text로 해야함</i></blur>
 
-        SequenceFileOutputFormat.setCompressOutput(conf, true);                         // 시퀀스로 압축
-        SequenceFileOutputFormat.setOutputCompressorClass(conf, GzipCodec.class);       // Gzip 코덱을 이용하여 압축
-        SequenceFileOutputFormat.setOutputCompressionType(conf, CompressionType.BLOCK); // 블록단위로.
+        <color6>SequenceFileOutputFormat</color6>.<color3>setCompressOutput</color3>(conf, <color2>true</color2>);                         <blur><i>// 시퀀스로 압축</i></blur>
+        <color6>SequenceFileOutputFormat</color6>.<color3>setOutputCompressorClass</color3>(conf, <color6>GzipCodec</color6>.class);       <blur><i>// Gzip 코덱을 이용하여 압축</i></blur>
+        <color6>SequenceFileOutputFormat</color6>.<color3>setOutputCompressionType</color3>(conf, <color6>CompressionType</color6>.BLOCK); <blur><i>// 블록단위로.</i></blur>
 
-        JobClient.runJob(conf);
-        return 0;
+        <color6>JobClient</color6>.<color3>runJob</color3>(conf);
+        <color6>return</color6> <color2>0</color2>;
     }
 
-    public static void main(String[] args) throws Exception {
-        int res = ToolRunner.run(new Configuration(), new SequenceFileCreator(), args);
-        System.out.println("###Result : " + res);
+    <color2>public</color2> <color2>static</color2> <color2>void</color2> <color3>main</color3>(<color2>String</color2>[] args) <color2>throws</color2> <color2>Exception</color2> {
+        <color2>int</color2> res = <color4>ToolRunner</color4>.<color3>run</color3>(<color6>new</color6> <color3>Configuration</color3>(), <color6>new</color6> <color3>SequenceFileCreator</color3>(), args);
+        <color4>System</color4>.<color4>out</color4>.<color3>println</color3>(<color7>"###Result : "</color7> + res);
     }
 }
 </terminal>
@@ -170,48 +170,48 @@ text: Unable to write to output stream.
 <color4>MapFileCreator.java</color4>
 
 <terminal>
-package Airline;
+<color4>package</color4> <color2>Airline</color2>;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.SequenceFile.CompressionType;
-import org.apache.hadoop.io.compress.GzipCodec;
-import org.apache.hadoop.mapred.FileInputFormat;
-import org.apache.hadoop.mapred.FileOutputFormat;
-import org.apache.hadoop.mapred.JobClient;
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapred.MapFileOutputFormat;
-import org.apache.hadoop.mapred.SequenceFileInputFormat;
-import org.apache.hadoop.mapred.SequenceFileOutputFormat;
-import org.apache.hadoop.util.Tool;
-import org.apache.hadoop.util.ToolRunner;
+<color4>import</color4> <color2>org.apache.hadoop.conf.Configuration</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.conf.Configured</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.fs.Path</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.IntWritable</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.SequenceFile.CompressionType</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.compress.GzipCodec</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapred.FileInputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapred.FileOutputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapred.JobClient</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapred.JobConf</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapred.MapFileOutputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapred.SequenceFileInputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapred.SequenceFileOutputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.util.Tool</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.util.ToolRunner</color2>;
 
-public class MapFileCreator extends Configured implements Tool {
+<color2>public</color2> <color2>class</color2> MapFileCreator <color2>extends</color2> <color4>Configured</color4> <color2>implements</color2> <color4>Tool</color4> {
 
-    public static void main(String[] args) throws Exception {
-        int res = ToolRunner.run(new Configuration(), new MapFileCreator(), args);
-        System.out.println("###result : " + res);
+    <color2>public</color2> <color2>static</color2> <color2>void</color2> <color3>main</color3>(<color2>String</color2>[] args) <color2>throws</color2> <color2>Exception</color2> {
+        int res = <color4>ToolRunner</color4>.<color3>run</color3>(<color6>new</color6> <color3>Configuration</color3>(), <color6>new</color6> <color3>MapFileCreator</color3>(), args);
+        <color4>System</color4>.<color4>out</color4>.<color3>println</color3>(<color7>"###result : "</color7> + res);
     }
 
-    public int run(String[] args) throws Exception {    // 드라이버 클래스
-        JobConf conf = new JobConf(MapFileCreator.class);
-        conf.setJobName("MapFileCreator");
+    <color2>public</color2> <color2>int</color2> run(<color2>String</color2>[] args) <color2>throws</color2> <color2>Exception</color2> {    <blur><i>// 드라이버 클래스</i></blur>
+        <color2>JobConf</color2> conf = <color6>new</color6> <color3>JobConf</color3>(<color4>MapFileCreator</color4>.class);
+        <color4>conf</color4>.<color3>setJobName</color3>(<color7>"MapFileCreator"</color7>);
 
-        FileInputFormat.setInputPaths(conf, new Path(args[0]));
-        FileOutputFormat.setOutputPath(conf, new Path(args[1]));
+        <color4>FileInputFormat</color4>.<color3>setInputPaths</color3>(conf, <color6>new</color6> <color3>Path</color3>(args[<color2>0</color2>]));
+        <color4>FileOutputFormat</color4>.<color3>setOutputPath</color3>(conf, <color6>new</color6> <color3>Path</color3>(args[<color2>1</color2>]));
 
-        conf.setInputFormat(SequenceFileInputFormat.class); // 입력 파일이 시퀀스 파일
-        conf.setOutputFormat(MapFileOutputFormat.class);    // 출력 파일은 맵 파일
-        conf.setOutputKeyClass(IntWritable.class);          // 키 값은 distance였던 것을 그대로 상속
+        <color4>conf</color4>.<color3>setInputFormat</color3>(<color4>SequenceFileInputFormat</color4>.class); <blur><i>// 입력 파일이 시퀀스 파일</i></blur>
+        <color4>conf</color4>.<color3>setOutputFormat</color3>(<color4>MapFileOutputFormat</color4>.class);    <blur><i>// 출력 파일은 맵 파일</i></blur>
+        <color4>conf</color4>.<color3>setOutputKeyClass</color3>(<color4>IntWritable</color4>.class);          <blur><i>// 키 값은 distance였던 것을 그대로 상속</i></blur>
 
-        SequenceFileOutputFormat.setCompressOutput(conf, true);                     // 시퀀스 파일로 압축
-        SequenceFileOutputFormat.setOutputCompressorClass(conf, GzipCodec.class);   // GzipCodec 으로 압축
-        SequenceFileOutputFormat.setOutputCompressionType(conf, CompressionType.BLOCK);
+        <color4>SequenceFileOutputFormat</color4>.<color3>setCompressOutput</color3>(conf, <color2>true</color2>);                     <blur><i>// 시퀀스 파일로 압축</i></blur>
+        <color4>SequenceFileOutputFormat</color4>.<color3>setOutputCompressorClass</color3>(conf, <color4>GzipCodec</color4>.class);   <blur><i>// GzipCodec 으로 압축</i></blur>
+        <color4>SequenceFileOutputFormat</color4>.<color3>setOutputCompressionType</color3>(conf, <color4>CompressionType</color4>.BLOCK);
 
-        JobClient.runJob(conf);
-        return 0;
+        <color4>JobClient</color4>.<color3>runJob</color3>(conf);
+        <color6>return</color6> <color2>0</color2>;
     }
 }
 </terminal>
@@ -291,54 +291,54 @@ text: Unable to write to output stream.
 <color4>SearchValueList.java</color4>
 
 <terminal>
-package Airline;
+<color4>package</color4> <color2>Airline</color2>;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.MapFile.Reader;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.mapred.MapFileOutputFormat;
-import org.apache.hadoop.mapred.Partitioner;
-import org.apache.hadoop.mapred.lib.HashPartitioner;
-import org.apache.hadoop.util.Tool;
-import org.apache.hadoop.util.ToolRunner;
+<color4>import</color4> <color2>org.apache.hadoop.conf.Configuration</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.conf.Configured</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.fs.FileSystem</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.fs.Path</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.IntWritable</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.MapFile.Reader</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.Text</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.Writable</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapred.MapFileOutputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapred.Partitioner</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapred.lib.HashPartitioner</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.util.Tool</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.util.ToolRunner</color2>;
 
-public class SearchValueList extends Configured implements Tool {
+<color2>public</color2> <color2>class</color2> SearchValueList <color2>extends</color2> <color4>Configured</color4> <color2>implements</color2> <color4>Tool</color4> {
 
-    public static void main(String[] args) throws Exception {
-        int res = ToolRunner.run(new Configuration(), new SearchValueList(), args);
-        System.out.println("###result : " + res);
+    <color2>public</color2> <color2>static</color2> <color2>void</color2> <color3>main</color3>(<color2>String</color2>[] args) <color2>throws</color2> <color2>Exception</color2> {
+        <color2>int</color2> res = <color4>ToolRunner</color4>.<color3>run</color3>(<color6>new</color6> <color3>Configuration</color3>(), <color6>new</color6> <color3>SearchValueList</color3>(), args);
+        <color4>System</color4>.<color4>out</color4>.<color3>println</color3>(<color7>"###result : "</color7> + res);
     }
 
-    public int run(String[] args) throws Exception {
-        Path path = new Path(args[0]);  // 입력받은 첫번 째 배열(입력 파일 경로)
-        FileSystem fs = path.getFileSystem(getConf());
+    <color2>public</color2> <color2>int</color2> <color3>run</color3>(<color2>String</color2>[] args) <color2>throws</color2> <color2>Exception</color2> {
+        <color2>Path</color2> path = <color6>new</color6> <color3>Path</color3>(args[<color2>0</color2>]);  <blur><i>// 입력받은 첫번 째 배열(입력 파일 경로)</i></blur>
+        <color2>FileSystem</color2> fs = <color4>path</color4>.<color3>getFileSystem</color3>(<color3>getConf</color3>());
 
-        Reader[] readers = MapFileOutputFormat.getReaders(fs, path, getConf()); // 입력 파일 경로(맵 파일)을 배열 형식으로 받아들임
+        <color2>Reader</color2>[] readers = <color4>MapFileOutputFormat</color4>.<color3>getReaders</color3>(fs, path, <color3>getConf</color3>()); <blur><i>// 입력 파일 경로(맵 파일)을 배열 형식으로 받아들임</i></blur>
 
-        IntWritable key = new IntWritable();
-        key.set(Integer.parseInt(args[1])); // 두번 째 배열을 key값으로 삼음
+        <color2>IntWritable</color2> key = <color6>new</color6> <color3>IntWritable</color3>();
+        <color4>key</color4>.set(<color4>Integer</color4>.<color3>parseInt</color3>(args[1])); <blur><i>// 두번 째 배열을 key값으로 삼음</i></blur>
 
-        Text value = new Text();
+        <color2>Text</color2> value = <color6>new</color6> <color3>Text</color3>();
 
-        Partitioner&lt;IntWritable, Text&gt; partitioner = new HashPartitioner&lt;IntWritable, Text&gt;();  // key, value를 이용해 해쉬 파티셔너 생성
-        Reader reader = readers[partitioner.getPartition(key, value, readers.length)];  // 배열 형식으로 받아들인 맵 파일에서 파티셔너를 이용해 검색
+        <color2>Partitioner</color2>&lt;<color2>IntWritable</color2>, <color2>Text</color2>&gt; partitioner = <color6>new</color6> <color2>HashPartitioner</color2>&lt;<color2>IntWritable</color2>, <color2>Text</color2>&gt;();  <blur><i>// key, value를 이용해 해쉬 파티셔너 생성</i></blur>
+        <color2>Reader</color2> reader = readers[<color4>partitioner</color4>.<color3>getPartition</color3>(key, value, <color4>readers</color4>.length)];  <blur><i>// 배열 형식으로 받아들인 맵 파일에서 파티셔너를 이용해 검색</i></blur>
 
-        Writable entry = reader.get(key, value);
-        if (entry == null) {    // 검색 결과가 없을 때
-            System.out.println("The requested key was not found.");
+        <color2>Writable</color2> entry = <color4>reader</color4>.<color3>get</color3>(key, value);
+        <color6>if</color6> (entry <color2>==</color2> <color2>null</color2>) {    <blur><i>// 검색 결과가 없을 때</i></blur>
+            <color4>System</color4>.<color4>out</color4>.<color3>println</color3>(<color7>"The requested key was not found."</color7>);
         }
 
-        IntWritable nextKey = new IntWritable();
-        do {
-            System.out.println(value.toString());   // 검색 결과 출력
-        } while (reader.next(nextKey, value) && key.equals(nextKey));   // 검색어가 다음 배열의 key값과 같을 때 까지
+        <color2>IntWritable</color2> nextKey = <color6>new</color6> <color3>IntWritable</color3>();
+        <color6>do</color6> {
+            <color4>System</color4>.<color4>out</color4>.<color3>println</color3>(<color4>value</color4>.<color3>toString</color3>());   <blur><i>// 검색 결과 출력</i></blur>
+        } <color6>while</color6> (<color4>reader</color4>.<color3>next</color3>(nextKey, value) <color2>&&</color2> <color4>key</color4>.<color3>equals</color3>(nextKey));   <blur><i>// 검색어가 다음 배열의 key값과 같을 때 까지</i></blur>
 
-        return 0;
+        <color6>return</color6> <color2>0</color2>;
     }
 }
 </terminal>

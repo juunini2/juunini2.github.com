@@ -4,68 +4,68 @@
 <color4>SequenceFileTotalSort.java</color4>
 
 <terminal>
-import java.net.URI;
+<color4>import</color4> <color2>java.net.URI</color2>;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.filecache.DistributedCache;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.SequenceFile.CompressionType;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.compress.GzipCodec;
-import org.apache.hadoop.mapred.FileInputFormat;
-import org.apache.hadoop.mapred.FileOutputFormat;
-import org.apache.hadoop.mapred.JobClient;
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapred.SequenceFileInputFormat;
-import org.apache.hadoop.mapred.SequenceFileOutputFormat;
-import org.apache.hadoop.mapred.lib.InputSampler;
-import org.apache.hadoop.mapred.lib.TotalOrderPartitioner;
-import org.apache.hadoop.util.Tool;
-import org.apache.hadoop.util.ToolRunner;
+<color4>import</color4> <color2>org.apache.hadoop.conf.Configuration</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.conf.Configured</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.filecache.DistributedCache</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.fs.Path</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.IntWritable</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.SequenceFile.CompressionType</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.Text</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.compress.GzipCodec</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapred.FileInputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapred.FileOutputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapred.JobClient</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapred.JobConf</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapred.SequenceFileInputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapred.SequenceFileOutputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapred.lib.InputSampler</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapred.lib.TotalOrderPartitioner</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.util.Tool</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.util.ToolRunner</color2>;
 
-public class SequenceFileTotalSort extends Configured implements Tool {
+<color2>public</color2> <color2>class</color2> SequenceFileTotalSort <color2>extends</color2> <color4>Configured</color4> <color2>implements</color2> <color4>Tool</color4> {
 
-    public static void main(String[] args) throws Exception {
-        int res = ToolRunner.run(new Configuration(), new SequenceFileTotalSort(), args);
-        System.out.println("###result : " + res);
+    <color2>public</color2> <color2>static</color2> <color2>void</color2> <color3>main</color3>(<color2>String</color2>[] args) <color2>throws</color2> <color2>Exception</color2> {
+        <color2>int</color2> res = <color4>ToolRunner</color4>.<color3>run</color3>(<color6>new</color6> <color3>Configuration</color3>(), <color6>new</color6> <color3>SequenceFileTotalSort</color3>(), args);
+        <color4>System</color4>.<color4>out</color4>.<color3>println</color3>(<color7>"###result : "</color7> + res);
     }
 
-    public int run(String[] args) throws Exception {
+    <color2>public</color2> <color2>int</color2> <color3>run</color3>(<color2>String</color2>[] args) <color2>throws</color2> <color2>Exception</color2> {
 
-        JobConf conf = new JobConf(getConf(), SequenceFileTotalSort.class);
-        conf.setJobName("SequenceFileTotalSort");
+        <color2>JobConf</color2> conf = <color6>new</color6> <color3>JobConf</color3>(<color3>getConf</color3>(), <color4>SequenceFileTotalSort</color4>.class);
+        <color4>conf</color4>.<color3>setJobName</color3>(<color7>"SequenceFileTotalSort"</color7>);
 
-        conf.setInputFormat(SequenceFileInputFormat.class);     // input 파일의 형식은 시퀀스 파일이어야 함
-        conf.setOutputFormat(SequenceFileOutputFormat.class);   // output 형식도 시퀀스 파일로 나감
-        conf.setOutputKeyClass(IntWritable.class);              // key 값은 distance. int
-        conf.setPartitionerClass(TotalOrderPartitioner.class);
+        <color4>conf</color4>.<color3>setInputFormat</color3>(<color4>SequenceFileInputFormat</color4>.class);     <blur><i>// input 파일의 형식은 시퀀스 파일이어야 함</i></blur>
+        <color4>conf</color4>.<color3>setOutputFormat</color3>(<color4>SequenceFileOutputFormat</color4>.class);   <blur><i>// output 형식도 시퀀스 파일로 나감</i></blur>
+        <color4>conf</color4>.<color3>setOutputKeyClass</color3>(<color4>IntWritable</color4>.class);              <blur><i>// key 값은 distance. int</i></blur>
+        <color4>conf</color4>.<color3>setPartitionerClass</color3>(<color4>TotalOrderPartitioner</color4>.class);
 
-        // 시퀀스 포맷 옵션
-        SequenceFileOutputFormat.setCompressOutput(conf, true);
-        SequenceFileOutputFormat.setOutputCompressorClass(conf, GzipCodec.class);
-        SequenceFileOutputFormat.setOutputCompressionType(conf, CompressionType.BLOCK);
+        <blur><i>// 시퀀스 포맷 옵션</i></blur>
+        <color4>SequenceFileOutputFormat</color4>.<color3>setCompressOutput</color3>(conf, <color2>true</color2>);
+        <color4>SequenceFileOutputFormat</color4>.<color3>setOutputCompressorClass</color3>(conf, <color4>GzipCodec</color4>.class);
+        <color4>SequenceFileOutputFormat</color4>.<color3>setOutputCompressionType</color3>(conf, <color4>CompressionType</color4>.BLOCK);
 
-        FileInputFormat.setInputPaths(conf, new Path(args[0]));
-        FileOutputFormat.setOutputPath(conf, new Path(args[1]));
+        <color4>FileInputFormat</color4>.<color3>setInputPaths</color3>(conf, <color6>new</color6> <color3>Path</color3>(args[<color2>0</color2>]));
+        <color4>FileOutputFormat</color4>.<color3>setOutputPath</color3>(conf, <color6>new</color6> <color3>Path</color3>(args[<color2>1</color2>]));
 
-        Path inputDir = FileInputFormat.getInputPaths(conf)[0];
-        inputDir = inputDir.makeQualified(inputDir.getFileSystem(conf));
-        Path partitionFile = new Path(inputDir, "_partitions");
-        TotalOrderPartitioner.setPartitionFile(conf, partitionFile);
+        <color2>Path</color2> inputDir = <color4>FileInputFormat</color4>.<color3>getInputPaths</color3>(conf)[<color2>0</color2>];
+        inputDir = <color4>inputDir</color4>.<color3>makeQualified</color3>(<color4>inputDir</color4>.<color3>getFileSystem</color3>(conf));
+        <color2>Path</color2> partitionFile = <color6>new</color6> <color3>Path</color3>(inputDir, <color7>"_partitions"</color7>);
+        <color4>TotalOrderPartitioner</color4>.<color3>setPartitionFile</color3>(conf, partitionFile);
 
-        InputSampler.Sampler&lt;IntWritable, Text&gt; sampler = new InputSampler.RandomSampler&lt;IntWritable, Text&gt;(0.1, 1000, 10); // 10개의 입력 스플릿에서 0.1% 확률로 1000건의 데이터를 샘플링
-        InputSampler.writePartitionFile(conf, sampler);
-        // 샘플 데이터 추출
+        <color4>InputSampler</color4>.Sampler&lt;<color2>IntWritable</color2>, <color2>Text</color2>&gt; sampler = <color6>new</color6> <color2>InputSampler</color2>.<color2>RandomSampler</color2>&lt;<color2>IntWritable</color2>, <color2>Text</color2>&gt;(0.1, 1000, 10); <blur><i>// 10개의 입력 스플릿에서 0.1% 확률로 1000건의 데이터를 샘플링</i></blur>
+        <color4>InputSampler</color4>.<color3>writePartitionFile</color3>(conf, sampler);
+        <blur><i>// 샘플 데이터 추출</i></blur>
 
-        URI partitionUri = new URI(partitionFile.toString() + "#_partitions");
-        DistributedCache.addCacheFile(partitionUri, conf);
-        DistributedCache.createSymlink(conf);
+        <color2>URI</color2> partitionUri = <color6>new</color6> <color3>URI</color3>(<color4>partitionFile</color4>.toString() + <color7>"#_partitions"</color7>);
+        <color4>DistributedCache</color4>.<color3>addCacheFile</color3>(partitionUri, conf);
+        <color4>DistributedCache</color4>.<color3>createSymlink</color3>(conf);
 
-        JobClient.runJob(conf);
+        <color4>JobClient</color4>.<color3>runJob</color3>(conf);
 
-        return 0;
+        <color6>return</color6> <color2>0</color2>;
     }
 }
 </terminal>

@@ -1,0 +1,216 @@
+이번 글에서는 리듀스 사이드 조인에 대해 다루도록 하겠습니다.<br>
+맵 사이드 조인은 간단하게 됐던것에 비해 리듀스 사이드 조인은 보조 정렬과 비슷한 약간 번거로운 과정을 거치게 됩니다.<br>
+hadoop-example/airplain 폴더 내에 reduceSideJoin 폴더를 생성해서 작업하도록 하겠습니다.<br>
+<br>
+<color4>CarrierCodeMapper.java</color4>
+
+<terminal>
+<color4>import</color4> <color2>java.io.IOException</color2>;
+
+<color4>import</color4> <color2>org.apache.hadoop.io.LongWritable</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.Text</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.Mapper</color2>;
+
+<color2>public</color2> <color2>class</color2> CarrierCodeMapper <color2>extends</color2> <color4>Mapper</color4>&lt;<color2>LongWritable</color2>, <color2>Text</color2>, <color2>Text</color2>, <color2>Text</color2>&gt; {
+
+    <color2>public final static String</color2> DATA_TAG = <color7>"A"</color7>;  <blur><i>// 구분자 A를 붙임</i></blur>
+
+    <color2>private</color2> <color2>Text</color2> outputKey = <color6>new</color6> <color3>Text</color3>();
+    <color2>private</color2> <color2>Text</color2> outputValue = <color6>new</color6> <color3>Text</color3>();
+
+    <color2>public</color2> <color2>void</color2> <color3>map</color3>(<color2>LongWritable</color2> key, <color2>Text</color2> value, <color2>Context</color2> context) <color2>throws</color2> <color2>IOException</color2>, <color2>InterruptedException</color2> {
+        <color6>if</color6> (<color4>key</color4>.<color3>get</color3>() > 0) {
+            <color2>String</color2>[] colums = <color4>value</color4>.<color3>toString</color3>().<color3>replaceAll</color3>(<color7>"\""</color7>, <color7>""</color7>).<color3>split</color3>(<color7>","</color7>); <blur><i>// 쌍따옴표를 전부 제거한 뒤 콤마를 기준으로 배열로 나눔</i></blur>
+            <color6>if</color6> (colums <color2>!= null &&</color2> <color4>colums</color4>.length <color2>> 0</color2>) {
+                <color4>outputKey</color4>.<color3>set</color3>(colums[<color2>0</color2>] + <color7>"_"</color7> + <color2>DATA_TAG</color2>);  <blur><i>// 항공사코드_A</i></blur>
+                <color4>outputValue</color4>.<color3>set</color3>(colums[<color2>1</color2>]);                 <blur><i>// 항공사 이름</i></blur>
+                <color4>context</color4>.<color3>write</color3>(outputKey, outputValue);
+            }
+        }
+    }
+}
+</terminal>
+
+<color4>MapperWithReducesideJoin.java</color4>
+
+<terminal>
+<color4>import</color4> <color2>java.io.IOException</color2>;
+
+<color4>import</color4> <color2>org.apache.hadoop.io.LongWritable</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.Text</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.Mapper</color2>;
+
+<color2>public class</color2> MapperWithReducesideJoin <color2>extends</color2> <color4>Mapper</color4>&lt;<color2>LongWritable</color2>, <color2>Text</color2>, <color2>Text</color2>, <color2>Text</color2>&gt; {
+
+    <blur><i>// 태그 선언</i></blur>
+    <color2>public final static String</color2> DATA_TAG = <color7>"B"</color7>;  <blur><i>// 구분자 B를 붙임</i></blur>
+
+    <blur><i>// map 출력키</i></blur>
+    <color2>private Text</color2> outputKey = <color6>new</color6> <color3>Text</color3>();
+
+    <color2>public void</color2> <color3>map</color3>(<color2>LongWritable</color2> key, <color2>Text</color2> value, <color2>Context</color2> context) <color2>throws</color2> <color2>IOException</color2>, <color2>InterruptedException</color2> {
+
+        <color6>if</color6> (<color4>key</color4>.<color3>get</color3>() > 0) {
+            
+            <color2>String</color2>[] colums = <color4>value</color4>.<color3>toString</color3>().<color3>split</color3>(<color7>","</color7>);  <blur><i>// 콤마를 기준으로 배열로 쪼갬</i></blur>
+            <color6>if</color6> (colums <color2>!= null &&</color2> <color4>colums</color4>.length <color2>> 0</color2>) {
+                <color6>try</color6> {
+                    <color4>outputKey</color4>.<color3>set</color3>(colums[<color2>8</color2>] + <color7>"_"</color7> + <color2>DATA_TAG</color2>);  <blur><i>// 항공사코드_B</i></blur>
+                    <color4>context</color4>.<color3>write</color3>(outputKey, value);            <blur><i>// 항공사코드_B, 전체 내용</i></blur>
+                } <color6>catch</color6> (<color2>Exception</color2> e) {
+                    <color4>e</color4>.<color3>printStackTrace</color3>();
+                }
+            }
+        }
+    }
+}
+</terminal>
+
+<color4>ReducerWithReducesideJoin.java</color4>
+
+<terminal>
+<color4>import</color4> <color2>java.io.IOException</color2>;
+
+<color4>import</color4> <color2>org.apache.hadoop.io.Text</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.Reducer</color2>;
+
+<color2>public class</color2> ReducerWithReducesideJoin <color2>extends</color2> <color4>Reducer</color4>&lt;<color2>Text</color2>, <color2>Text</color2>, <color2>Text</color2>, <color2>Text</color2>&gt; {
+
+    <blur><i>// reduce 출력키</i></blur>
+    <color2>private</color2> <color2>Text</color2> outputKey = <color6>new</color6> <color3>Text</color3>();
+    <color2>private</color2> <color2>Text</color2> outputValue = <color6>new</color6> <color3>Text</color3>();
+
+    <color2>public</color2> <color2>void</color2> <color3>reduce</color3>(<color2>Text</color2> key, <color2>Iterable</color2>&lt;<color2>Text</color2>&gt; values, <color2>Context</color2> context) <color2>throws</color2> <color2>IOException</color2>, <color2>InterruptedException</color2> {
+        <blur><i>// 태그 조회</i></blur>
+        <color2>String</color2> tagValue = <color4>key</color4>.<color3>toString</color3>().<color3>split</color3>(<color7>"_"</color7>)[<color2>1</color2>]; <blur><i>// _를 기준으로 배열로 쪼개서 뒤의 값</i></blur>
+
+        <color6>for</color6> (<color2>Text</color2> value : values) {
+            <blur><i>// 출력키 설정</i></blur>
+            <color6>if</color6> (<color4>tagValue</color4>.<color3>equals</color3>(<color4>CarrierCodeMapper</color4>.DATA_TAG)) {  <blur><i>// 구분자가 A일 때</i></blur>
+                <color4>outputKey</color4>.<color3>set</color3>(value);   <blur><i>// key에 항공사 이름</i></blur>
+            } <color6>else if</color6> (<color4>tagValue</color4>.<color3>equals</color3>(<color4>MapperWithReducesideJoin</color4>.DATA_TAG)) {    <blur><i>// 구분자가 B일 때</i></blur>
+                <color4>outputValue</color4>.<color3>set</color3>(value); <blur><i>// value에 전체 내용</i></blur>
+                <color4>context</color4>.<color3>write</color3>(outputKey, outputValue);
+            }
+
+        }
+
+    }
+}
+</terminal>
+
+<color4>ReducesideJoin.java</color4>
+
+<terminal>
+<color4>import</color4> <color2>org.apache.hadoop.conf.Configuration</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.conf.Configured</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.fs.Path</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.Text</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.Job</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.lib.input.MultipleInputs</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.lib.input.TextInputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.lib.output.FileOutputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.lib.output.TextOutputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.util.GenericOptionsParser</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.util.Tool</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.util.ToolRunner</color2>;
+
+<color2>public class</color2> ReducesideJoin <color2>extends</color2> <color4>Configured</color4> <color2>implements</color2> <color4>Tool</color4> {
+
+    <color2>public</color2> <color2>int</color2> <color3>run</color3>(<color2>String</color2>[] args) <color2>throws</color2> <color2>Exception</color2> {
+        <color2>String</color2>[] otherArgs = <color6>new</color6> <color3>GenericOptionsParser</color3>(<color3>getConf</color3>(), args).<color3>getRemainingArgs</color3>();
+        
+        <color6>if</color6> (<color4>otherArgs</color4>.length <color2>!= 3</color2>) {
+            <color4>System</color4>.<color4>err</color4>.<color3>println</color3>(<color7>"Usage: ReducesideJoin &lt;metadata&gt; &lt;in&gt; &lt;out&gt;"</color7>);
+            <color4>System</color4>.<color3>exit</color3>(<color2>2</color2>);
+        }
+
+        <color2>Job</color2> job = <color6>new</color6> <color3>Job</color3>(<color3>getConf</color3>(), <color7>"ReducesideJoin"</color7>);
+
+        <color4>FileOutputFormat</color4>.<color3>setOutputPath</color3>(job, <color6>new</color6> <color3>Path</color3>(otherArgs[2]));
+
+        <color4>job</color4>.<color3>setJarByClass</color3>(<color4>ReducesideJoin</color4>.class);
+        <color4>job</color4>.<color3>setReducerClass</color3>(<color4>ReducerWithReducesideJoin</color4>.class);
+
+        <color4>job</color4>.<color3>setInputFormatClass</color3>(<color4>TextInputFormat</color4>.class);
+        <color4>job</color4>.<color3>setOutputFormatClass</color3>(<color4>TextOutputFormat</color4>.class);
+
+        <color4>job</color4>.<color3>setOutputKeyClass</color3>(<color4>Text</color4>.class);
+        <color4>job</color4>.<color3>setOutputValueClass</color3>(<color4>Text</color4>.class);
+
+        <color4>MultipleInputs</color4>.<color3>addInputPath</color3>(job, <color6>new</color6> <color3>Path</color3>(otherArgs[0]), <color4>TextInputFormat</color4>.class, <color4>CarrierCodeMapper</color4>.class);   <blur><i>// CarrierCodeMapper는 carriers.csv 파일을 읽어들임</i></blur>
+        <color4>MultipleInputs</color4>.<color3>addInputPath</color3>(job, <color6>new</color6> <color3>Path</color3>(otherArgs[1]), <color4>TextInputFormat</color4>.class, <color4>MapperWithReducesideJoin</color4>.class);    <blur><i>// MapperWithReducesideJoin은 연착 정보 파일을 읽어들임</i></blur>
+
+        <color4>job</color4>.<color3>waitForCompletion</color3>(<color2>true</color2>);
+        <color6>return</color6> <color2>0</color2>;
+    }
+
+    <color2>public static void</color2> <color3>main</color3>(<color2>String</color2>[] args) <color2>throws Exception</color2> {
+        <color2>int</color2> res = <color4>ToolRunner</color4>.<color3>run</color3>(<color6>new</color6> Configuration(), <color6>new</color6> <color3>ReducesideJoin</color3>(), args);
+        <color4>System</color4>.<color4>out</color4>.<color3>println</color3>(<color7>"## RESULT:"</color7> + res);
+    }
+}
+</terminal>
+
+다 됐으면 컴파일하고 실행해봅시다.<br>
+
+<terminal>
+<strong>[hadoop@namenode reduceSideJoin]$</strong> javac -cp $HADOOP_HOME/hadoop-core-1.2.1.jar:$HADOOP_HOME/lib/commons-cli-1.2.jar -d . *.java
+<strong>[hadoop@namenode reduceSideJoin]$</strong> jar -cvf $HADOOP_HOME/ReducesideJoin.jar *.class
+Manifest를 추가함
+추가하는 중: Airline/AirlineParser.class(입력 = 2223) (출력 = 1079)(51%를 감소함)
+추가하는 중: Airline/CarrierCodeMapper.class(입력 = 1910) (출력 = 830)(56%를 감소함)
+추가하는 중: Airline/MapperWithReduceSideJoin.class(입력 = 1678) (출력 = 716)(57%를 감소함)
+추가하는 중: Airline/ReduceSideJoin.class(입력 = 2789) (출력 = 1289)(53%를 감소함)
+추가하는 중: Airline/ReducerWithReduceSideJoin.class(입력 = 1826) (출력 = 840)(53%를 감소함)
+추가하는 중: Airline/TaggedGroupKeyPartitioner.class(입력 = 778) (출력 = 430)(44%를 감소함)
+추가하는 중: Airline/TaggedKey.class(입력 = 1784) (출력 = 818)(54%를 감소함)
+추가하는 중: Airline/TaggedKeyComparator.class(입력 = 751) (출력 = 443)(41%를 감소함)
+<strong>[hadoop@namenode reduceSideJoin]$</strong> cd $HADOOP_HOME
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop jar ReducesideJoin.jar ReducesideJoin carriers.csv airplain/2008.csv reduce_join_output
+.
+.
+.
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -ls reduce_join_output
+Found 3 items
+-rw-r--r--   3 hadoop supergroup          0 2018-01-28 10:45 /user/hadoop/reduce_join_output/_SUCCESS
+drwxr-xr-x   - hadoop supergroup          0 2018-01-28 10:44 /user/hadoop/reduce_join_output/_logs
+-rw-r--r--   3 hadoop supergroup  879439366 2018-01-28 10:44 /user/hadoop/reduce_join_output/part-r-00000
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -cat reduce_join_output/part-r-00000 | head -10
+Pinnacle Airlines Inc.	2008,12,26,5,1418,1250,1549,1432,9E,5860,91819E,91,102,66,77,88,ATL,PIT,526,3,22,0,,0,0,0,77,0,0
+Pinnacle Airlines Inc.	2008,12,28,7,1408,1250,1541,1432,9E,5860,96049E,93,102,65,69,78,ATL,PIT,526,8,20,0,,0,69,0,0,0,0
+Pinnacle Airlines Inc.	2008,12,29,1,1247,1250,1418,1432,9E,5860,96019E,91,102,72,-14,-3,ATL,PIT,526,6,13,0,,0,NA,NA,NA,NA,NA
+Pinnacle Airlines Inc.	2008,12,30,2,1245,1250,1419,1432,9E,5860,91669E,94,102,69,-13,-5,ATL,PIT,526,5,20,0,,0,NA,NA,NA,NA,NA
+Pinnacle Airlines Inc.	2008,12,3,3,1453,1440,1547,1530,9E,5860,91819E,54,50,30,17,13,ATL,TYS,152,2,22,0,,0,0,0,4,0,13
+Pinnacle Airlines Inc.	2008,12,5,5,1448,1440,1604,1530,9E,5860,91479E,76,50,29,34,8,ATL,TYS,152,5,42,0,,0,0,0,26,0,8
+Pinnacle Airlines Inc.	2008,12,1,1,1156,1049,1511,1355,9E,5860,96049E,135,126,109,76,67,AUS,ATL,813,9,17,0,,0,0,0,9,0,67
+Pinnacle Airlines Inc.	2008,12,2,2,1115,1049,1431,1355,9E,5860,91879E,136,126,117,36,26,AUS,ATL,813,9,10,0,,0,0,0,10,0,26
+Pinnacle Airlines Inc.	2008,12,3,3,1054,1049,1413,1355,9E,5860,91819E,139,126,110,18,5,AUS,ATL,813,15,14,0,,0,0,0,18,0,0
+Pinnacle Airlines Inc.	2008,12,4,4,1057,1049,1426,1355,9E,5860,96059E,149,126,120,31,8,AUS,ATL,813,12,17,0,,0,8,0,23,0,0
+</terminal>
+
+이렇게 리듀스 사이드 조인이 완료되었습니다.<br>
+맵 사이드 조인을 할 때 보다 파일의 용량이 클 때 더욱 효율적으로 할 수 있다고 합니다.<br>
+아마 속도 문제겠지요.<br>
+이렇게 해서 Part. 2를 마치도록 하겠습니다. 감사합니다.<br>
+<br>
+<a href="/hadoop/page/3_1.html" onclick="
+    event.preventDefault();
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = () => {
+        document.querySelector('main').innerHTML = xhttp.responseText;
+    }
+
+    xhttp.open('GET', '/hadoop/page/3_1.html', true);
+    xhttp.send();
+
+    document.title = 'Hadoop Guide Part. 3 - Step. 1';
+    history.pushState('/hadoop/page/3_1.html' + ' ' + 'Part. 3 - Step. 1', null, '#3_1');
+
+    document.querySelector('side').children[1].classList.remove('on');
+    document.querySelector('side').children[2].classList.add('on');
+    document.querySelector('side').children[1].children[8].classList.remove('on');
+    document.querySelector('side').children[2].children[1].classList.add('on');
+" class="button">다음단계로 가기</a>

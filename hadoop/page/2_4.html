@@ -95,7 +95,7 @@
 <color4>WritableComparable.java</color4>의 일부분을 발췌하였습니다.<br>
 
 <terminal>
-private int counter;
+<blur><i>private int counter;
  *       private long timestamp;
  *       
  *       public void write(DataOutput out) throws IOException {
@@ -112,7 +112,7 @@ private int counter;
  *         int thisValue = this.value;
  *         int thatValue = ((IntWritable)o).value;
  *         return (thisValue &lt; thatValue ? -1 : (thisValue==thatValue ? 0 : 1));
- *       }
+ *       }</i></blur>
 </terminal>
 
 보면 write, readFields, compareTo 함수를 오버라이드 할 것을 명시하고 있습니다.<br>
@@ -120,57 +120,57 @@ private int counter;
 <color4>DateKey.java</color4>
 
 <terminal>
-package Airline;
+<color4>package</color4> <color2>Airline</color2>;
 
-import org.apache.hadoop.io.WritableComparable;
-import org.apache.hadoop.io.WritableUtils;
+<color4>import</color4> <color2>org.apache.hadoop.io.WritableComparable</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.WritableUtil</color2>s;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
+<color4>import</color4> <color2>java.io.DataInput</color2>;
+<color4>import</color4> <color2>java.io.DataOutput</color2>;
+<color4>import</color4> <color2>java.io.IOException</color2>;
 
-public class DateKey implements WritableComparable&lt;DateKey&gt; {
+<color2>public class</color2> DateKey <color2>implements</color2> <color4>WritableComparable</color4>&lt;<color2>DateKey</color2>&gt; {
 
-    private String year;   // 왜 String으로 주냐면, 앞에 D와 A의 구분자를 넣어줄 것 이기 때문입니다. 그게 아니면 Integer로 쓰겠죠.
-    private Integer month;
+    <color2>private String</color2> year;   <blur><i>// 왜 String으로 주냐면, 앞에 D와 A의 구분자를 넣어줄 것 이기 때문입니다. 그게 아니면 Integer로 쓰겠죠.</i></blur>
+    <color2>private Integer</color2> month;
 
-    public DateKey() {}
+    <color2>public</color2> <color3>DateKey</color3>() {}
 
-    public DateKey (String year, Integer month) {
-        this.year = year;
-        this.month = month;
+    <color2>public</color2> <color3>DateKey</color3> (<color2>String</color2> year, <color2>Integer</color2> month) {
+        <color4>this</color4>.year = year;
+        <color4>this</color4>.month = month;
     }
 
-    public String getYear() { return year; }
-    public Integer getMonth() { return month; }
-    public void setYear(String year) { this.year = year; }
-    public void setMonth(Integer month) { this.month = month; }
+    <color2>public</color2> <color2>String</color2> <color3>getYear</color3>() { <color6>return</color6> year; }
+    <color2>public</color2> <color2>Integer</color2> <color3>getMonth</color3>() { <color6>return</color6> month; }
+    <color2>public</color2> <color2>void</color2> <color3>setYear</color3>(<color2>String</color2> year) { <color4>this</color4>.year = year; }
+    <color2>public</color2> <color2>void</color2> <color3>setMonth</color3>(<color2>Integer</color2> month) { <color4>this</color4>.month = month; }
 
-    @Override
-    public String toString() {
-        return (new StringBuilder()).append(year).append("\t").append(month).toString();    // 책에는 중간에 콤마가 있지만 저는 R의 작업 효용상 탭으로 구분하겠습니다.
-    }   // 결과를 String형태로 변환
+    <color2>@Override</color2>
+    <color2>public</color2> <color2>String</color2> <color3>toString</color3>() {
+        <color6>return</color6> (<color6>new</color6> <color3>StringBuilder</color3>()).<color3>append</color3>(year).<color3>append</color3>("\t").<color3>append</color3>(month).<color3>toString</color3>();    <blur><i>// 책에는 중간에 콤마가 있지만 저는 R의 작업 효용상 탭으로 구분하겠습니다.</i></blur>
+    }   <blur><i>// 결과를 String형태로 변환</i></blur>
 
-    @Override
-    public void readFields(DataInput in) throws IOException {
-        year = WritableUtils.readString(in);  // 어차피 순서대로 읽어들여서 둘 다 int값이어도 상관없습니다.
-        month = in.readInt();
+    <color2>@Override</color2>
+    <color2>public</color2> <color2>void</color2> <color3>readFields</color3>(<color2>DataInput</color2> in) <color2>throws</color2> <color2>IOException</color2> {
+        year = <color4>WritableUtils</color4>.<color3>readString</color3>(in);  <blur><i>// 어차피 순서대로 읽어들여서 둘 다 int값이어도 상관없습니다.</i></blur>
+        month = <color4>in</color4>.<color3>readInt</color3>();
     }
 
-    @Override
-    public void write(DataOutput out) throws IOException {
-        WritableUtils.writeString(out, year);
-        out.writeInt(month);
+    <color2>@Override</color2>
+    <color2>public</color2> <color2>void</color2> <color3>write</color3>(<color2>DataOutput</color2> out) <color2>throws</color2> <color2>IOException</color2> {
+        <color4>WritableUtils</color4>.<color3>writeString</color3>(out, year);
+        <color4>out</color4>.<color3>writeInt</color3>(month);
     }
 
-    @Override
-    public int compareTo(DateKey key) {
-        int result = year.compareTo(key.year);
-        if (0 == result) {
-            result = month.compareTo(key.month);
+    <color2>@Override</color2>
+    <color2>public</color2> <color2>int</color2> <color3>compareTo</color3>(DateKey key) {
+        <color2>int</color2> result = <color4>year</color4>.<color3>compareTo</color3>(<color4>key</color4>.year);
+        <color6>if</color6> (<color2>0 ==</color2> result) {
+            result = <color4>month</color4>.<color3>compareTo</color3>(<color4>key</color4>.month);
         }
-        return result;
-    }   // 년도를 비교한 후 년도가 같으면 월을 비교함.
+        <color6>return</color6> result;
+    }   <blur><i>// 년도를 비교한 후 년도가 같으면 월을 비교함.</i></blur>
 }
 </terminal>
 
@@ -186,32 +186,32 @@ public class DateKey implements WritableComparable&lt;DateKey&gt; {
 <color4>DateKeyComparator.java</color4>
 
 <terminal>
-package Airline;
+<color4>package</color4> <color2>Airline</color2>;
 
-import org.apache.hadoop.io.WritableComparable;
-import org.apache.hadoop.io.WritableComparator;
+<color4>import</color4> <color2>org.apache.hadoop.io.WritableComparable</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.WritableComparator</color2>;
 
-import Airline.DateKey; // 컴파일 해보니 이걸 안넣으면 에러가 납니다.
+<color4>import</color4> <color2>Airline.DateKey</color2>; <blur><i>// 컴파일 해보니 이걸 안넣으면 에러가 납니다.</i></blur>
 
-public class DateKeyComparator extends WritableComparator {
-    protected DateKeyComparator() { // 해당 파일이 실행되면 DateKay를 곧장 불러오겠다는 의미
-        super(DateKey.class, true);
+<color2>public class</color2> DateKeyComparator <color2>extends</color2> <color4>WritableComparator</color4> {
+    <color2>protected</color2> <color3>DateKeyComparator</color3>() { <blur><i>// 해당 파일이 실행되면 DateKay를 곧장 불러오겠다는 의미</i></blur>
+        super(<color4>DateKey</color4>.class, true);
     }
 
-    // 에러문구 무시
-    @SuppressWarnings("rawtypes")
-    @Override
-    public int compare(WritableComparable w1, WritableComparable w2) {
-        DateKey k1 = (DateKey) w1;  // 강제 형 변환
-        DateKey k2 = (DateKey) w2;  // 강제 형 변환
+    <blur><i>// 에러문구 무시</i></blur>
+    <color2>@SuppressWarnings</color2>(<color7>"rawtypes"</color7>)
+    <color2>@Override</color2>
+    <color2>public int</color2> <color3>compare</color3>(<color2>WritableComparable</color2> w1, <color2>WritableComparable</color2> w2) {
+        <color2>DateKey</color2> k1 = (<color2>DateKey</color2>) w1;  <blur><i>// 강제 형 변환</i></blur>
+        <color2>DateKey</color2> k2 = (<color2>DateKey</color2>) w2;  <blur><i>// 강제 형 변환</i></blur>
 
-        int cmp = k1.getYear().compareTo(k2.getYear()); // 아까 왔던거랑 지금 온거랑 비교
-        if (cmp != 0) { return cmp; }   // 년도를 비교해서 같지 않은 경우 해당 값을 리턴하고 종료
+        <color2>int</color2> cmp = <color4>k1</color4>.<color3>getYear</color3>().<color3>compareTo</color3>(<color4>k2</color4>.<color3>getYear</color3>()); <blur><i>// 아까 왔던거랑 지금 온거랑 비교</i></blur>
+        <color6>if</color6> (cmp <color2>!= 0</color2>) { <color6>return</color6> cmp; }   <blur><i>// 년도를 비교해서 같지 않은 경우 해당 값을 리턴하고 종료</i></blur>
 
-        return k1.getMonth() == k2.getMonth() ? 0 : (k1.getMonth() < k2.getMonth() ? -1 : 1);
-        // ? 뒤에 true : false 조건이 들어갑니다.
-        // 맨 처음에 참이면 0, 거짓이면 또 다른 조건문이 들어갑니다.
-        // 두번 쨰 조건은 비교 대상이 작으면 -1, 크면 1 입니다.
+        <color6>return</color6> <color4>k1</color4>.<color3>getMonth</color3>() <color2>==</color2> <color4>k2</color4>.<color3>getMonth</color3>() ? <color2>0</color2> : (<color4>k1</color4>.<color3>getMonth</color3>() < <color4>k2</color4>.<color3>getMonth</color3>() ? -<color2>1</color2> : <color2>1</color2>);
+        <blur><i>// ? 뒤에 true : false 조건이 들어갑니다.</i></blur>
+        <blur><i>// 맨 처음에 참이면 0, 거짓이면 또 다른 조건문이 들어갑니다.</i></blur>
+        <blur><i>// 두번 쨰 조건은 비교 대상이 작으면 -1, 크면 1 입니다.</i></blur>
     }
 }
 </terminal>
@@ -225,20 +225,20 @@ compartTo 함수로 구분하게 되면 1 다음에 10이 오는게 아니라 2�
 <color4>GroupKeyPartitioner.java</color4>
 
 <terminal>
-package Airline;
+<color4>package</color4> <color2>Airline</color2>;
 
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.mapreduce.Partitioner;
+<color4>import</color4> <color2>org.apache.hadoop.io.IntWritable</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.Partitioner</color2>;
 
-import Airline.DateKey; // 역시나 넣어줘야 합니다.
+<color4>import</color4> <color2>Airline.DateKey</color2>; <blur><i>// 역시나 넣어줘야 합니다.</i></blur>
 
-public class GroupKeyPartitioner extends Partitioner&lt;DateKey, IntWritable&gt; {
+<color2>public class</color2> GroupKeyPartitioner <color2>extends</color2> <color4>Partitioner</color4>&lt;<color2>DateKey</color2>, <color2>IntWritable</color2>&gt; {
     
-    @Override
-    public int getPartition(DateKey key, IntWritable val, int numPartitions) {
-        int hash = key.getYear().hashCode();
-        int partition = hash % numPartitions;
-        return partition;
+    <color2>@Override</color2>
+    <color2>public in</color2>t <color3>getPartition</color3>(<color2>DateKey</color2> key, <color2>IntWritable</color2> val, <color2>int</color2> numPartitions) {
+        <color2>int</color2> hash = <color4>key</color4>.<color3>getYear</color3>().<color3>hashCode</color3>();
+        <color2>int</color2> partition = hash % numPartitions;
+        <color6>return</color6> partition;
     }
 }
 </terminal>
@@ -258,26 +258,26 @@ public class GroupKeyPartitioner extends Partitioner&lt;DateKey, IntWritable&gt;
 <color4>GroupKeyComparator.java</color4>
 
 <terminal>
-package Airline;
+<color4>package</color4> <color2>Airline</color2>;
 
-import org.apache.hadoop.io.WritableComparable;
-import org.apache.hadoop.io.WritableComparator;
+<color4>import</color4> <color2>org.apache.hadoop.io.WritableComparable</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.WritableComparator</color2>;
 
-import Airline.DateKey; // 역시나 넣어줘야 합니다.
+<color4>import</color4> <color2>Airline.DateKey</color2>; <blur><i>// 역시나 넣어줘야 합니다.</i></blur>
 
-public class GroupKeyComparator extends WritableComparator {
+<color2>public class</color2> GroupKeyComparator <color2>extends</color2> <color4>WritableComparator</color4> {
 
-    protected GroupKeyComparator() {    // 이것도 마찬가지로 실행되자마 DateKey를 불러오겠다는 의미
-        super (DateKey.class, true);
+    <color2>protected</color2> <color3>GroupKeyComparator</color3>() {    <blur><i>// 이것도 마찬가지로 실행되자마 DateKey를 불러오겠다는 의미</i></blur>
+        super (<color4>DateKey</color4>.class, <color2>true</color2>);
     }
 
-    @SuppressWarnings("rawtypes")
-    @Override
-    public int compare(WritableComparable w1, WritableComparable w2) {
-        DateKey k1 = (DateKey) w1;  // 강제 형 변환
-        DateKey k2 = (DateKey) w2;  // 강제 형 변환
+    <color2>@SuppressWarnings</color2>(<color7>"rawtypes"</color7>)
+    <color2>@Override</color2>
+    <color2>public int</color2> <color3>compare</color3>(<color2>WritableComparable</color2> w1, <color2>WritableComparable</color2> w2) {
+        <color2>DateKey</color2> k1 = (<color2>DateKey</color2>) w1;  <blur><i>// 강제 형 변환</i></blur>
+        <color2>DateKey</color2> k2 = (<color2>DateKey</color2>) w2;  <blur><i>// 강제 형 변환</i></blur>
 
-        return k1.getYear().compareTo(k2.getYear());    // 아까 받아온 줄과 지금 받아온 줄의 연도 비교
+        <color6>return</color6> <color4>k1</color4>.<color3>getYear</color3>().<color3>compareTo</color3>(<color4>k2</color4>.<color3>getYear</color3>());    <blur><i>// 아까 받아온 줄과 지금 받아온 줄의 연도 비교</i></blur>
     }
 }
 </terminal>
@@ -289,42 +289,42 @@ public class GroupKeyComparator extends WritableComparator {
 <color4>AirlineMapper.java</color4>
 
 <terminal>
-package Airline;
+<color4>package</color4> <color2>Airline</color2>;
 
-import java.io.IOException;
+<color4>import</color4> <color2>java.io.IOException</color2>;
 
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Mapper;
+<color4>import</color4> <color2>org.apache.hadoop.io.IntWritable</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.LongWritable</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.Text</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.Mapper</color2>;
 
-import Airline.AirlineParser;
-import Airline.DateKey;
+<color4>import</color4> <color2>Airline.AirlineParser</color2>;
+<color4>import</color4> <color2>Airline.DateKey</color2>;
 
-public class AirlineMapper extends Mapper&lt;LongWritable, Text, DateKey, IntWritable&gt; {
+<color2>public class</color2> AirlineMapper <color2>extends</color2> <color4>Mapper</color4>&lt;<color2>LongWritable</color2>, <color2>Text</color2>, <color2>DateKey</color2>, <color2>IntWritable</color2>&gt; {
 
-    private IntWritable outputValue = new IntWritable(1);
-    private DateKey outputKey = new DateKey();
+    <color2>private final static IntWritable</color2> outputValue = <color4>new</color4> <color3>IntWritable</color3>(<color2>1</color2>);
+    <color2>private DateKey</color2> outputKey = <color4>new</color4> <color3>DateKey</color3>();
 
-    public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+    <color2>public void</color2> <color3>map</color3>(<color2>LongWritable</color2> key, <color2>Text</color2> value, <color2>Context</color2> context) <color2>throws</color2> <color2>IOException</color2>, <color2>InterruptedException</color2> {
 
-        AirlineParser parser = new AirlineParser(value);
+        <color2>AirlineParser</color2> parser = <color4>new</color4> <color3>AirlineParser</color3>(value);
         
-        if (parser.isDepartureDelayAvailable()) {
-            if (parser.getDepartureDelayTime() > 0) {
-                outputKey.setYear("D," + parser.getYear());
-                outputKey.setMonth(parser.getMonth());
+        <color4>if</color4> (<color4>parser</color4>.<color3>isDepartureDelayAvailable</color3>()) {
+            <color4>if</color4> (<color4>parser</color4>.<color3>getDepartureDelayTime</color3>() > 0) {
+                <color4>outputKey</color4>.<color3>setYear</color3>(<color7>"D,"</color7> + <color4>parser</color4>.<color3>getYear</color3>());
+                <color4>outputKey</color4>.<color3>setMonth</color3>(<color4>parser</color4>.<color3>getMonth</color3>());
 
-                context.write(outputKey, outputValue);
+                <color4>context</color4>.<color3>write</color3>(outputKey, outputValue);
             }
         }
 
-        if (parser.isArriveDelayAvailable()) {
-            if (parser.getArriveDelayTime() > 0) {
-                outputKey.setYear("A," + parser.getYear());
-                outputKey.setMonth(parser.getMonth());
+        <color4>if</color4> (<color4>parser</color4>.<color3>isArriveDelayAvailable</color3>()) {
+            <color4>if</color4> (<color4>parser</color4>.<color3>getArriveDelayTime</color3>() <color2>> 0</color2>) {
+                <color4>outputKey</color4>.<color3>setYear</color3>(<color7>"A,"</color7> + <color4>parser</color4>.<color3>getYear</color3>());
+                <color4>outputKey</color4>.<color3>setMonth</color3>(<color4>parser</color4>.<color3>getMonth</color3>());
 
-                context.write(outputKey, outputValue);
+                <color4>context</color4>.<color3>write</color3>(outputKey, outputValue);
             }
         }
     }
@@ -334,74 +334,74 @@ public class AirlineMapper extends Mapper&lt;LongWritable, Text, DateKey, IntWri
 <color4>AirlineReducer.java</color4>
 
 <terminal>
-package Airline;
+<color4>package</color4> <color2>Airline</color2>;
 
-import java.io.IOException;
+<color4>import</color4> <color2>java.io.IOException</color2>;
 
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
+<color4>import</color4> <color2>org.apache.hadoop.io.IntWritable</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.Text</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.Reducer</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.lib.output.MultipleOutputs</color2>;
 
-import Airline.DateKey;
+<color4>import</color4> <color2>Airline.DateKey</color2>;
 
-public class AirlineReducer extends Reducer&lt;DateKey, IntWritable, DateKey, IntWritable&gt; {
-    private MultipleOutputs&lt;DateKey, IntWritable&gt; mos;
-    private DateKey outputKey = new DateKey();
-    private IntWritable result = new IntWritable();
+<color2>public class</color2> AirlineReducer <color2>extends</color2> <color4>Reducer</color4>&lt;<color2>DateKey</color2>, <color2>IntWritable</color2>, <color2>DateKey</color2>, <color2>IntWritable</color2>&gt; {
+    <color2>private MultipleOutputs</color2>&lt;<color2>DateKey</color2>, <color2>IntWritable</color2>&gt; mos;
+    <color2>private DateKey</color2> outputKey = <color6>new</color6> <color3>DateKey</color3>();
+    <color2>private IntWritable</color2> result = <color6>new</color6> <color3>IntWritable</color3>();
 
-    @Override   // Reducer 클래스의 setup 함수를 오버라이드 합니다. 멀티파일로 저장해야 하기 때문이니까요.
-    public void setup(Context context) throws IOException, InterruptedException {
-        mos = new MultipleOutputs&lt;DateKey, IntWritable&gt;(context);
+    <color2>@Override</color2>   <blur><i>// Reducer 클래스의 setup 함수를 오버라이드 합니다. 멀티파일로 저장해야 하기 때문이니까요.</i></blur>
+    <color2>public void</color2> <color3>setup</color3>(<color2>Context</color2> context) <color2>throws</color2> <color2>IOException</color2>, <color2>InterruptedException</color2> {
+        mos = <color6>new</color6> <color2>MultipleOutputs</color2>&lt;<color2>DateKey</color2>, <color2>IntWritable</color2>&gt;(context);
     }
 
-    public void reduce(DateKey key, Iterable&lt;IntWritable&gt; values, Context context) throws IOException, InterruptedException {
+    <color2>public void</color2> <color3>reduce</color3>(<color2>DateKey</color2> key, <color2>Iterable</color2>&lt;<color2>IntWritable</color2>&gt; values, <color2>Context</color2> context) <color2>throws</color2> <color2>IOException</color2>, <color2>InterruptedException</color2> {
 
-        int sum = 0;
-        Integer bMonth = key.getMonth();
+        <color2>int</color2> sum = 0;
+        <color2>Integer</color2> bMonth = <color4>key</color4>.<color3>getMonth</color3>();
 
-        if (key.getYear().substring(0, 1).equals("D")) {  // 출발 지연
-            for (IntWritable value : values) {
-                if (bMonth != key.getMonth()) {
-                    result.set(sum);
-                    outputKey.setYear(key.getYear().substring(2));
-                    outputKey.setMonth(bMonth);
-                    mos.write("departure", outputKey, result);
-                    sum = 0;
+        <color6>if</color6> (<color4>key</color4>.<color3>getYear</color3>().<color3>substring</color3>(0, 1).<color3>equals</color3>(<color7>"D"</color7>)) {  <blur><i>// 출발 지연</i></blur>
+            <color6>for</color6> (<color2>IntWritable</color2> value : values) {
+                <color6>if</color6> (bMonth <color2>!=</color2> <color4>key</color4>.<color3>getMonth</color3>()) {
+                    <color4>result</color4>.<color3>set</color3>(sum);
+                    <color4>outputKey</color4>.<color3>setYear</color3>(<color4>key</color4>.<color3>getYear</color3>().<color3>substring</color3>(<color2>2</color2>));
+                    <color4>outputKey</color4>.<color3>setMonth</color3>(bMonth);
+                    <color4>mos</color4>.<color3>write</color3>(<color7>"departure"</color7>, outputKey, result);
+                    sum = <color2>0</color2>;
                 }
-                sum += value.get();
-                bMonth = key.getMonth();
+                sum += <color4>value</color4>.<color3>get</color3>();
+                bMonth = <color4>key</color4>.<color3>getMonth</color3>();
             } 
-            if (bMonth == key.getMonth()) {
-                outputKey.setYear(key.getYear().substring(2));
-                outputKey.setMonth(key.getMonth());
-                result.set(sum);
-                mos.write("departure", outputKey, result);
+            <color6>if</color6> (bMonth == <color4>key</color4>.<color3>getMonth</color3>()) {
+                <color4>outputKey</color4>.<color3>setYear</color3>(<color4>key</color4>.<color3>getYear</color3>().<color3>substring</color3>(<color2>2</color2>));
+                <color4>outputKey</color4>.<color3>setMonth</color3>(<color4>key</color4>.<color3>getMonth</color3>());
+                <color4>result</color4>.<color3>set</color3>(sum);
+                <color4>mos</color4>.<color3>write</color3>(<color7>"departure"</color7>, outputKey, result);
             }
-        } else {    // 도착 지연
-            for (IntWritable value : values) {
-                if (bMonth != key.getMonth()) {
-                    result.set(sum);
-                    outputKey.setYear(key.getYear().substring(2));
-                    outputKey.setMonth(bMonth);
-                    mos.write("arrival", outputKey, result);
-                    sum = 0;
+        } <color6>else</color6> {    <blur><i>// 도착 지연</i></blur>
+            <color6>for</color6> (<color2>IntWritable</color2> value : values) {
+                <color6>if</color6> (bMonth <color2>!=</color2> <color4>key</color4>.<color3>getMonth</color3>()) {
+                    <color4>result</color4>.<color3>set</color3>(sum);
+                    <color4>outputKey</color4>.<color3>setYear</color3>(<color4>key</color4>.<color3>getYear</color3>().<color3>substring</color3>(<color2>2</color2>));
+                    <color4>outputKey</color4>.<color3>setMonth</color3>(bMonth);
+                    <color4>mos</color4>.<color3>write</color3>(<color7>"arrival"</color7>, outputKey, result);
+                    sum = <color2>0</color2>;
                 }
-                sum += value.get();
-                bMonth = key.getMonth();
+                sum += <color4>value</color4>.<color3>get</color3>();
+                bMonth = <color4>key</color4>.<color3>getMonth</color3>();
             }
-            if (bMonth == key.getMonth()) {
-                outputKey.setYear(key.getYear().substring(2));
-                outputKey.setMonth(key.getMonth());
-                result.set(sum);
-                mos.write("arrival", outputKey, result);
+            <color6>if</color6> (bMonth <color2>==</color2> <color4>key</color4>.<color3>getMonth</color3>()) {
+                <color4>outputKey</color4>.<color3>setYear</color3>(<color4>key</color4>.<color3>getYear</color3>().<color3>substring</color3>(<color2>2</color2>));
+                <color4>outputKey</color4>.<color3>setMonth</color3>(<color4>key</color4>.<color3>getMonth</color3>());
+                <color4>result</color4>.<color3>set</color3>(sum);
+                <color4>mos</color4>.<color3>write</color3>(<color7>"arrival"</color7>, outputKey, result);
             }
         }
     }
 
-    @Override   // Reducer클래스의 cleanup함수를 오버라이드 합니다. 멀티파일을 종료시켜야지요.
-    public void cleanup(Context context) throws IOException, InterruptedException {
-        mos.close();
+    <color2>@Override</color2>   <blur><i>// Reducer클래스의 cleanup함수를 오버라이드 합니다. 멀티파일을 종료시켜야지요.</i></blur>
+    <color2>public void</color2> <color4>cleanup</color4>(<color2>Context</color2> context) <color2>throws</color2> <color2>IOException</color2>, <color2>InterruptedException</color2> {
+        <color4>mos</color4>.<color4>close</color4>();
     }
 }
 </terminal>
@@ -409,59 +409,59 @@ public class AirlineReducer extends Reducer&lt;DateKey, IntWritable, DateKey, In
 <color4>AirlineCountSort.java</color4>
 
 <terminal>
-package Airline;
+<color4>package</color4> <color2>Airline</color2>;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import org.apache.hadoop.util.GenericOptionsParser;
-import org.apache.hadoop.util.Tool;
-import org.apache.hadoop.util.ToolRunner;
-import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
+<color4>import</color4> <color2>org.apache.hadoop.conf.Configuration</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.conf.Configured</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.fs.Path</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.Text</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.IntWritable</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.Job</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.lib.input.FileInputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.lib.input.TextInputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.lib.output.FileOutputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.lib.output.TextOutputFormat</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.util.GenericOptionsParser</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.util.Tool</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.util.ToolRunner</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapreduce.lib.output.MultipleOutputs</color2>;
 
-public class AirlineCountSort extends Configured implements Tool {
+<color2>public class</color2> AirlineCountSort <color2>extends</color2> <color4>Configured</color4> <color2>implements</color2> <color4>Tool</color4> {
 
-    public static void main(String[] args) throws Exception {
-        int res = ToolRunner.run(new Configuration(), new AirlineCountSort(), args);
-        System.out.println("Result : " + res);
+    <color2>public static void</color2> <color3>main</color3>(String[] args) <color2>throws Exception</color2> {
+        <color2>int</color2> res = <color4>ToolRunner</color4>.<color3>run</color3>(<color6>new</color6> <color3>Configuration</color3>(), <color6>new</color6> <color3>AirlineCountSort</color3>(), args);
+        <color4>System</color4>.<color4>out</color4>.<color3>println</color3>(<color7>"Result : "</color7> + res);
     }
 
-    public int run(String[] args) throws Exception {
+    <color2>public int</color2> <color3>run</color3>(<color2>String</color2>[] args) <color2>throws Exception</color2> {
 
-        if (args.length != 2) {
-            System.err.println("Usage: AirlineCount &lt;input&gt; &lt;output&gt;");
-            System.exit(2);
+        <color6>if</color6> (<color4>args</color4>.length <color2>!= 2</color2>) {
+            <color4>System</color4>.<color4>err</color4>.<color3>println</color3>(<color7>"Usage: AirlineCount &lt;input&gt; &lt;output&gt;"</color7>);
+            <color4>System</color4>.<color3>exit</color3>(<color2>2</color2>);
         }
 
-        Job job = new Job(getConf(), "AirlineCountSort");
-        job.setJarByClass(AirlineCountSort.class);
-        job.setPartitionerClass(GroupKeyPartitioner.class);
-        job.setGroupingComparatorClass(GroupKeyComparator.class);
-        job.setSortComparatorClass(DateKeyComparator.class);
-        job.setMapperClass(AirlineMapper.class);
-        job.setReducerClass(AirlineReducer.class);
+        <color2>Job</color2> job = <color6>new</color6> <color3>Job</color3>(<color3>getConf</color3>(), <color7>"AirlineCountSort"</color7>);
+        <color4>job</color4>.<color3>setJarByClass</color3>(<color4>AirlineCountSort</color4>.class);
+        <color4>job</color4>.<color3>setPartitionerClass</color3>(<color4>GroupKeyPartitioner</color4>.class);
+        <color4>job</color4>.<color3>setGroupingComparatorClass</color3>(<color4>GroupKeyComparator</color4>.class);
+        <color4>job</color4>.<color3>setSortComparatorClass</color3>(<color4>DateKeyComparator</color4>.class);
+        <color4>job</color4>.<color3>setMapperClass</color3>(<color4>AirlineMapper</color4>.class);
+        <color4>job</color4>.<color3>setReducerClass</color3>(<color4>AirlineReducer</color4>.class);
 
-        job.setInputFormatClass(TextInputFormat.class);
-	    job.setOutputFormatClass(TextOutputFormat.class);
+        <color4>job</color4>.<color3>setInputFormatClass</color3>(<color4>TextInputFormat</color4>.class);
+	    <color4>job</color4>.<color3>setOutputFormatClass</color3>(<color4>TextOutputFormat</color4>.class);
 
-	    job.setOutputKeyClass(DateKey.class);
-        job.setOutputValueClass(IntWritable.class);
+	    <color4>job</color4>.<color3>setOutputKeyClass</color3>(<color4>DateKey</color4>.class);
+        <color4>job</color4>.<color3>setOutputValueClass</color3>(<color4>IntWritable</color4>.class);
 
-        FileInputFormat.addInputPath(job, new Path(args[0]));
-	    FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        <color4>FileInputFormat</color4>.<color3>addInputPath</color3>(job, <color6>new</color6> Path(args[<color2>0</color2>]));
+	    <color4>FileOutputFormat</color4>.<color3>setOutputPath</color3>(job, <color6>new</color6> Path(args[<color2>1</color2>]));
         
-        MultipleOutputs.addNamedOutput(job, "departure", TextOutputFormat.class, DateKey.class, IntWritable.class);    // departure로 시작하는 파일을 생성하여 저장함
-        MultipleOutputs.addNamedOutput(job, "arrival", TextOutputFormat.class, DateKey.class, IntWritable.class);      // arrival로 시작하는 파일을 생성하여 저장함
+        <color4>MultipleOutputs</color4>.<color3>addNamedOutput</color3>(job, <color7>"departure"</color7>, <color4>TextOutputFormat</color4>.class, <color4>DateKey</color4>.class, <color4>IntWritable</color4>.class);    <blur><i>// departure로 시작하는 파일을 생성하여 저장함</i></blur>
+        <color4>MultipleOutputs</color4>.<color3>addNamedOutput</color3>(job, <color7>"arrival"</color7>, <color4>TextOutputFormat</color4>.class, <color4>DateKey</color4>.class, <color4>IntWritable</color4>.class);      <blur><i>// arrival로 시작하는 파일을 생성하여 저장함</i></blur>
 
-        job.waitForCompletion(true);
-        return 0;
+        <color4>job</color4>.<color3>waitForCompletion</color3>(<color2>true</color2>);
+        <color6>return</color6> <color2>0</color2>;
     }
 }
 </terminal>
