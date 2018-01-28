@@ -449,13 +449,13 @@ compartTo 함수로 구분하게 되면 1 다음에 10이 오는게 아니라 2�
         <color4>job</color4>.<color3>setReducerClass</color3>(<color4>AirlineReducer</color4>.class);
 
         <color4>job</color4>.<color3>setInputFormatClass</color3>(<color4>TextInputFormat</color4>.class);
-	    <color4>job</color4>.<color3>setOutputFormatClass</color3>(<color4>TextOutputFormat</color4>.class);
+        <color4>job</color4>.<color3>setOutputFormatClass</color3>(<color4>TextOutputFormat</color4>.class);
 
-	    <color4>job</color4>.<color3>setOutputKeyClass</color3>(<color4>DateKey</color4>.class);
+        <color4>job</color4>.<color3>setOutputKeyClass</color3>(<color4>DateKey</color4>.class);
         <color4>job</color4>.<color3>setOutputValueClass</color3>(<color4>IntWritable</color4>.class);
 
         <color4>FileInputFormat</color4>.<color3>addInputPath</color3>(job, <color6>new</color6> Path(args[<color2>0</color2>]));
-	    <color4>FileOutputFormat</color4>.<color3>setOutputPath</color3>(job, <color6>new</color6> Path(args[<color2>1</color2>]));
+        <color4>FileOutputFormat</color4>.<color3>setOutputPath</color3>(job, <color6>new</color6> Path(args[<color2>1</color2>]));
         
         <color4>MultipleOutputs</color4>.<color3>addNamedOutput</color3>(job, <color7>"departure"</color7>, <color4>TextOutputFormat</color4>.class, <color4>DateKey</color4>.class, <color4>IntWritable</color4>.class);    <blur><i>// departure로 시작하는 파일을 생성하여 저장함</i></blur>
         <color4>MultipleOutputs</color4>.<color3>addNamedOutput</color3>(job, <color7>"arrival"</color7>, <color4>TextOutputFormat</color4>.class, <color4>DateKey</color4>.class, <color4>IntWritable</color4>.class);      <blur><i>// arrival로 시작하는 파일을 생성하여 저장함</i></blur>
@@ -496,27 +496,27 @@ drwxr-xr-x   - hadoop supergroup          0 2018-01-28 00:43 /user/hadoop/airlin
 -rw-r--r--   3 hadoop supergroup        171 2018-01-28 00:44 /user/hadoop/airline_sort/departure-r-00000
 -rw-r--r--   3 hadoop supergroup          0 2018-01-28 00:44 /user/hadoop/airline_sort/part-r-00000
 <strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -cat airline_sort/departure-r-00000 | head -10
-2008	1	247948
-2008	2	252765
-2008	3	271969
-2008	4	220864
-2008	5	220614
-2008	6	271014
-2008	7	253632
-2008	8	231349
-2008	9	147061
-2008	10	162531
+2008    1    247948
+2008    2    252765
+2008    3    271969
+2008    4    220864
+2008    5    220614
+2008    6    271014
+2008    7    253632
+2008    8    231349
+2008    9    147061
+2008    10   162531
 <strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -cat airline_sort/arrival-r-00000 | head -10
-2008	1	279427
-2008	2	278902
-2008	3	294556
-2008	4	256142
-2008	5	254673
-2008	6	295897
-2008	7	264630
-2008	8	239737
-2008	9	169959
-2008	10	183582
+2008    1    279427
+2008    2    278902
+2008    3    294556
+2008    4    256142
+2008    5    254673
+2008    6    295897
+2008    7    264630
+2008    8    239737
+2008    9    169959
+2008    10   183582
 </terminal>
 
 1 다음에 10이 안오고 숫자 순서대로 나열됐습니다.<br>

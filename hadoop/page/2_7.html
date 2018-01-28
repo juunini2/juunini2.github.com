@@ -149,9 +149,9 @@ HDFS로 복사가 완료되었습니다.<br>
     }
 
     <color2>public</color2> <color2>static</color2> <color2>void</color2> <color3>main</color3>(<color2>String</color2>[] args) <color2>throws</color2> <color2>Exception</color2> {
-		<color2>int</color2> res = <color4>ToolRunner</color4>.<color3>run</color3>(<color6>new</color6> <color3>Configuration</color3>(), <color6>new</color6> <color3>MapSideJoin</color3>(), args);
-		<color4>System</color4>.<color4>out</color4>.<color3>println</color3>(<color7>"## RESULT : "</color7> + res);
-	}
+        <color2>int</color2> res = <color4>ToolRunner</color4>.<color3>run</color3>(<color6>new</color6> <color3>Configuration</color3>(), <color6>new</color6> <color3>MapSideJoin</color3>(), args);
+        <color4>System</color4>.<color4>out</color4>.<color3>println</color3>(<color7>"## RESULT : "</color7> + res);
+    }
 }
 </terminal>
 
@@ -193,16 +193,16 @@ drwxr-xr-x   - hadoop supergroup          0 2018-01-28 07:39 /user/hadoop/map_jo
 -rw-r--r--   3 hadoop supergroup   89365213 2018-01-28 07:40 /user/hadoop/map_join/part-m-00009
 -rw-r--r--   3 hadoop supergroup   23207941 2018-01-28 07:40 /user/hadoop/map_join/part-m-00010
 <strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop fs -cat map_join/part-m-00000 | head -10
-WN	Southwest Airlines Co.	2008,1,3,4,2003,1955,2211,2225,WN,335,N712SW,128,150,116,-14,8,IAD,TPA,810,4,8,0,,0,NA,NA,NA,NA,NA
-WN	Southwest Airlines Co.	2008,1,3,4,754,735,1002,1000,WN,3231,N772SW,128,145,113,2,19,IAD,TPA,810,5,10,0,,0,NA,NA,NA,NA,NA
-WN	Southwest Airlines Co.	2008,1,3,4,628,620,804,750,WN,448,N428WN,96,90,76,14,8,IND,BWI,515,3,17,0,,0,NA,NA,NA,NA,NA
-WN	Southwest Airlines Co.	2008,1,3,4,926,930,1054,1100,WN,1746,N612SW,88,90,78,-6,-4,IND,BWI,515,3,7,0,,0,NA,NA,NA,NA,NA
-WN	Southwest Airlines Co.	2008,1,3,4,1829,1755,1959,1925,WN,3920,N464WN,90,90,77,34,34,IND,BWI,515,3,10,0,,0,2,0,0,0,32
-WN	Southwest Airlines Co.	2008,1,3,4,1940,1915,2121,2110,WN,378,N726SW,101,115,87,11,25,IND,JAX,688,4,10,0,,0,NA,NA,NA,NA,NA
-WN	Southwest Airlines Co.	2008,1,3,4,1937,1830,2037,1940,WN,509,N763SW,240,250,230,57,67,IND,LAS,1591,3,7,0,,0,10,0,0,0,47
-WN	Southwest Airlines Co.	2008,1,3,4,1039,1040,1132,1150,WN,535,N428WN,233,250,219,-18,-1,IND,LAS,1591,7,7,0,,0,NA,NA,NA,NA,NA
-WN	Southwest Airlines Co.	2008,1,3,4,617,615,652,650,WN,11,N689SW,95,95,70,2,2,IND,MCI,451,6,19,0,,0,NA,NA,NA,NA,NA
-WN	Southwest Airlines Co.	2008,1,3,4,1620,1620,1639,1655,WN,810,N648SW,79,95,70,-16,0,IND,MCI,451,3,6,0,,0,NA,NA,NA,NA,NA
+WN    Southwest Airlines Co.    2008,1,3,4,2003,1955,2211,2225,WN,335,N712SW,128,150,116,-14,8,IAD,TPA,810,4,8,0,,0,NA,NA,NA,NA,NA
+WN    Southwest Airlines Co.    2008,1,3,4,754,735,1002,1000,WN,3231,N772SW,128,145,113,2,19,IAD,TPA,810,5,10,0,,0,NA,NA,NA,NA,NA
+WN    Southwest Airlines Co.    2008,1,3,4,628,620,804,750,WN,448,N428WN,96,90,76,14,8,IND,BWI,515,3,17,0,,0,NA,NA,NA,NA,NA
+WN    Southwest Airlines Co.    2008,1,3,4,926,930,1054,1100,WN,1746,N612SW,88,90,78,-6,-4,IND,BWI,515,3,7,0,,0,NA,NA,NA,NA,NA
+WN    Southwest Airlines Co.    2008,1,3,4,1829,1755,1959,1925,WN,3920,N464WN,90,90,77,34,34,IND,BWI,515,3,10,0,,0,2,0,0,0,32
+WN    Southwest Airlines Co.    2008,1,3,4,1940,1915,2121,2110,WN,378,N726SW,101,115,87,11,25,IND,JAX,688,4,10,0,,0,NA,NA,NA,NA,NA
+WN    Southwest Airlines Co.    2008,1,3,4,1937,1830,2037,1940,WN,509,N763SW,240,250,230,57,67,IND,LAS,1591,3,7,0,,0,10,0,0,0,47
+WN    Southwest Airlines Co.    2008,1,3,4,1039,1040,1132,1150,WN,535,N428WN,233,250,219,-18,-1,IND,LAS,1591,7,7,0,,0,NA,NA,NA,NA,NA
+WN    Southwest Airlines Co.    2008,1,3,4,617,615,652,650,WN,11,N689SW,95,95,70,2,2,IND,MCI,451,6,19,0,,0,NA,NA,NA,NA,NA
+WN    Southwest Airlines Co.    2008,1,3,4,1620,1620,1639,1655,WN,810,N648SW,79,95,70,-16,0,IND,MCI,451,3,6,0,,0,NA,NA,NA,NA,NA
 cat: Unable to write to output stream.
 </terminal>
 
