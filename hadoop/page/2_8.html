@@ -166,9 +166,15 @@ hadoop-example/airplain 폴더 내에 reduceSideJoin 폴더를 생성해서 작�
 </terminal>
 
 다 됐으면 컴파일하고 실행해봅시다.<br>
+그 전에, 여러분 여태까지 사용자 정의 옵션(GenericOptionsParser)를 사용하면 컴파일 에러가 나서 사용하지 못하셨을 분이 많으셨을거라 생각합니다.<br>
+저 또한 그랬구요. 에러문구에 대해 자세히 눈여겨보지 않고 왜 못쓰는걸 적어놓은건가 작가를 원망하기만 했을 뿐이었습니다.<br>
+그런데, 에러문구를 자세히 들여다보니 힌트가 있더군요.<br>
+그래서 javac -cp 에 대해 인터넷에 조금 더 찾아보니 : 으로 연결할 수 있다는 힌트를 찾고 $HADOOP_HOME/lib/commons-cli-1.2.jar 파일도 같이 컴파일 하는데 사용해봤습니다.<br>
+결과는 성공적이었습니다.<br>
+이제 사용자 정의 옵션을 사용할 수 있습니다.<br>
 
 <terminal>
-<strong>[hadoop@namenode reduceSideJoin]$</strong> javac -cp $HADOOP_HOME/hadoop-core-1.2.1.jar:$HADOOP_HOME/lib/commons-cli-1.2.jar -d . *.java
+<strong>[hadoop@namenode reduceSideJoin]$</strong> javac -cp $HADOOP_HOME/hadoop-core-1.2.1.jar<color4>:$HADOOP_HOME/lib/commons-cli-1.2.jar</color4> -d . *.java
 <strong>[hadoop@namenode reduceSideJoin]$</strong> jar -cvf $HADOOP_HOME/ReducesideJoin.jar *.class
 Manifest를 추가함
 추가하는 중: Airline/AirlineParser.class(입력 = 2223) (출력 = 1079)(51%를 감소함)
