@@ -181,6 +181,23 @@
 </terminal>
 
 그랬더니 <color4>Airline</color4> 이라는 폴더가 만들어지면서 거기에 class 파일이 들어갔습니다. 쩃든 컴파일은 잘 된 셈입니다.<br>
+<br>
+여기서 잠깐, 여러분. 패키지 이름을 보시면 하둡같으면 org.apache.hadoop..... 하고 되거나 java.util..... 하고 가지요?<br>
+이클립스를 접해보신 분들이라면 자바 프로젝트를 만드시면 폴더 구조가<br>
+src -> (내가 만든 프로젝트 이름) 이렇게 되어있고 패키지 이름은 <color4>내가 만든 프로젝트 이름</color4>으로 되어있는것을 보신적이 있으실겁니다.<br>
+그리고 하위폴더를 만들면 자동으로 패키지 이름이 들어가는데 <color4>[내가 만든 프로젝트 이름].[하위폴더 이름]</color4>이렇게 됩니다.<br>
+그러니까 하둡 패키지의 경우에는 src 폴더 내에서 src -> org -> apache -> hadoop -> ... 이런식의 폴더구조라고 생각할 수 있습니다.<br>
+<br>
+저는 호기심이 너무 많아서 직접 찾아봤습니다.<br>
+
+<img src="/hadoop/img2/4_2.jpg" alt="">
+
+얼추 맞지요? src -> <color4>core</color4> -> org -> apache -> hadoop -> ...<br>
+그리고 우리는 컴파일 할 때 hadoop-.1.2.1.jar 파일을 사용합니다.<br>
+그리고 우리는 컴파일 할 때 hadoop-<color4>core</color4>.1.2.1.jar 파일을 사용합니다.<br>
+<color4>core</color4> 폴더죠?<br>
+이런식으로 하나씩 알고 넘어가는것도 중요하다고 생각합니다.<br>
+<br>
 다음 파일을 작성해보겠습니다.<br>
 <br>
 <color4>DateKeyComparator.java</color4>

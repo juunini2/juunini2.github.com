@@ -35,8 +35,46 @@ HDFS로 복사가 완료되었습니다.<br>
 우선 다른 폴더에서 AirlineParser.java 파일을 복사해서 넣어주세요.<br>
 <br>
 아.... 시작하려고 보니 책에는 CarrierCodeParser 라는 클래스 파일을 import 하라고 했는데 책 어딜 봐도 없습니다.<br>
-휴우... 없으면 뭐... 인터넷에 올라가있는 소스를 보고 비교해서 만드는 수 밖에 없지요.<br>
+휴우... 없어서 인터넷에 뒤지니 출판사에서 올린 깃허브에 있기는 있군요...<br>
 <br>
+<color4>CarrierCodeParser.java</color4>
+
+<terminal>
+<color4>package</color4> <color2>Airline</color2>;
+
+<color4>import</color4> <color2>org.apache.hadoop.io.Text</color2>;
+
+<color2>public</color2> <color2>class</color2> CarrierCodeParser {
+  <color2>private</color2> <color2>String</color2> carrierCode;
+  <color2>private</color2> <color2>String</color2> carrierName;
+  <blur><i>// 코드네임과 풀 네임은 당연히 문자열이지요?</i></blur>
+
+  <color2>public</color2> <color3>CarrierCodeParser</color3>(<color2>Text</color2> value) {
+    <color4>this</color4>(<color4>value</color4>.<color3>toString</color3>()); <blur><i>// 이 클래스를 실행시킬 때 value값을 넣어주면 문자열로 변환시켜 읽어들입니다.</i></blur>
+  }
+
+  <color2>public</color2> <color3>CarrierCodeParser</color3>(<color2>String</color2> value) {  <blur><i>// 문자열로 변환된 value값을 넣어주면 콤마를 기준으로 배열로 쪼개버립니다.</i></blur>
+    <color6>try</color6> {
+      <color2>String</color2>[] colums = <color4>value</color4>.<color3>replaceAll</color3>(<color7>"\""</color7>, <color7>""</color7>).<color3>split</color3>(<color7>","</color7>);   <blur><i>// 여기에 코드를 좀 추가했습니다. replaceAll을 추가했는데, 쌍따옴표를 전부 제거하는겁니다. 안그러면 항공사 코드를 다른 문자열로 인식해버려서요.</i></blur>
+      <color6>if</color6> (colums <color2>!= null &&</color2> <color4>colums</color4>.length <color2>> 0</color2>) {
+        carrierCode = colums[<color2>0</color2>];
+        carrierName = colums[<color2>1</color2>];
+      }
+    } <color6>catch</color6> (<color2>Exception</color2> e) {
+      <color4>System</color4>.<color4>out</color4>.<color3>println</color3>(<color7>"Error parsing a record :"</color7> + <color4>e</color4>.<color3>getMessage</color3>());
+    }
+  }
+
+  <color2>public</color2> <color2>String</color2> <color3>getCarrierCode</color3>() {
+    <color6>return</color6> carrierCode;
+  }
+
+  <color2>public</color2> <color2>String</color2> <color3>getCarrierName</color3>() {
+    <color6>return</color6> carrierName;
+  }
+}
+</terminal>
+
 <color4>MapSideJoinMapper.java</color4>
 
 <terminal>
@@ -54,6 +92,7 @@ HDFS로 복사가 완료되었습니다.<br>
 <color4>import</color4> <color2>org.apache.hadoop.mapreduce.Mapper</color2>;
 
 <color4>import</color4> <color2>Airline.AirlineParser</color2>;
+<color4>import</color4> <color2>Airline.CarrierCodeParser</color2>;
 
 <color2>public</color2> <color2>class</color2> MapSideJoinMapper <color2>extends</color2> <color4>Mapper</color4>&lt;<color2>LongWritable</color2>, <color2>Text</color2>, <color2>Text</color2>, <color2>Text</color2>&gt; {   <blur><i>// 조인 할 것이기 때문에 key인 줄 번호만 Long으로 받고 나머지는 Text로</i></blur>
 
@@ -65,18 +104,17 @@ HDFS로 복사가 완료되었습니다.<br>
     <color2>public</color2> <color2>void</color2> <color3>setup</color3>(<color2>Context</color2> context) <color2>throws</color2> <color2>IOException</color2>, <color2>InterruptedException</color2> {
         <color6>try</color6> {
 
-            <color2>Path</color2>[] cacheFiles = <color4>DistributedCache</color4>.<color3>getLocalCacheFiles</color3>(<color4>context</color4>.getConfiguration());
+            <color2>Path</color2>[] cacheFiles = <color4>DistributedCache</color4>.<color3>getLocalCacheFiles</color3>(<color4>context</color4>.<color3>getConfiguration</color3>());   <blur><i>// 파일을 읽어서 분산처리 합니다.</i></blur>
 
             <color6>if</color6> (cacheFile <color2>!= null &&</color2> <color4>cacheFiles</color4>.length <color2>> 0</color2>) {
 
                 <color2>String</color2> line;
-                <color2>String</color2>[] tokens;
-                <color2>BufferedReader</color2> br = <color6>new</color6> <color3>BufferedReader</color3>(<color6>new</color6> <color3>FileReader</color3>(cacheFiles[<color2>0</color2>].<color3>toString</color3>()));
+                <color2>BufferedReader</color2> br = <color6>new</color6> <color3>BufferedReader</color3>(<color6>new</color6> <color3>FileReader</color3>(cacheFiles[<color2>0</color2>].<color3>toString</color3>()));    <blur><i>// 분산처리 된 파일을 한줄씩 읽어옴.</i></blur>
 
                 <color6>try</color6> {
-                    <color6>while</color6> ((line = <color4>br</color4>.<color3>readLine</color3>()) <color2>!= null</color2>) {
-                        tokens = <color4>line</color4>.<color3>toString</color3>().<color3>replaceAll</color3>(<color7>"\""</color7>, <color7>""</color7>).<color3>split</color3>(<color7>","</color7>);
-                        <color4>joinMap</color4>.<color3>put</color3>(tokens[<color2>0</color2>], tokens[<color2>1</color2>]);
+                    <color6>while</color6> ((line = <color4>br</color4>.<color3>readLine</color3>()) <color2>!= null</color2>) {    <blur><i>// 더 이상 남은 줄이 없을 때 까지</i></blur>
+                        <color2>CarrierCodeParser</color2> codeParser = <color6>new</color6> <color3>CarrierCodeParser</color3>(line);
+                        <color4>joinMap</color4>.<color3>put</color3>(<color4>codeParser</color4>.<color3>getCarrierCode</color3>(), <color4>codeParser</color4>.<color3>getCarrierName</color3>());
                     }
                 } <color6>finally</color6> {
                     <color4>br</color4>.<color3>close</color3>();
@@ -123,7 +161,7 @@ HDFS로 복사가 완료되었습니다.<br>
         <color2>String</color2>[] otherArgs = <color6>new</color6> <color3>GenericOptionParser</color3>(<color3>getConf</color3>(), args).<color3>getRemainingArgs</color3>();
 
         <color6>if</color6> (<color4>otherArgs</color4>.length <color2>!= 3</color2>) {    <blur><i>// 배열이 3개가 들어와야 함</i></blur>
-            <color4>System</color4>.<color4>err</color4>.<color3>println</color3>(<color7>"Usage: MapSideJoin [metadata] [in] [out]"</color7>);
+            <color4>System</color4>.<color4>err</color4>.<color3>println</color3>(<color7>"Usage: MapSideJoin [metadata] [in] [out]"</color7>); <blur><i>조인 할 데이터, 데이터, 아웃풋</i></blur>
             <color4>System</color4>.<color3>exit</color3>(<color2>2</color2>);
         }
 
@@ -209,6 +247,7 @@ cat: Unable to write to output stream.
 요렇게 항공사 코드와 항공사의 풀네임을 조인시켜줍니다.<br>
 맵 사이드 조인은 부분 정렬 처럼 상대적으로 작은 용량의 데이터를 조인하는데에 좋습니다.<br>
 좀 더 용량이 커지면 리듀스 사이드 조인을 해야합니다.<br>
+제 개인적인 경험과 생각이지만 아마도 20GB기준으로 속도의 차이가 조금씩 나기 시작하는 것 같습니다.<br>
 다음 글에서는 리듀스 사이드 조인을 다루도록 하겠습니다.<br>
 <br>
 <a href="/hadoop/page/2_8.html" onclick="
