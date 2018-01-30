@@ -55,6 +55,7 @@ Part. 3 시작입니다.<br>
 
 그냥 저 두껍게 강조한 콤바이너 클래스만 넣으면 됩니다. 콤바이너 클래스엔 리듀서를 넣으면 돼요. 참 쉽죠?<br>
 그런데, 겨우 저 한줄 넣었다고 성능 차이가 확실하게 난답니다. 안 할 이유가 없군요.<br>
+게다가 이제야 알려주다니, 시작부터 저거 넣으라고 해도 됐는데, 저자양반 한데 쥐어박고싶군요.<br>
 <br>
 <strong>3. Gzip 압축</strong><br>
 이거 생각 나세요? 아... 안나시나요?<br>
@@ -117,7 +118,9 @@ Part. 3 시작입니다.<br>
 <br>
 <strong>4. 스내피 설치</strong><br>
 여러분 컴파일한 jar 파일을 하둡에서 실행할 때 마다 나오는 WARN 코드를 보신 적 있나요?<br>
+<br>
 18/01/22 10:40:29 WARN snappy.LoadSnappy:    Snappy native library not loaded<br>
+<br>
 이건데.... 눈여겨 보신분들이 있다면 항상 저 경고문구가 나온다는걸 알고계셨을겁니다.<br>
 그럼 저걸 써보도록 합시다.<br>
 <br>
@@ -274,9 +277,9 @@ datanode: starting tasktracker, logging to /home/hadoop/hadoop/libexec/../logs/h
 <strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop jar WordCount.jar WordCount gangnamstyle.txt snappy_test
 18/01/30 06:59:57 WARN mapred.JobClient: Use GenericOptionsParser for parsing the arguments. Applications should implement Tool for the same.
 18/01/30 06:59:57 INFO input.FileInputFormat: Total input paths to process : 1
-<strong>18/01/30 06:59:57 WARN snappy.LoadSnappy: Snappy native library is available
+<strong><color2>18/01/30 06:59:57 WARN snappy.LoadSnappy: Snappy native library is available
 18/01/30 06:59:57 INFO util.NativeCodeLoader: Loaded the native-hadoop library
-18/01/30 06:59:57 INFO snappy.LoadSnappy: Snappy native library loaded</strong>
+18/01/30 06:59:57 INFO snappy.LoadSnappy: Snappy native library loaded</color2></strong>
 18/01/30 06:59:58 INFO mapred.JobClient: Running job: job_201801300658_0001
 18/01/30 06:59:59 INFO mapred.JobClient:  map 0% reduce 0%
 18/01/30 07:00:04 INFO mapred.JobClient:  map 100% reduce 0%
