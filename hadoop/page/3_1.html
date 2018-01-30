@@ -1,1 +1,456 @@
-not ready
+Part. 3 시작입니다.<br>
+이번 글에서는 <color4>맵리듀스 튜닝</color4>에 대해서 다뤄보겠습니다.<br>
+<br>
+하둡의 성능 향상을 위한건데, 뭘 하면 성능이 향상될까요?<br>
+병렬처리, 분산환경을 생각한다면 <color2>slaves(데이터노드)</color2> 숫자를 늘리면 되는 단순한 일입니다.<br>
+정말 단순하게 생각해서 데이터노드의 숫자를 늘리면 그만큼 병렬처리를 할테니 속도가 빨라질겁니다.<br>
+<br>
+그런데, 만약에 데이터노드가.... 조금 과장을 해보자구요. <color4>10000</color4>개쯤 된다고 생각해봅시다.<br>
+10000개에서 성능을 <color2>10%</color2> 향상시키고 싶으면 <color4>1000</color4>개를 더 늘려야 합니다.<br>
+<br>
+.....네?<br>
+<br>
+아, 당신이 배트맨이라면 신경 안쓸지도 모르겠네요;;<br>
+그런데 저는 배트맨이 아니라서 돈이 좀 안들면서도 성능을 올릴 방법을 찾아보겠습니다.<br>
+<br>
+자, 그럼 시작하죠.<br>
+<br>
+<strong>1. 셔플튜닝</strong><br>
+여러분이 드라이버 클래스에 <color4>사용자 정의 옵션(GenericParserOption)</color4>을 넣었다면 할 수 있는 방법입니다.<br>
+말 그대로 사용자 정의 옵션을 사용하는 방법이죠.<br>
+예시를 보여드리겠습니다..<br>
+
+<terminal>
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop jar [파일이름].jar [클래스이름] <color4>-D io.sort.mb=200 -D mapred.child.java.opts=-Xmx512m -D io.sort.factor=30</color4> [input] [output]
+</terminal>
+
+이런식으로 할 수 있는 방법이 하나 있고요, 이게 귀찮으면 드라이버 클래스에 직접 넣어버리는 방법도 있죠.<br>
+
+<terminal>
+<blur>(위 생략)</blur>
+
+<color2>Configuration</color2> conf = <color6>new</color6> <color3>Configuration</color3>();
+<color4>conf</color4>.<color3>set</color3>(<color7>"io.sort.mb"</color7>, <color7>"300"</color7>);
+<color4>conf</color4>.<color3>set</color3>(<color7>"io.sort.factor"</color7>, <color7>"30"</color7>)
+
+<blur>(아래 생략)</blur>
+</terminal>
+
+이런식으로 드리아버 클래스에 직접 선언해버리는 방법도 있습니다.<br>
+<br>
+<strong>2. 콤바이너 클래스 적용</strong><br>
+매우 단순한 방법입니다. 드라이버 클래스에 매퍼 정의하고 리듀서 정의하시죠?<br>
+거기에 콤바이너도 같이 정의하면 됩니다. 이것도 예시를 보여드릴게요.<br>
+
+<terminal>
+<blur>(위 생략)</blur>
+
+<color4>job</color4>.<color3>setJarByClass</color3>(<color4>Driver</color4>.class);
+<color4>job</color4>.<color3>setMapperClass</color3>(<color4>Mapper</color4>.class);
+<color4>job</color4>.<color3>setReducerClass</color3>(<color4>Reducer</color4>.class);
+<strong><color4>job</color4>.<color3>setCombinerClass</color3>(<color4>Reducer</color4>.class);</strong>
+
+<blur>(아래 생략)</blur>
+</terminal>
+
+그냥 저 두껍게 강조한 콤바이너 클래스만 넣으면 됩니다. 콤바이너 클래스엔 리듀서를 넣으면 돼요. 참 쉽죠?<br>
+그런데, 겨우 저 한줄 넣었다고 성능 차이가 확실하게 난답니다. 안 할 이유가 없군요.<br>
+<br>
+<strong>3. Gzip 압축</strong><br>
+이거 생각 나세요? 아... 안나시나요?<br>
+부분 정렬 할 때 했었는데.... 뭐.... 네, 그래요 Part. 2에 Step. 5를 참고하시면 있는데요....<br>
+휴우... 됐다 그냥 예제 하나 보여드릴게요.<br>
+
+<terminal>
+<color4>import</color4> <color2>org.apache.hadoop.conf.Configuration</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.conf.Configured</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.fs.Path</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.IntWritable</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.LongWritable</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.SequenceFile.CompressionType</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.Text</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.io.compress.GzipCodec</color2>;
+<color4>import</color4> <color2>org.apache.hadoop.mapred.*</color2>;
+
+<color4>import</color4> <color2>java.io.IOException</color2>;
+
+<color2>public</color2> <color2>class</color2> GzipExample {
+    <color2>public</color2> <color2>static</color2> <color2>void</color2> <color3>main</color3>(<color2>String</color2>[] args) <color2>throws</color2> <color2>Exception</color2> {
+        <strong>
+        <color2>Configuration</color2> conf = <color6>new</color6> <color3>Configuration</color3>();
+        <color4>conf</color4>.<color3>setBoolean</color3>(<color7>"mapred.compress.map.output"</color7>, <color2>true</color2>);
+        <color4>conf</color4>.<color3>set</color3>(<color7>"mapred.map.output.comparesion.codec"</color7>, <color7>"org.apache.hadoop.io.compress.GzipCodec"</color7>);
+        </strong>
+
+        <color6>if</color6> (args.length <color2>!= 2</color2>) {
+            <color4>System</color4>.<color4>err</color4>.<color3>println</color3>(<color7>"Usage: GzipExample &lt;in&gt; &lt;out&gt;"</color7>);
+            <color4>System</color4>.<color3>exit</color3>(<color2>2</color2>);
+        }
+
+        <color2>Job</color2> job = <color6>new</color6> <color3>Job</color3>(conf, "GzipExample");
+
+        <color4>FileInputFormat</color4>.<color3>setInputPaths</color3>(job, <color6>new</color6> <color3>Path</color3>(args[<color2>0</color2>]));
+        <color4>FileOutputFormat</color4>.<color3>setOutputPath</color3>(job, <color6>new</color6> <color3>Path</color3>(args[<color2>1</color2>]));
+
+        <color4>job</color4>.<color3>setJarByClass</color3>(<color4>GzipExample</color4>.class);
+        <color4>job</color4>.<color3>setMapperClass</color3>(<color4>GzipExampleMapper</color4>.class);
+        <color4>job</color4>.<color3>setCombinerClass</color3>(<color4>GzipExampleReducer</color4>.class);
+        <color4>job</color4>.<color3>setReducerClass</color3>(<color4>GzipExampleReducer</color4>.class);
+        
+        <color4>job</color4>.<color3>setOutputKeyClass</color3>(<color4>Text</color4>.class);
+        <color4>job</color4>.<color3>setOutputValueClass</color3>(<color4>IntWritable</color4>.class);
+
+        <color4>job</color4>.<color3>setInputFormatClass</color3>(<color4>TextInputFormat</color4>.class);
+        <strong><color4>job</color4>.<color3>setOutputFormatClass</color3>(<color4>SequenceFileOutputFormat</color4>.class);</strong>
+        <strong>
+        <color4>SequenceFileOutputFormat</color4>.<color3>setCompressOutput</color3>(job, <color2>true</color2>);
+        <color4>SequenceFileOutputFormat</color4>.<color3>setOutputCompressorClass</color3>(job, <color4>GzipCodec</color4>.class);
+        <color4>SequenceFileOutputFormat</color4>.<color3>setOutputCompressionType</color3>(job, <color4>CompressionType</color4>.BLOCK);
+        </strong>
+
+        <color4>job</color4>.<color3>waitForCompletion</color3>(<color2>true</color2>);
+    }
+}
+</terminal>
+
+굵게 표시 해둔 부분들 보이시죠? 저렇게 시퀀스 형식으로 Gzip포맷 압축해도 성능이 좋아진답니다.<br>
+<br>
+<strong>4. 스내피 설치</strong><br>
+여러분 컴파일한 jar 파일을 하둡에서 실행할 때 마다 나오는 WARN 코드를 보신 적 있나요?<br>
+18/01/22 10:40:29 WARN snappy.LoadSnappy:    Snappy native library not loaded<br>
+이건데.... 눈여겨 보신분들이 있다면 항상 저 경고문구가 나온다는걸 알고계셨을겁니다.<br>
+그럼 저걸 써보도록 합시다.<br>
+<br>
+그리고 여기서 잠깐, 우리는 최소설치부터 시작해서 gcc 컴파일러도 없고 cmake도 없습니다. 시대가 지나서 책과는 설치 방법도 다르니 한번 보고 가시죠.<br>
+<br>
+<a href="https://cmake.org/download/" class="link" target="_new">https://cmake.org/download/</a> 여기로 들어가서 리눅스 버전을 다운로드 받습니다.<br>
+
+<img src="/hadoop/img3/1_1.jpg" alt="">
+
+제가 했을 땐 3.10.2 버전인데 여러분이 하실 땐 업데이트 되서 다를수도 있습니다. 버전 잘 보고 해주세요.<br>
+만약 버전이 다르다면 아래 명령어도 알맞게 고쳐주셔야 할 필요가 있습니다.<br>
+
+<terminal>
+<strong>[hadoop@namenode ~]$</strong> cd Downloads
+<strong>[hadoop@namenode Downloads]$</strong> sudo yum install -y gcc-c++ && tar -zxvf cmake-3.10.2.tar.gz && rm cmake-3.10.2.tar.gz && cd cmake-3.10.2 && ./bootstrap && make && sudo make install
+.
+.
+.
+.
+<blur>(조금 오래 걸립니다.)</blur>
+.
+.
+.
+.
+-- Installing: <color4>/usr/local/share/cmake-3.10</color4>/editors/emacs/cmake-mode.el
+-- Installing: /usr/local/share/aclocal/cmake.m4
+-- Installing: <color4>/usr/local/share/cmake-3.10</color4>/completions/cmake
+-- Installing: <color4>/usr/local/share/cmake-3.10</color4>/completions/cpack
+-- Installing: <color4>/usr/local/share/cmake-3.10</color4>/completions/ctest
+</terminal>
+
+다 되고나면 환경변수에 추가해줍니다.<br>
+
+<terminal>
+<strong>[hadoop@namenode cmake-3.10.2]$</strong> sudo vi /etc/profile
+.
+.
+.
+<blur>(맨 밑으로 내려가서 아래 줄을 추가해주세요.)</blur>
+export CMAKE_HOME=<color4>/usr/local/share/cmake-3.10</color4>
+</terminal>
+
+하고나면 <key>Esc</key> 키를 누른 뒤 <color2>:wq</color2> 를 입력하고 <key>Enter</key> 키를 누른 뒤 빠져나와 주세요.<br>
+
+<terminal>
+<strong>[hadoop@namenode cmake-3.10.2]$</strong> source /etc/profile
+<strong>[hadoop@namenode cmake-3.10.2]$</strong> cmake -version
+cmake version 3.10.2
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake)
+</terminal>
+
+gcc컴파일러와 CMake 설치를 마쳤습니다. 아... 이것만 했는데 조금 지치는 기분이네요. 시간이 오래 걸려서 그런걸까요?<br>
+그럼 스내피 설치를 해보겠습니다.<br>
+
+<a href="https://google.github.io/snappy/" class="link" target="_new">https://google.github.io/snappy/</a>여기로 들어가시면 다운로드 받을 수 있어요.<br>
+
+<img src="/hadoop/img3/1_2.jpg" alt="">
+
+저걸 클릭해서 다운로드 받으세요.<br>
+다운로드 받고나서 다운로드 폴더로 가면 <color4>google-snappy-1.1.7-3-ge69d9f8.tar.gz</color4> 이라는 파일이 있을거에요. 버전이 바뀌면 이름도 바뀔 수 있으니 뭐.... 아무튼 압축을 풀겠습니다.<br>
+
+<terminal>
+<strong>[hadoop@namenode Downloads]$</strong> tar -zxvf google-snappy-1.1.7-3-ge69d9f8.tar.gz && rm google-snappy-1.1.7-3-ge69d9f8.tar.gz
+.
+.
+.
+</terminal>
+
+이렇게 하면 압축이 풀리고 <color4>google-snappy-e69d9f8</color4> 이라는 폴더가 생겨있을겁니다.<br>
+그리고 설치합니다.<br>
+
+<terminal>
+<strong>[hadoop@namenode Downloads]$</strong> cd google-snappy-e69d9f8
+<strong>[hadoop@namenode google-snappy-e69d9f8]$</strong> mkdir build && cd build && cmake ../ && make && sudo make install
+.
+.
+.
+-- Installing: /usr/local/include/snappy.h
+-- Installing: /usr/local/include/snappy-stubs-public.h
+-- Installing: /usr/local/lib64/cmake/Snappy/SnappyTargets.cmake
+-- Installing: /usr/local/lib64/cmake/Snappy/SnappyTargets-noconfig.cmake
+-- Installing: /usr/local/lib64/cmake/Snappy/SnappyConfig.cmake
+-- Installing: /usr/local/lib64/cmake/Snappy/SnappyConfigVersion.cmake
+</terminal>
+
+자, 여기까지 스내피 설치도 마쳤습니다.<br>
+이제 밑에 제가 첨부해놓은 파일들을 다운로드 받아주세요.<br>
+<br>
+<a href="/hadoop/img3/libsnappy.a" download class="link">libsnappy.a</a><br>
+<a href="/hadoop/img3/libsnappy.la" download class="link">libsnappy.la</a><br>
+<a href="/hadoop/img3/libsnappy.so" download class="link">libsnappy.so</a><br>
+<a href="/hadoop/img3/libsnappy.so.1" download class="link">libsnappy.so.1</a><br>
+<a href="/hadoop/img3/libsnappy.so.1.1.4" download class="link">libsnappy.so.1.1.4</a><br>
+<br>
+만약 버전이 높아졌다면, 여기서 libsnappy.la, libsnappy.so 파일만 다운로드 해주시고, 나머지는 찾으셔야 합니다.<br>
+
+<terminal>
+<strong>[hadoop@namenode google-snappy-e69d9f8]$</strong> cd /
+<strong>[hadoop@namenode /]$</strong> sudo find -name libsnappy*
+.
+.
+.
+./usr/lib/libsnappy.so.1
+./usr/lib/libsnappy.so.1.1.4
+./usr/lib64/libsnappy.so.1
+./usr/lib64/libsnappy.so.1.1.4
+./usr/local/lib64/libsnappy.a
+</terminal>
+
+저 위치에 있는 파일을 복사하셔야 합니다. 그리고 libsnappy.la 파일의 내용을 바꿔주셔야 해요. 열어보면 어떤 느낌인지 대략 아실겁니다.<br>
+그것에 대해서는 언급하지 않고 그냥 넘어가도록 하겠습니다. 개인적인 역량이라고 생각하거든요.<br>
+<br>
+파일들이 전부 준비 되셨으면 <color4>$HADOOP_HOME/lib/native/Linux-amd64-64</color4> 이쪽으로 전부 파일을 옮겨주세요.<br>
+그리고 터미널에 아래 명령어를 넣습니다.<br>
+
+<terminal>
+<strong>[hadoop@namenode ~]$</strong> cd $HADOOP_HOME/lib/native/Linux-amd64-64
+<strong>[hadoop@namenode Linux-amd64-64]$</strong> scp * snamenode:/home/hadoop/hadoop/lib/native/Linux-amd64-64 && scp * datanode:/home/hadoop/hadoop/lib/native/Linux-amd64-64
+libhadoop.a                                   100%  402KB  78.2MB/s   00:00    
+libhadoop.la                                  100%  877     3.4MB/s   00:00    
+libhadoop.so                                  100%  218KB  72.0MB/s   00:00    
+libhadoop.so.1                                100%  218KB  60.5MB/s   00:00    
+libhadoop.so.1.0.0                            100%  218KB  80.9MB/s   00:00    
+libsnappy.a                                   100%  184KB  84.2MB/s   00:00    
+libsnappy.la                                  100%  807     2.1MB/s   00:00    
+libsnappy.so                                  100%   27KB  34.7MB/s   00:00    
+libsnappy.so.1                                100%   23KB  32.5MB/s   00:00    
+libsnappy.so.1.1.4                            100%   23KB   3.6MB/s   00:00    
+libhadoop.a                                   100%  402KB  69.1MB/s   00:00    
+libhadoop.la                                  100%  877     2.6MB/s   00:00    
+libhadoop.so                                  100%  218KB  65.8MB/s   00:00    
+libhadoop.so.1                                100%  218KB  65.7MB/s   00:00    
+libhadoop.so.1.0.0                            100%  218KB  92.3MB/s   00:00    
+libsnappy.a                                   100%  184KB  78.3MB/s   00:00    
+libsnappy.la                                  100%  807     2.5MB/s   00:00    
+libsnappy.so                                  100%   27KB  37.9MB/s   00:00    
+libsnappy.so.1                                100%   23KB  32.9MB/s   00:00    
+libsnappy.so.1.1.4                            100%   23KB   2.9MB/s   00:00
+<strong>[hadoop@namenode Linux-amd64-64]$</strong> cd $HADOOP_HOME
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/stop-mapred.sh
+stopping jobtracker
+snamenode: stopping tasktracker
+datanode: stopping tasktracker
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/start-mapred.sh
+starting jobtracker, logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-jobtracker-namenode.out
+snamenode: starting tasktracker, logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-tasktracker-snamenode.out
+datanode: starting tasktracker, logging to /home/hadoop/hadoop/libexec/../logs/hadoop-hadoop-tasktracker-datanode.out
+</terminal>
+
+이제 실험해봅시다. 아... 뭐가 좋을까요? 저번에 강남스타일 한걸로 실험해볼까요?<br>
+
+<terminal>
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop jar WordCount.jar WordCount gangnamstyle.txt snappy_test
+18/01/30 06:59:57 WARN mapred.JobClient: Use GenericOptionsParser for parsing the arguments. Applications should implement Tool for the same.
+18/01/30 06:59:57 INFO input.FileInputFormat: Total input paths to process : 1
+<strong>18/01/30 06:59:57 WARN snappy.LoadSnappy: Snappy native library is available
+18/01/30 06:59:57 INFO util.NativeCodeLoader: Loaded the native-hadoop library
+18/01/30 06:59:57 INFO snappy.LoadSnappy: Snappy native library loaded</strong>
+18/01/30 06:59:58 INFO mapred.JobClient: Running job: job_201801300658_0001
+18/01/30 06:59:59 INFO mapred.JobClient:  map 0% reduce 0%
+18/01/30 07:00:04 INFO mapred.JobClient:  map 100% reduce 0%
+.
+.
+.
+</terminal>
+
+보이세요?<br>
+전 이거 하루종일 찾아서 해냈답니다...<br>
+뭐, 아무튼 해냈습니다...ㅠ_ㅠ<br>
+<br>
+<strong>5. 스내피 사용</strong>
+스내피를 설치했으니 사용할 차례입니다.<br>
+사용법은 아까 Gzip예제에서 몇가지만 수정하면 됩니다.<br>
+
+<terminal>
+<blur>(위 생략)</blur>
+<color4>import</color4> <color2>org.apache.hadoop.io.compress.SnappyCodec</color2>;
+<blur>(아래 생략)</blur>
+
+<blur>(위 생략)</blur>
+<color2>Configuration</color2> conf = <color6>new</color6> <color3>Configuration</color3>();
+<color4>conf</color4>.<color3>setBoolean</color3>(<color7>"mapred.compress.map.output"</color7>, <color2>true</color2>);
+<color4>conf</color4>.<color3>set</color3>(<color7>"mapred.map.output.comparesion.codec"</color7>, <color7>"org.apache.hadoop.io.compress.SnappyCodec"</color7>);
+<blur>(아래 생략)</blur>
+
+<blur>(위 생략)</blur>
+<color4>SequenceFileOutputFormat</color4>.<color3>setCompressOutput</color3>(job, <color2>true</color2>);
+<color4>SequenceFileOutputFormat</color4>.<color3>setOutputCompressorClass</color3>(job, <color4>SnappyCodec</color4>.class);
+<color4>SequenceFileOutputFormat</color4>.<color3>setOutputCompressionType</color3>(job, <color4>CompressionType</color4>.BLOCK);
+<blur>(아래 생략)</blur>
+</terminal>
+
+이렇게 바꿔주시면 됩니다. Gzip 대신 Snappy 코덱을 사용하는거에요.<br>
+Gzip과 마찬가지로 실행예제는 올리지 않겠습니다. 대신 나중에 한번 테스트 해서 예제를 올려볼게요. 이런게 있구나 하는것만 알아두세요.<br>
+<br>
+<strong>6. DFS 블록 크기 수정</strong><br>
+HDFS에 파일을 업로드 하면 기본세팅으로는 64MB 단위로 파일을 분리시켜서 저장하는데, 그걸 더 잘게 나누는겁니다.<br>
+많이 분리시킬수록 태스크가 늘어나서 속도가 빨라진다는 말입니다.(그만큼 메모리 용량이 따라줘야...)<br>
+설정하는 방법은 두 가지가 있는데, 첫번째는 이미 분산파일로 저장 된 파일을 더 나누는 방법입니다.<br>
+
+<terminal>
+<strong>[hadoop@namenode hadoop]$</strong> ./bin/hadoop distcp -Ddfs.block.size=<color4>$[32*1024*1024]</color4> [입력 경로] [출력 경로]
+</terminal>
+
+<color4>$[32*1024*1024]</color4> 부분에 32는 꼭 32가 아니더라도 자신이 원하는 블록 크기로 지정해주시면 됩니다.<br>
+그리고 두번쨰 방법은 <color2>hdfs-site.xml</color2> 파일을 고치는겁니다.
+
+<terminal>
+<color2>&lt;property&gt;</color2>
+    <color2>&lt;name&gt;</color2>dfs.block.size<color2>&lt;/name&gt;</color2>
+    <color2>&lt;value&gt;</color2>33554432<color2>&lt;/value&gt;</color2>
+<color2>&lt;/property&gt;</color2>
+
+<color2>&lt;property&gt;</color2>
+    <color2>&lt;name&gt;</color2>mapred.tasktracker.map.tasks.maximum<color2>&lt;/name&gt;</color2>
+    <color2>&lt;value&gt;</color2>4<color2>&lt;/value&gt;</color2>
+<color2>&lt;/property&gt;</color2>
+
+<color2>&lt;property&gt;</color2>
+    <color2>&lt;name&gt;</color2>mapred.tasktracker.reduce.tasks.maximum<color2>&lt;/name&gt;</color2>
+    <color2>&lt;value&gt;</color2>4<color2>&lt;/value&gt;</color2>
+<color2>&lt;/property&gt;</color2>
+</terminal>
+
+이걸 추가하는거죠. 참고로 저기에 33554432라는 숫자는 [32 × 1024 × 1024] 입니다.<br>
+<color2>mapred.tasktracker.map.tasks.maximum</color2>는 하나의 태스크트래커에서 동시에 실행할 수 있는 맵 태스크 갯수이고,<br>
+<color2>mapred.tasktracker.reduce.tasks.maximum</color2>는 하나의 태스크트래커에서 동시에 실행할 수 있는 리듀스 태스크 갯수입니다.<br>
+<br>
+숫자가 높으면 높을수록 좋다 이런게 아니라 자신의 환경에 맞춰서 설정할 줄 알아야 합니다.<br>
+일단 두개의 디폴트값은 2이고, 권장수치는<br>
+[0.95 × 데이터노드 갯수] ~ [1.75 × 데이터노드 갯수] 입니다.<br>
+지금 우리는 2개를 쓰니깐 1.9 ~ 3.5 이군요.<br>
+데이터노드가 많으면 많을수록 늘려나가도 괜찮지만, CPU의 코어 수와 동일해지거나 더 많아지면 문제가 일어납니다.<br>
+열심히 몸으로 체득하는 방법 뿐이군요.<br>
+<br>
+아무튼 이런식으로 파일을 잘개 쪼개서 태스크 양을 늘리면 빨리 처리할 수 있겠지만<br>
+어디까지나 컴퓨터의 메모리 성능이 따라 줄 때의 이야기입니다. 그렇지 않으면 역효과가 날 수도 있어요.<br>
+컴퓨터가 뻗어버린다거나...<br>
+<br>
+<strong>7. JVM 재사용</strong><br>
+태스크트래커는 실행 될 떄 마다 각각 별도의 JVM을 실행한다고 합니다.<br>
+1초정도씩인데, 그 시간을 아끼자고 JVM을 재사용 하는겁니다.<br>
+<color2>mapred-site.xml</color2>에 이 값을 추가해주면 됩니다.<br>
+
+<terminal>
+<color2>&lt;property&gt;</color2>
+    <color2>&lt;name&gt;</color2>mapred.job.reuse.jvm.num.tasks<color2>&lt;/name&gt;</color2>
+    <color2>&lt;value&gt;</color2>-1<color2>&lt;/value&gt;</color2>
+<color2>&lt;/property&gt;</color2>
+</terminal>
+
+디폴트값은 1로 한번만 사용하겠다는 의미이며 숫자를 늘려나가면 그 숫자만큼 재사용 하겠다는 의미입니다.<br>
+저기 써진 -1의 경우에는 무제한으로 JVM을 재사용 하겠다는 의미입니다.<br>
+<br>
+<strong>8. 투기적인 잡 실행</strong><br>
+????<br>
+투기적? 무슨 투기? 부동산 투기 할 때 그 투기? [speculative = 위험한] .... 맞네 맞아...<br>
+위험한 잡 실행?<br>
+말은 이상하지만 이것에 대한 설명은<br>
+<br>
+어느 데이터노드가 태스크를 수행하는데 다른 데이터노드들에 비해 너무 느리면 그 일을 중지시키고 다른 데이터노드에게 넘겨주는겁니다.<br>
+<color2>mapred-site.xml</color2> 에서 수정할 수 있습니다.<br>
+
+<terminal>
+<color2>&lt;property&gt;</color2>
+    <color2>&lt;name&gt;</color2>mapred.map.tasks.speclative.execution<color2>&lt;/name&gt;</color2>
+    <color2>&lt;value&gt;</color2>false<color2>&lt;/value&gt;</color2>
+<color2>&lt;/property&gt;</color2>
+
+<color2>&lt;property&gt;</color2>
+    <color2>&lt;name&gt;</color2>mapred.reduce.tasks.speclative.execution<color2>&lt;/name&gt;</color2>
+    <color2>&lt;value&gt;</color2>false<color2>&lt;/value&gt;</color2>
+<color2>&lt;/property&gt;</color2>
+</terminal>
+
+둘 다 디폴트값은 true 입니다.<br>
+어라? true면 투기적인 잡 실행을 하겠다는 의미이고 false면 안하겠다는 의미인데?<br>
+왜인지 책에 설명이 나와있는데,<br>
+태스크 자체의 로직에 심각한 버그가 있거나, 성능을 저하시키는 코드가 있는 경우는 버그를 수정하는게 우선적으로 해야 할 일이고,<br>
+HDFS가 아니라 별도의 파일 시스템의 파일 I/O를 하고 있을 경우에는 병목현상이 일어날 수 밖에 없기도 하고<br>
+투기적인 잡 실행이 과다하게 일어나면 오히려 역효과라고 합니다.<br>
+<br>
+그래서 필요한 경우에만 사용하고 그렇지 않으면 사용하지 않는것이 더 좋다고 하네요.<br>
+따로 사용하려면 어떻게 해야할까요?<br>
+드라이버 클래스에서 따로 지정을 해줍니다.<br>
+
+<terminal>
+<color2>job</color2>.<color3>setSpeculativeExecution</color3>(conf, true);
+<color2>job</color2>.<color3>setMapSpeculativeExecution</color3>(conf, true);
+<color2>job</color2>.<color3>setReduceSpeculativeExecution</color3>(conf, true);
+</terminal>
+
+이런식으로 따로 지정해주면 된다고 합니다.<br>
+<br>
+<strong>9. 압축 코덱 선택</strong><br>
+........<br>
+............<br>
+음......<br>
+Snappy 사이트의 글을 자세히 읽어보신 분 계신가요?<br>
+구글이 개발한 압축 코덱이라 그런지.....<br>
+<br><color2>
+우리꺼 빠르다!<br>
+쟤네보다 빨라! 우리꺼가 제일 빨라!<br>
+벤치마크도 보여줄게!<br>
+어때? 빠르지?!<br>
+그러니까 얼른 우리껄 써!<br>
+<br></color2>
+......<br>
+네....그럴게요....;;<br>
+<br>
+<br>
+<br>
+마지막이 이상하지만....;;<br>
+일단 맵리듀스 튜닝은 여기까지입니다.<br>
+도움이 되었으면 좋겠네요.<br>
+<br>
+<a href="/hadoop/page/3_2.html" onclick="
+    event.preventDefault();
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = () => {
+        document.querySelector('main').innerHTML = xhttp.responseText;
+    }
+
+    xhttp.open('GET', '/hadoop/page/3_2.html', true);
+    xhttp.send();
+
+    document.title = 'Hadoop Guide Part. 3 - Step. 2';
+    history.pushState('/hadoop/page/3_2.html' + ' ' + 'Part. 3 - Step. 2', null, '#3_2');
+
+    document.querySelector('side').children[2].classList.add('on');
+    document.querySelector('side').children[2].children[1].classList.remove('on');
+    document.querySelector('side').children[2].children[2].classList.add('on');
+" class="button">다음단계로 가기</a>
