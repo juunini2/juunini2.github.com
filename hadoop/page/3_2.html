@@ -1,1 +1,541 @@
-not ready
+저번 글에서는 하둡 튜닝을 다루었습니다.<br>
+책을 가지고 계신 분이라면 다음 부분은 [하둡 운영]을 할 차례라고 알고계실텐데<br>
+저는 이걸 맨 마지막에 했으면 해서 지금 당장 하진 않겠습니다.<br>
+실무적인 하둡 운영에 관한 것이고 실습을 진행하는 환경에서는 너무나 동떨어진 이야기이기 때문에<br>
+실습을 다 마치고 나서 실무에서는 이런 환경에서 진행한다 하고 이해하는것이 더 나을 것 같습니다.<br>
+<br>
+그래서 이번 글에서는 [하둡 부가기능 활용]에 대해서 다루겠습니다.<br>
+이번에는 <color2>하둡 스트리밍</color2> 이라는 재밌는 기능이 나와요!<br>
+유닉스 표준 입력과 표준 출력을 통해 매퍼와 리듀서를 거져 출력 데이터를 생성한다는데<br>
+복잡한 이야기는 이쯤 해 두고 사용법을 봅시다!<br>
+
+<terminal>
+<strong>[hadoop@NameNode hadoop]$</strong> ./bin/hadoop jar contrib/streaming/hadoop-streaming-1.2.1.jar \
+    > -input [입력 데이터 경로] \
+    > -output [출력 데이터 경로] \
+    > -mapper [매퍼 경로] \
+    > -reducer [리듀서 경로]
+</terminal>
+
+이렇게 사용합니다.<br>
+저기에 <color2>-input</color2> 이런식으로 써놓은것들은 각각의 옵션인데<br>
+옵션 리스트가 나와있으니 쭉 소개를 해드리겠습니다.<br>
+<br>
+<color2>-input</color2> : 입력 데이터 경로<color4>(필수)</color4><br>
+<color2>-output</color2> : 출력 데이터 경로<color4>(필수)</color4><br>
+<color2>-mapper</color2> : 매퍼로 실행할 스크립트 혹은 자바 클래스 명, 또는 유닉스 명령어로도 가능합니다.<color4>(필수)</color4><br>
+<color2>-reducer</color2> : 리듀서로 실행할 스크립트 혹은 자바 클래스 명, 또는 유닉스 명령어로도 가능합니다.<color4>(필수)</color4><br>
+<color2>-file</color2> : 매퍼나 리듀서 등에서 스크립트 파일을 사용할 때 포함시키는 옵션<br>
+<color2>-inputformat</color2> : 별도로 값을 정하지 않으면 TextInputFormat 이 됨.<br>
+<color2>-outputformat</color2> : 별도로 값을 정하지 않으면 TextOutputFormat 이 됨.<br>
+<color2>-partitioner</color2> : 파티셔너로 사용할 클래스명<br>
+<color2>-combiner</color2> : 콤바이너로 실행할 스크립트 혹은 자바 클래스 명, 또는 유닉스 명령어로도 사용 가능합니다.<br>
+<color2>-numReduceTasks</color2> : 잡에서 실행할 reduce task 갯수, 리듀서를 사용 안할거면 0으로 해야겠죠?<br>
+<color2>-cmdenv</color2> : 스트리밍 명령어에서 사용할 환경변수<br>
+<color2>-inputreader</color2> : InputFormat 클래스에서 사용할 RecordReader 클래스명. 매퍼에서 처리할 레코드의 범위도 함께 설정이 가능함<br>
+예) -inputreader "StreamXmlRecordReader,begin=xml,end=/xml"<br>
+<color2>-verbose</color2> : 스트리밍 로그를 상세하게 출력함<br>
+<color2>-mapdebug</color2> : 매퍼 실행 중 버그가 발생할 경우 실행할 스크립트<br>
+<color2>-reducedebug</color2> : 리듀서 실행 중 버그가 발생할 경우 실행할 스크립트<br>
+<br>
+그리고, 사용자 정의 옵션(GenericOption)도 사용 가능합니다.<br>
+<br>
+<color2>-conf</color2> : 맵리듀스 잡에서 사용할 환경설정 파일<br>
+<color2>-D</color2> : 맵리듀스 잡에서 사용할 속성값. "속성=값" 형식으로 설정. 이 명령어만큼은 친숙하시죠??<br>
+<color2>-fs</color2> : 스트리밍 명령어에서 접근할 네임노드<br>
+<color2>-jt</color2> : 스트리밍 명령어에서 접근할 잡트래커<br>
+<color2>-files</color2> : 분산 캐시에 등록해서 사용할 텍스트 파일<br>
+<color2>-libjars</color2> : 분산 캐시에 등록해서 사용할 jar 파일<br>
+<color2>-archives</color2> : 분산 캐시에 등록해서 사용할 아카이브 파일<br>
+<br>
+여기까지 하둡 스트리밍의 옵션에 대한 설명이었습니다!<br>
+설명이 끝났으니 실습시간!<br>
+<br>
+첫번째 시간은 유닉스 명령어를 이용한 스트리밍 구현이네요?<br>
+아래 명령어를 따라 입력해주세요.<br>
+
+<terminal>
+<strong>[hadoop@NameNode hadoop]$</strong> ./bin/hadoop jar contrib/streaming/hadoop-streaming-1.2.1.jar \
+    > -input airplain/2008.csv \
+    > -output delay_flight_list \
+    > -mapper "cut -f 9,10 -d , | awk 'NF'" \
+    > -reducer "uniq"
+
+packageJobJar: [/home/hadoop/hadoop-data/hadoop-unjar5195815906998774998/] [] /tmp/streamjob4775802473603458891.jar tmpDir=null
+18/01/30 21:02:31 WARN snappy.LoadSnappy: Snappy native library is available
+18/01/30 21:02:31 INFO util.NativeCodeLoader: Loaded the native-hadoop library
+18/01/30 21:02:31 INFO snappy.LoadSnappy: Snappy native library loaded
+18/01/30 21:02:31 INFO mapred.FileInputFormat: Total input paths to process : 22
+18/01/30 21:02:32 INFO streaming.StreamJob: getLocalDirs(): [/home/hadoop/hadoop-data//mapred/local]
+18/01/30 21:02:32 INFO streaming.StreamJob: Running job: job_201801302021_0001
+18/01/30 21:02:32 INFO streaming.StreamJob: To kill this job, run:
+18/01/30 21:02:32 INFO streaming.StreamJob: /home/hadoop/hadoop/libexec/../bin/hadoop job  -Dmapred.job.tracker=NameNode:9001 -kill job_201801302021_0001
+18/01/30 21:02:32 INFO streaming.StreamJob: Tracking URL: http://NameNode:50030/jobdetails.jsp?jobid=job_201801302021_0001
+18/01/30 21:02:33 INFO streaming.StreamJob:  map 0%  reduce 0%
+18/01/30 21:03:08 INFO streaming.StreamJob:  map 100%  reduce 100%
+18/01/30 21:03:08 INFO streaming.StreamJob: To kill this job, run:
+18/01/30 21:03:08 INFO streaming.StreamJob: /home/hadoop/hadoop/libexec/../bin/hadoop job  -Dmapred.job.tracker=NameNode:9001 -kill job_201801302021_0001
+18/01/30 21:03:08 INFO streaming.StreamJob: Tracking URL: http://NameNode:50030/jobdetails.jsp?jobid=job_201801302021_0001
+18/01/30 21:03:08 ERROR streaming.StreamJob: Job not successful. Error: # of failed Map Tasks exceeded allowed limit. FailedCount: 1. LastFailedTask: task_201801302021_0001_m_000000
+18/01/30 21:03:08 INFO streaming.StreamJob: killJob...
+Streaming Command Failed!
+</terminal>
+
+이런 메시지가 나오면서 실패해버리네요. 책에서 왜 실패하는지 원인을 알려줍니다.
+
+<img src="/hadoop/img3/2_1.jpg" alt="">
+
+여기 들어가서 보시면 Failed Jobs 하고 나옵니다. 들어가서 보면 맵과 리듀스에 대한 에러 로그를 확인할 수 있어요.<br>
+여기서 map을 눌러보면 이런 에러로그들을 볼 수 있습니다.<br>
+
+<terminal>
+java.lang.RuntimeException: PipeMapRed.waitOutputThreads(): subprocess failed with code 1
+	at org.apache.hadoop.streaming.PipeMapRed.waitOutputThreads(PipeMapRed.java:362)
+	at org.apache.hadoop.streaming.PipeMapRed.mapRedFinished(PipeMapRed.java:576)
+	at org.apache.hadoop.streaming.PipeMapper.close(PipeMapper.java:135)
+	at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:57)
+	at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:36)
+	at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:430)
+	at org.apache.hadoop.mapred.MapTask.run(MapTask.java:366)
+	at org.apache.hadoop.mapred.Child$4.run(Child.java:255)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:422)
+	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1190)
+	at org.apache.hadoop.mapred.Child.main(Child.java:249)
+</terminal>
+
+<color2>PipeMapRed.waitOutputThreads()</color2> 이 부분이 중요하다네요?<br>
+파이프라인 방식으로 실행하려 했기 때문에 안된다고 그러는데 자세한건 <a href="http://goo.gl/S32ptS" target="_new" class="link">http://goo.gl/S32ptS</a> 여기서 확인하라네요?<br>
+음... 에이.... 쉽게 설명해드릴게요.<br>
+매퍼는 하나가 끝나고 또 그 다음에 하나를 하고 그런 식으로 일을 하는데<br>
+파이프라인은 하나가 다 끝나기 전에 또 다음껄 하고 그런 식으로 일을 진행합니다.<br>
+그러니까 작업 방식이 맞지 않아 충돌이 났다는 소리입니다. 우리가 일하는 방식대로 해달라 하고 항의하는거죠.<br>
+<br>
+그러니 해결방법은 매퍼에 썼던 유닉스 명령어를 쉘스크립트로 만들어서 실행하면 해결된다고 합니다.<br>
+<color2>$HADOOP_HOME</color2> 폴더에 <color2>mapper.sh</color2> 파일을 만들고나서<br>
+아래 글을 입력해주세요.<br>
+<br>
+<color2>cut -f 9,10 -d , | awk <color7>'NF'</color7></color2><br>
+<br>
+다 하셨으면 다시 실행해봅시다!<br>
+아래 명령어를 입력해주세요!<br>
+
+<terminal>
+<strong>[hadoop@NameNode hadoop]$</strong> ./bin/hadoop fs -rmr delay_flight_list
+Deleted hdfs://NameNode:9000/user/hadoop/delay_flight_list
+<strong>[hadoop@NameNode hadoop]$</strong> ./bin/hadoop jar contrib/streaming/hadoop-streaming-1.2.1.jar \
+    > -file mapper.sh \
+    > -input airplain/2008.csv \
+    > -output delay_flight_list \
+    > -mapper mapper.sh \
+    > -reducer "uniq"
+packageJobJar: [mapper.sh, /home/hadoop/hadoop-data/hadoop-unjar2882959296181230578/] [] /tmp/streamjob8699417016574201941.jar tmpDir=null
+18/01/30 21:17:04 WARN snappy.LoadSnappy: Snappy native library is available
+18/01/30 21:17:04 INFO util.NativeCodeLoader: Loaded the native-hadoop library
+18/01/30 21:17:04 INFO snappy.LoadSnappy: Snappy native library loaded
+18/01/30 21:17:04 INFO mapred.FileInputFormat: Total input paths to process : 1
+.
+.
+.
+18/01/30 21:20:28 INFO streaming.StreamJob:  map 100%  reduce 100%
+18/01/30 21:20:29 INFO streaming.StreamJob: Job complete: job_201801302021_0002
+18/01/30 21:20:29 INFO streaming.StreamJob: Output: delay_flight_list
+</terminal>
+
+??<br>
+뭐 된다고 앞에서 설명을 듣긴 했는데 저렇게 꼴랑 6줄 넣었다고 진짜 된건가?<br>
+얼른 확인해봅시다!<br>
+
+<terminal>
+<strong>[hadoop@NameNode hadoop]$</strong> ./bin/hadoop fs -cat delay_flight_list/part-00000 |head -10
+9E,2001	
+9E,2002	
+9E,2003	
+9E,2004	
+9E,2005	
+9E,2006	
+9E,2007	
+9E,2008	
+9E,2009	
+9E,2010	
+cat: Unable to write to output stream.
+<strong>[hadoop@NameNode hadoop]$</strong> ./bin/hadoop fs -cat delay_flight_list/part-00000 |tail -10
+YV,7493	
+YV,7494	
+YV,7495	
+YV,7496	
+YV,7498	
+YV,7499	
+YV,8910	
+YV,8911	
+YV,8940	
+YV,8941	
+</terminal>
+
+우와.....<br>
+우와아......<br>
+와아아아아.........<br>
+
+<img src="/hadoop/img3/2_2.jpg" alt="">
+
+유닉스 명령어 잘 몰라서 해석도 잘 안되는데<br>
+이참에 유닉스 명령어 공부해볼까 하는 욕심도 들고!<br>
+오오.....<br>
+<br>
+게다가 다음 예제도 또 있다니!<br>
+이번에는 <color2>$HADOOP_HOME</color2> 폴더에 <color2>reducer.sh</color2> 파일을 만들고<br>
+<br>
+<color2>awk <color7>'BEGIN {s=0} {s += $1 } END {print s}'</color7></color2>
+<br>
+이렇게 넣고 실행해봅시다.<br>
+
+<terminal>
+<strong>[hadoop@NameNode hadoop]$</strong> ./bin/hadoop jar contrib/streaming/hadoop-streaming-1.2.1.jar \
+    > -file reducer.sh \
+    > -input delay_flight_list/part-00000 \
+    > -output delay_flight_list_count \
+    > -mapper "wc -l" \
+    > -reducer reducer.sh
+
+packageJobJar: [reducer.sh, /home/hadoop/hadoop-data/hadoop-unjar1336206808797814356/] [] /tmp/streamjob4934983563837127728.jar tmpDir=null
+18/01/30 21:34:00 WARN snappy.LoadSnappy: Snappy native library is available
+18/01/30 21:34:00 INFO util.NativeCodeLoader: Loaded the native-hadoop library
+18/01/30 21:34:00 INFO snappy.LoadSnappy: Snapp./y native library loaded
+18/01/30 21:34:00 INFO mapred.FileInputFormat: Total input paths to process : 1
+18/01/30 21:34:00 INFO streaming.StreamJob: getLocalDirs(): [/home/hadoop/hadoop-data//mapred/local]
+18/01/30 21:34:00 INFO streaming.StreamJob: Running job: job_201801302021_0003
+18/01/30 21:34:00 INFO streaming.StreamJob: To kill this job, run:
+18/01/30 21:34:00 INFO streaming.StreamJob: /home/hadoop/hadoop/libexec/../bin/hadoop job  -Dmapred.job.tracker=NameNode:9001 -kill job_201801302021_0003
+18/01/30 21:34:00 INFO streaming.StreamJob: Tracking URL: http://NameNode:50030/jobdetails.jsp?jobid=job_201801302021_0003
+18/01/30 21:34:01 INFO streaming.StreamJob:  map 0%  reduce 0%
+18/01/30 21:34:04 INFO streaming.StreamJob:  map 100%  reduce 0%
+18/01/30 21:34:12 INFO streaming.StreamJob:  map 100%  reduce 33%
+18/01/30 21:34:13 INFO streaming.StreamJob:  map 100%  reduce 100%
+18/01/30 21:34:13 INFO streaming.StreamJob: Job complete: job_201801302021_0003
+18/01/30 21:34:13 INFO streaming.StreamJob: Output: delay_flight_list_count
+</terminal>
+
+오오! 순식간에 됐다! 또 확인해보러 갑시다!<br>
+
+<terminal>
+<strong>[hadoop@NameNode hadoop]$</strong> ./bin/hadoop fs -cat delay_flight_list_count/part-00000
+28522
+</terminal>
+
+오오오!!!!!<br>
+뭐... 뭐지?! 이렇게 간단한 명령어로 엄청나게 긴 자바 코드를 대신할 수 있다니?!<br>
+스...스승님! 이...이건 대체?!<br>
+
+<img src="/hadoop/img3/2_3.jpg" alt="">
+
+하아... 진정.. 진정합시다. 너무 들떳네요.<br>
+아무튼 놀랍긴 합니다.<br>
+<br>
+그 다음은 파이썬을 이용한 스트리밍 구현이 나오네요?<br>
+제가 파이썬3으로 작업하는 방법을 찾아봤는데 잘 모르겠네요. 다들 파이썬2로 작업하는 것 같구...<br>
+찾게 되면 수정해서 올려놓겠습니다. 그 전까진 일단 파이썬2로 작업할게요.<br>
+<br>
+<color2>$HADOOP_HOME</color2> 폴더 안에서 작업할게요.<br>
+<br>
+<color4>ArrivalDelayMapper.py</color4>
+
+<terminal>
+<blur><i>#!/usr/bin/env python</i></blur>
+<blur><i>#-*- coding: utf-8 -*-</i></blur>
+
+<color4>import</color4> sys
+output_value = 1
+
+<color4>for</color4> line <color2>in</color2> sys.stdin: <blur><i># 입력스트림 단위로 파일을 읽어옴(줄 단위로)</i></blur>
+    line = line.strip() <blur><i># 줄 단위로 받아온 파일을 문자열로 바꿈</i></blur>
+    columns = line.split(<color7>","</color7>)  <blur><i># 콤마 단위로 배열화</i></blur>
+    <color4>if</color4> <color3>len</color3>(columns[<color2>1</color2>]) == <color2>1</color2>:    <blur><i># 1월부터 9월까지</i></blur>
+        columns[<color2>1</color2>] = <color7>'0'</color7> + columns[<color2>1</color2>]    <blur><i># 01월, 02월 이런식으로 표현함</i></blur>
+    output_key = columns[<color2>0</color2>] + <color7>'. '</color7> + columns[<color2>1</color2>]  <blur><i># 년, 월</i></blur>
+
+    <color4>if</color4> <color3>len</color3>(columns) <color2>> 14 and</color2> columns[<color2>14</color2>].isdigit() <color2>and int</color2>(columns[<color2>14</color2>]) > <color2>0</color2>:
+        <color3>print</color3> <color7>'<color3>%s</color3>\t<color3>%s</color3>'</color7> % (output_key, output_value) <blur><i># 년, 월 그리고 1</i></blur>
+</terminal>
+
+<color4>ArrivalDelayReducer.py</color4>
+
+<terminal>
+<blur><i>#!/usr/bin/env python</i></blur>
+<blur><i>#-*- coding: utf-8 -*-</i></blur>
+
+<color4>import</color4> sys
+
+<blur><i># 기본 입력값</i></blur>
+input_key = <color2>None</color2>
+input_value = <color2>0</color2>
+output_key = <color2>None</color2>
+output_value = <color2>0</color2>
+
+<color4>for</color4> line <color2>in</color2> sys.stdin:    <blur><i># 줄 단위로 파일을 받아옴</i></blur>
+    line = line.strip() <blur><i># 문자열화</i></blur>
+    columns = line.split(<color7>"\t"</color7>) <blur><i># 탭을 기준으로 배열화</i></blur>
+    input_key = columns[<color2>0</color2>] <blur><i># 년, 월</i></blur>
+    input_value = <color2>int</color2>(columns[<color2>1</color2>]) <blur><i># 1</i></blur>
+
+    <color4>if</color4> output_key <color2>==</color2> input_key:   <blur><i># 아까 들어온 줄과 지금 들어온 줄의 년, 월이 같을 때</i></blur>
+        output_value += input_value <blur><i># +1</i></blur>
+    <color4>else</color4> : <blur><i># 년, 월이 숫자가 달라졌을 때</i></blur>
+        <color4>if</color4> output_key: <blur><i># output_key가 None이 아닐 때</i></blur>
+            <color3>print</color3> <color7>'<color2>%s</color2>\t<color2>%s</color2>'</color7> % (output_key, output_value) <blur><i># 년, 월 그리고 합계</i></blur>
+        output_value = input_value
+        output_key = input_key
+
+
+<color3>print</color3> <color7>'<color2>%s</color2>\t<color2>%s</color2>'</color7> % (input_key, output_value)  <blur><i># 파일 읽기가 끝났을 때</i></blur>
+</terminal>
+
+책이랑 조금 소스가 다르지요? 잘못된 부분이 있어서 고쳤습니다.<br>
+자, 다 됐으면 이제 실행해봅시다.<br>
+아, <color2>-file</color2> 부분에 여러개를 쓰려면 <color2>-files</color2> 라고 쓰고 콤마로 구분해주셔야 합니다.<br>
+
+<terminal>
+<strong>[hadoop@NameNode hadoop]$</strong> ./bin/hadoop jar contrib/streaming/hadoop-streaming-1.2.1.jar \
+    > -files ArrivalDelayMapper.py,ArrivalDelayReducer.py \
+    > -input airplain/2008.csv \
+    > -output arr_delay_count_py \
+    > -mapper ArrivalDelayMapper.py \
+    > -reducer ArrivalDelayReducer.py
+
+packageJobJar: [/home/hadoop/hadoop-data/hadoop-unjar786551685179852315/] [] /tmp/streamjob8244120479499268729.jar tmpDir=null
+18/01/31 01:51:52 WARN snappy.LoadSnappy: Snappy native library is available
+18/01/31 01:51:52 INFO util.NativeCodeLoader: Loaded the native-hadoop library
+18/01/31 01:51:52 INFO snappy.LoadSnappy: Snappy native library loaded
+18/01/31 01:51:52 INFO mapred.FileInputFormat: Total input paths to process : 1
+18/01/31 01:51:52 INFO streaming.StreamJob: getLocalDirs(): [/home/hadoop/hadoop-data//mapred/local]
+18/01/31 01:51:52 INFO streaming.StreamJob: Running job: job_201801302339_0050
+18/01/31 01:51:52 INFO streaming.StreamJob: To kill this job, run:
+18/01/31 01:51:52 INFO streaming.StreamJob: /home/hadoop/hadoop/libexec/../bin/hadoop job  -Dmapred.job.tracker=NameNode:9001 -kill job_201801302339_0050
+18/01/31 01:51:52 INFO streaming.StreamJob: Tracking URL: http://NameNode:50030/jobdetails.jsp?jobid=job_201801302339_0050
+18/01/31 01:51:53 INFO streaming.StreamJob:  map 0%  reduce 0%
+18/01/31 01:52:01 INFO streaming.StreamJob:  map 9%  reduce 0%
+18/01/31 01:52:02 INFO streaming.StreamJob:  map 36%  reduce 0%
+18/01/31 01:52:07 INFO streaming.StreamJob:  map 64%  reduce 0%
+18/01/31 01:52:08 INFO streaming.StreamJob:  map 73%  reduce 0%
+18/01/31 01:52:10 INFO streaming.StreamJob:  map 82%  reduce 24%
+18/01/31 01:52:12 INFO streaming.StreamJob:  map 100%  reduce 24%
+18/01/31 01:52:19 INFO streaming.StreamJob:  map 100%  reduce 67%
+18/01/31 01:52:22 INFO streaming.StreamJob:  map 100%  reduce 80%
+18/01/31 01:52:25 INFO streaming.StreamJob:  map 100%  reduce 98%
+18/01/31 01:52:27 INFO streaming.StreamJob:  map 100%  reduce 100%
+18/01/31 01:52:27 INFO streaming.StreamJob: Job complete: job_201801302339_0050
+18/01/31 01:52:27 INFO streaming.StreamJob: Output: arr_delay_count_py
+</terminal>
+
+다 됐는데, 저만 그런건지 모르겠는데 리듀스 33% 하다가 0% 되고 다시 33% 하다가 0% 되고 하는 경우가 있더라구요.<br>
+음... 복불복인가...<br>
+튜닝을 좀 건드렸는데 그게 문제인가.. 한번 알아봐야겠군요.<br>
+아무튼 다 됐으니 확인해봅시다.<br>
+
+<terminal>
+<strong>[hadoop@NameNode hadoop]$</strong> ./bin/hadoop fs -cat arr_delay_count_py/part-00000
+2008. 01    279427
+2008. 02    278902
+2008. 03    294556
+2008. 04    256142
+2008. 05    254673
+2008. 06    295897
+2008. 07    264630
+2008. 08    239737
+2008. 09    169959
+2008. 10    183582
+2008. 11    181506
+2008. 12    280493
+</terminal>
+
+아까 매퍼 코드에서 월 자릿수가 1개면 앞에 '0' 붙이는 부분 있었죠?<br>
+저런식으로 정렬하기 위해서입니다. 안그러면<br>
+<br>
+2008, 1&nbsp;&nbsp;&nbsp;&nbsp;279427<br>
+2008, 10&nbsp;&nbsp;&nbsp;183582<br>
+2008, 11&nbsp;&nbsp;&nbsp;181506<br>
+2008, 12&nbsp;&nbsp;&nbsp;280493<br>
+2008, 2&nbsp;&nbsp;&nbsp;&nbsp;278902<br>
+2008, 3&nbsp;&nbsp;&nbsp;&nbsp;294556<br>
+2008, 4&nbsp;&nbsp;&nbsp;&nbsp;256142<br>
+2008, 5&nbsp;&nbsp;&nbsp;&nbsp;254673<br>
+2008, 6&nbsp;&nbsp;&nbsp;&nbsp;295897<br>
+2008, 7&nbsp;&nbsp;&nbsp;&nbsp;264630<br>
+2008, 8&nbsp;&nbsp;&nbsp;&nbsp;239737<br>
+2008, 9&nbsp;&nbsp;&nbsp;&nbsp;169959<br>
+<br>
+이렇게 나오거든요.<br>
+와아~ 파이썬으로도 맵리듀스 프로그래밍이 가능하구낭~<br>
+얼른 다음 단계로 넘어가봅시다.<br>
+<br>
+다음 단계는 <color2>aggregate</color2>라는게 나오네요?<br>
+설명을 한번 쭉 읽어봅시다.<br>
+
+<terminal>
+<color2>DoubleValueSum</color2>    연속적은 doulbe 값들의 <color4>합계</color4> 계산
+<color2>LongValueMax</color2>      연속적인 long 값들의 <color4>최댓값</color4> 계산
+<color2>LongValueMin</color2>      연속적인 long 값들의 <color4>최솟값</color4> 계산
+<color2>LongValueSum</color2>      연속적인 long 값들의 <color4>합계</color4> 계산
+<color2>StringValueMax</color2>    연속적인 문자열에서 <color4>가장 큰 값</color4>을 계산
+<color2>StringValueMin</color2>    연속적인 문자열에서 <color4>가장 작은 값</color4>을 계산
+<color2>UniqValueCount</color2>    연속적인 값들의 <color4>중복값을 제거한 갯수</color4>를 계산
+<color2>ValueHistogram</color2>    연속적인 값들에 대해 <color4>히스토그램 연산</color4>을 수행
+</terminal>
+
+이런 기능들이 있다네요?<br>
+<color2>[aggregate name]:key<color3>\t</color3>value</color2> 이런식으로 사용한다는데<br>
+직접 써보기 전에는 감이 전혀 안올 것 같네요.<br>
+실습 한번 해보고 넘어갑시다.<br>
+이번에도 <color2>$HADOOP_HOME</color2> 폴더 내에서 작업할게요.<br>
+<br>
+<color4>ArrivalDelayLongSumMapper.py</color4>
+
+<terminal>
+<blur><i>#!/usr/bin/env python</i></blur>
+<blur><i>#-*- coding: utf-8 -*-</i></blur>
+
+<color4>import</color4> sys
+
+<color4>for</color4> line in sys.stdin:  <blur><i># 한줄씩 받아옴</i></blur>
+    line = line.strip() <blur><i># 문자열화</i></blur>
+    columns = line.split(<color7>","</color7>)   <blur><i># 콤마를 기준으로 배열화</i></blur>
+    <color4>if</color4> <color3>len</color3>(columns[<color2>1</color2>]) <color2>==</color2> <color2>1</color2>:    <blur><i># 1 ~ 9월</i></blur>
+        columns[<color2>1</color2>] = <color7>'0'</color7> + columns[<color2>1</color2>]   <blur><i># 1 ~ 9월은 앞에 0을 붙임</i></blur>
+    output_key = columns[<color2>0</color2>] + <color7>". "</color7> + columns[<color2>1</color2>]  <blur><i># key = 년, 월</i></blur>
+
+    <color4>if</color4> <color3>len</color3>(columns) <color2>> 14 and</color2> columns[<color2>14</color2>].isdigit() <color2>and int</color2>(columns[<color2>14</color2>]) <color2>> 0</color2>:  <blur><i># 이륙 지연값이 0보다 클 때</i></blur>
+        output_value = int(columns[14]) <blur><i># value = 이륙지연시간</i></blur>
+        <color3>print</color3> <color7>'LongValueSum:<color2>%s</color2>\t<color2>%s</color2>'</color7> %(output_key, output_value) <blur><i># 합계 : 년, 월 그리고 이륙지연시간</i></blur>
+</terminal>
+
+리듀서 기능은 aggregate가 알아서 해주니 필요가 없어서 편하네요~<br>
+시작해봅시다!<br>
+
+<terminal>
+<strong>[hadoop@NameNode hadoop]$</strong> ./bin/hadoop jar contrib/streaming/hadoop-streaming-1.2.1.jar \
+    > -file ArrivalDelayLongSumMapper.py \
+    > -input airplain/2008.csv \
+    > -output arr_delay_long_sum \
+    > -mapper ArrivalDelayLongSumMapper.py \
+    > -reducer aggregate
+
+packageJobJar: [ArrivalDelayLongSumMapper.py, /home/hadoop/hadoop-data/hadoop-unjar4439804889296254608/] [] /tmp/streamjob3204033285153843720.jar tmpDir=null
+18/01/31 02:47:03 WARN snappy.LoadSnappy: Snappy native library is available
+18/01/31 02:47:03 INFO util.NativeCodeLoader: Loaded the native-hadoop library
+18/01/31 02:47:03 INFO snappy.LoadSnappy: Snappy native library loaded
+18/01/31 02:47:03 INFO mapred.FileInputFormat: Total input paths to process : 1
+18/01/31 02:47:04 INFO streaming.StreamJob: getLocalDirs(): [/home/hadoop/hadoop-data//mapred/local]
+18/01/31 02:47:04 INFO streaming.StreamJob: Running job: job_201801302339_0054
+18/01/31 02:47:04 INFO streaming.StreamJob: To kill this job, run:
+18/01/31 02:47:04 INFO streaming.StreamJob: /home/hadoop/hadoop/libexec/../bin/hadoop job  -Dmapred.job.tracker=NameNode:9001 -kill job_201801302339_0054
+18/01/31 02:47:04 INFO streaming.StreamJob: Tracking URL: http://NameNode:50030/jobdetails.jsp?jobid=job_201801302339_0054
+18/01/31 02:47:05 INFO streaming.StreamJob:  map 0%  reduce 0%
+18/01/31 02:47:12 INFO streaming.StreamJob:  map 9%  reduce 0%
+18/01/31 02:47:14 INFO streaming.StreamJob:  map 27%  reduce 0%
+18/01/31 02:47:15 INFO streaming.StreamJob:  map 36%  reduce 0%
+18/01/31 02:47:19 INFO streaming.StreamJob:  map 64%  reduce 0%
+18/01/31 02:47:20 INFO streaming.StreamJob:  map 73%  reduce 0%
+18/01/31 02:47:21 INFO streaming.StreamJob:  map 82%  reduce 0%
+18/01/31 02:47:22 INFO streaming.StreamJob:  map 100%  reduce 0%
+18/01/31 02:47:28 INFO streaming.StreamJob:  map 100%  reduce 100%
+18/01/31 02:47:30 INFO streaming.StreamJob: Job complete: job_201801302339_0054
+18/01/31 02:47:30 INFO streaming.StreamJob: Output: arr_delay_long_sum
+
+<strong>[hadoop@NameNode hadoop]$</strong> ./bin/hadoop fs -cat arr_delay_long_sum/part-00000
+2008. 01    9215217
+2008. 02    9823493
+2008. 03    9735988
+2008. 04    7291581
+2008. 05    7061417
+2008. 06    10719131
+2008. 07    9539944
+2008. 08    7835527
+2008. 09    4224626
+2008. 10    4174528
+2008. 11    4934509
+2008. 12    11296787
+</terminal>
+
+...넌 왜이렇게 많이 나왔니;;<br>
+아... 이륙 지연시간 합계구나;;<br>
+똑같이 나오게 하려면 value에 이륙지연시간값을 넣는게 아니라 1을 넣으면 같은 값이 나오겠군요;;<br>
+직접 해보니까 아까 했던거랑 같게 나오네요. 와! 편리한기능!<br>
+<br>
+그 다음은 히스토그램에 대해 나옵니다.<br>
+저 아까 aggregate 내용 보면서 히스토그램이 뭔지 궁금했거든요.<br>
+빨리 시작해봅시다.<br>
+<br>
+<color4>ArrivalDelayHistogramMapper.py</color4>
+
+<terminal>
+<blur><i>#!/usr/bin/env python</i></blur>
+<blur><i>#-*- coding: utf-8 -*-</i></blur>
+
+<color4>import</color4> sys
+
+<color4>for</color4> line in sys.stdin:  <blur><i># 한줄씩 받아옴</i></blur>
+    line = line.strip() <blur><i># 문자열화</i></blur>
+    columns = line.split(<color7>","</color7>)   <blur><i># 콤마를 기준으로 배열화</i></blur>
+    <color4>if</color4> <color3>len</color3>(columns[<color2>1</color2>]) <color2>==</color2> <color2>1</color2>:    <blur><i># 1 ~ 9월</i></blur>
+        columns[<color2>1</color2>] = <color7>'0'</color7> + columns[<color2>1</color2>]   <blur><i># 1 ~ 9월은 앞에 0을 붙임</i></blur>
+    output_key = columns[<color2>0</color2>] + <color7>". "</color7> + columns[<color2>1</color2>]  <blur><i># key = 년, 월</i></blur>
+
+    <color4>if</color4> <color3>len</color3>(columns) <color2>> 14 and</color2> columns[<color2>14</color2>].isdigit() <color2>and int</color2>(columns[<color2>14</color2>]) <color2>> 0</color2>:  <blur><i># 이륙 지연값이 0보다 클 때</i></blur>
+        output_value = int(columns[14]) <blur><i># value = 이륙지연시간</i></blur>
+        <color3>print</color3> <color7>'ValueHistogram:<color2>%s</color2>\t<color2>%s</color2>'</color7> %(output_key, output_value) <blur><i># 히스토그램 : 년, 월 그리고 이륙지연시간</i></blur>
+</terminal>
+
+아까랑 똑같은데 <color2>LongValueSum</color2>을 <color2>ValueHistogram</color2>으로만 바꾼겁니다.<br>
+
+<terminal>
+<strong>[hadoop@NameNode hadoop]$</strong> ./bin/hadoop jar contrib/streaming/hadoop-streaming-1.2.1.jar \
+    > -file ArrivalDelayHistogramMapper.py \
+    > -input airplain/2008.csv \
+    > -output arr_delay_histogram \
+    > -mapper ArrivalDelayHistogramMapper.py \
+    > -reducer aggregate
+
+packageJobJar: [ArrivalDelayHistogramMapper.py, /home/hadoop/hadoop-data/hadoop-unjar5211988277246606064/] [] /tmp/streamjob5069513667464565299.jar tmpDir=null
+18/01/31 03:08:28 WARN snappy.LoadSnappy: Snappy native library is available
+18/01/31 03:08:28 INFO util.NativeCodeLoader: Loaded the native-hadoop library
+18/01/31 03:08:28 INFO snappy.LoadSnappy: Snappy native library loaded
+18/01/31 03:08:28 INFO mapred.FileInputFormat: Total input paths to process : 1
+18/01/31 03:08:28 INFO streaming.StreamJob: getLocalDirs(): [/home/hadoop/hadoop-data//mapred/local]
+18/01/31 03:08:28 INFO streaming.StreamJob: Running job: job_201801302339_0060
+18/01/31 03:08:28 INFO streaming.StreamJob: To kill this job, run:
+18/01/31 03:08:28 INFO streaming.StreamJob: /home/hadoop/hadoop/libexec/../bin/hadoop job  -Dmapred.job.tracker=NameNode:9001 -kill job_201801302339_0060
+18/01/31 03:08:28 INFO streaming.StreamJob: Tracking URL: http://NameNode:50030/jobdetails.jsp?jobid=job_201801302339_0060
+18/01/31 03:08:29 INFO streaming.StreamJob:  map 0%  reduce 0%
+18/01/31 03:08:37 INFO streaming.StreamJob:  map 9%  reduce 0%
+18/01/31 03:08:38 INFO streaming.StreamJob:  map 18%  reduce 0%
+18/01/31 03:08:39 INFO streaming.StreamJob:  map 36%  reduce 0%
+18/01/31 03:08:44 INFO streaming.StreamJob:  map 45%  reduce 0%
+18/01/31 03:08:45 INFO streaming.StreamJob:  map 73%  reduce 0%
+18/01/31 03:08:46 INFO streaming.StreamJob:  map 73%  reduce 24%
+18/01/31 03:08:48 INFO streaming.StreamJob:  map 91%  reduce 24%
+18/01/31 03:08:50 INFO streaming.StreamJob:  map 100%  reduce 24%
+18/01/31 03:08:53 INFO streaming.StreamJob:  map 100%  reduce 100%
+18/01/31 03:08:53 INFO streaming.StreamJob: Job complete: job_201801302339_0060
+18/01/31 03:08:53 INFO streaming.StreamJob: Output: arr_delay_histogram
+
+<strong>[hadoop@NameNode hadoop]$</strong> ./bin/hadoop fs -cat arr_delay_histogram/part-00000
+2008. 01	583	1	14	13557	479.29159519725556	1603.6643622249494
+2008. 02	619	1	10	12507	450.5686591276252	1479.9476040980587
+2008. 03	626	1	10	14520	470.5367412140575	1633.5010528140629
+2008. 04	564	1	11	14896	454.15248226950354	1648.1437532445666
+2008. 05	556	1	11	14847	458.044964028777	1667.573524678433
+2008. 06	604	1	16	14075	489.8956953642384	1597.2462604758186
+2008. 07	611	1	16	14407	433.10965630114566	1495.4913296119103
+2008. 08	602	1	14	13709	398.234219269103	1434.391924353187
+2008. 09	495	1	8	12196	343.3515151515152	1297.1678682642817
+2008. 10	486	1	9	13231	377.74074074074076	1448.5448930807195
+2008. 11	476	1	14	11406	381.3151260504202	1321.6826354805705
+2008. 12	682	1	11	10814	411.28005865102637	1314.8410302251878
+</terminal>
+
+음... 어디 봅시다.<br>
+[중복값을 제외한 값들의 갯수], [최소], [중간], [최대], [평균], [표준편차]<br>
+이렇게 나왔다고 하는군요.<br>
+오오~ value값에 대한 종합평가라니 이렇게 편리할수가!<br>
+자바로 하다가 파이썬으로 하니깐 날아갈 것 같네요 ㅎㅎ<br>
+aggregate도 엄청 편리하구요. 앞으로 엄청 애용할 것 같습니다.<br>
+그럼 이번 글을 여기서 마치도록 하겠습니다.<br>
