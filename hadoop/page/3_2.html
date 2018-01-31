@@ -90,18 +90,18 @@ Streaming Command Failed!
 
 <terminal>
 java.lang.RuntimeException: PipeMapRed.waitOutputThreads(): subprocess failed with code 1
-	at org.apache.hadoop.streaming.PipeMapRed.waitOutputThreads(PipeMapRed.java:362)
-	at org.apache.hadoop.streaming.PipeMapRed.mapRedFinished(PipeMapRed.java:576)
-	at org.apache.hadoop.streaming.PipeMapper.close(PipeMapper.java:135)
-	at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:57)
-	at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:36)
-	at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:430)
-	at org.apache.hadoop.mapred.MapTask.run(MapTask.java:366)
-	at org.apache.hadoop.mapred.Child$4.run(Child.java:255)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1190)
-	at org.apache.hadoop.mapred.Child.main(Child.java:249)
+    at org.apache.hadoop.streaming.PipeMapRed.waitOutputThreads(PipeMapRed.java:362)
+    at org.apache.hadoop.streaming.PipeMapRed.mapRedFinished(PipeMapRed.java:576)
+    at org.apache.hadoop.streaming.PipeMapper.close(PipeMapper.java:135)
+    at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:57)
+    at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:36)
+    at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:430)
+    at org.apache.hadoop.mapred.MapTask.run(MapTask.java:366)
+    at org.apache.hadoop.mapred.Child$4.run(Child.java:255)
+    at java.security.AccessController.doPrivileged(Native Method)
+    at javax.security.auth.Subject.doAs(Subject.java:422)
+    at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1190)
+    at org.apache.hadoop.mapred.Child.main(Child.java:249)
 </terminal>
 
 <color2>PipeMapRed.waitOutputThreads()</color2> 이 부분이 중요하다네요?<br>
