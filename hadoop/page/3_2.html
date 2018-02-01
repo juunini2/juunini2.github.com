@@ -539,3 +539,18 @@ packageJobJar: [ArrivalDelayHistogramMapper.py, /home/hadoop/hadoop-data/hadoop-
 자바로 하다가 파이썬으로 하니깐 날아갈 것 같네요 ㅎㅎ<br>
 aggregate도 엄청 편리하구요. 앞으로 엄청 애용할 것 같습니다.<br>
 그럼 이번 글을 여기서 마치도록 하겠습니다.<br>
+<br>
+<a href="/hadoop/page/3_3.html" onclick="
+    event.preventDefault();
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = () => {
+        document.querySelector('main').innerHTML = xhttp.responseText;
+    }
+    xhttp.open('GET', '/hadoop/page/3_3.html', true);
+    xhttp.send();
+    document.title = 'Hadoop Guide Part. 3 - Step. 3';
+    history.pushState('/hadoop/page/3_3.html' + ' ' + 'Part. 3 - Step. 3', null, '#3_3');
+    document.querySelector('side').children[2].classList.add('on');
+    document.querySelector('side').children[2].children[2].classList.remove('on');
+    document.querySelector('side').children[2].children[3].classList.add('on');
+" class="button">다음단계로 가기</a>
