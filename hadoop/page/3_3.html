@@ -1,1 +1,187 @@
-not ready
+마트에서 계산을 하는데 앞 손님이 물건을 카드 가득 담아와서 계산이 오래 걸리는데<br>
+뒷 손님은 초콜릿 하나 들고 계산을 기다리고 있습니다.<br>
+약간 융통성을 발휘해서 앞 손님에게 양해를 구한 뒤에, 뒷 손님 먼저 빠르게 계산하고 진행 할 수도 있겠죠?<br>
+<br>
+맵리듀스의 잡도 마찬가지입니다. 원칙은 먼저 시작한걸 먼저 하는 방식인데<br>
+앞에 설명한 상황이 일어나면 융통성을 발휘 할 필요가 있을겁니다.<br>
+그걸 <color2>잡 스케줄러</color2>의 값을 설정하면 되는데<br>
+여기서는 페이스북에서 개발한 <color2>페어 스케줄러</color2> 라는 것을 사용해보겠습니다.<br>
+<br>
+<color2>페어 스케줄러</color2> 설정은 네임노드에만 하면 됩니다.<br>
+먼저 <color4>mapred-site.xml</color4>에 아래 내용을 추가해주세요.<br>
+
+<terminal>
+&lt;property&gt;
+    &lt;name&gt;mapred.jobtracker.taskScheduler&lt;/name&gt;
+    &lt;value&gt;org.apache.hadoop.mapred.FairScheduler&lt;/value&gt;
+&lt;/property&gt;
+
+&lt;property&gt;
+    &lt;name&gt;mapred.fairscheduler.allocation.file&lt;/name&gt;
+    &lt;value&gt;${HADOOP_HOME}/conf/pools.xml&lt;/value&gt;
+&lt;/property&gt;
+
+&lt;property&gt;
+    &lt;name&gt;mapred.fairscheduler.pool&lt;/name&gt;
+    &lt;value&gt;mypool&lt;/value&gt;
+&lt;/property&gt;
+</terminal>
+
+<color2>mapred.jobtracker.taskScheduler</color2> 속성은 어떤 태스크 스케줄러를 사용할건지에 대한 설정값입니다. 여기서는 페어 스케줄러를 사용하겠다고 선언했습니다.<br>
+<color2>mapred.fairscheduler.allocation.file</color2> 속성은 페어 스케줄러에서 사용할 풀의 설정파일 경로입니다.<br>
+<color2>mapred.fairscheduler.pool</color2> 속성은 페어 스케줄러에서 제공하는 속성값입니다.<br>
+<br>
+
+<color4>pools.xml</color4>
+<terminal>
+&lt;?xml version="1.0"?&gt;
+&lt;allocations&gt;
+    &lt;pool name="default"&gt;
+        &lt;minMaps&gt;30&lt;/minMaps&gt;
+        &lt;minReduces&gt;80&lt;/minReduces&gt;
+        &lt;maxMaps&gt;30&lt;/maxMaps&gt;
+        &lt;maxReduces&gt;80&lt;/maxReduces&gt;
+        &lt;minSharePreemptionTimeout&gt;300&lt;/minSharePreemptionTimeout&gt;
+    &lt;/pool&gt;
+
+    &lt;pool name="service"&gt;
+        &lt;minMaps&gt;50&lt;/minMaps&gt;
+        &lt;minReduces&gt;50&lt;/minReduces&gt;
+        &lt;maxMaps&gt;80&lt;/maxMaps&gt;
+        &lt;maxReduces&gt;80&lt;/maxReduces&gt;
+        &lt;minSharePreemptionTimeout&gt;300&lt;/minSharePreemptionTimeout&gt;
+    &lt;/pool&gt;
+
+    &lt;user name="hadoop"&gt;
+        &lt;maxRunningJobs&gt;30&lt;/maxRunningJobs&gt;
+    &lt;/user&gt;
+    &lt;userMaxJobsDefault&gt;10&lt;/userMaxJobsDefault&gt;
+    &lt;fairSharePreemptionTimeout&gt;600&lt;/fairSharePreemptionTimeout&gt;
+&lt;/allocations&gt;
+</terminal>
+
+<color4>mapred-site.xml</color4>
+<terminal>
+&lt;property&gt;
+    &lt;name&gt;mapred.jobtracker.taskScheduler&lt;/name&gt;
+    &lt;value&gt;org.apache.hadoop.mapred.CapacityTaskScheduler&lt;/value&gt;
+&lt;/property&gt;
+
+&lt;property&gt;
+    &lt;name&gt;mapred.queue.names&lt;/name&gt;
+    &lt;value&gt;queueA,queueB&lt;/value&gt;
+&lt;/property&gt;
+</terminal>
+
+<color4>capacity-scheduler.xml</color4>
+
+<terminal>
+&lt;?xml version="1.0"?&gt;
+
+&lt;!-- This is the configuration file for the resource manager in Hadoop. --&gt;
+&lt;!-- You can configure various scheduling parameters related to queues. --&gt;
+&lt;!-- The properties for a queue follow a naming convention,such as, --&gt;
+&lt;!-- mapred.capacity-scheduler.queue.&lt;queue-name&gt;.property-name. --&gt;
+
+&lt;configuration&gt;
+
+    &lt;property&gt;
+        &lt;name&gt;mapred.capacity-scheduler.maximum-system-jobs&lt;/name&gt;
+        &lt;value&gt;3000&lt;/value&gt;
+    &lt;/property&gt;
+
+    &lt;!-- queueA --&gt;
+    &lt;property&gt;
+        &lt;name&gt;mapred.capacity-scheduler.queue.queueA.capacity&lt;/name&gt;
+        &lt;value&gt;80&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;mapred.capacity-scheduler.queue.queueA.supports-priority&lt;/name&gt;
+        &lt;value&gt;false&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;mapred.capacity-scheduler.queue.queueA.minimum-user-limit-percent&lt;/name&gt;
+        &lt;value&gt;20&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;mapred.capacity-scheduler.queue.queueA.user-limit-factor&lt;/name&gt;
+        &lt;value&gt;10&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;mapred.capacity-scheduler.queue.queueA.maximum-initialized-active-tasks&lt;/name&gt;
+        &lt;value&gt;200000&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;mapred.capacity-scheduler.queue.queueA.maximum-initialized-active-tasks-per-user&lt;/name&gt;
+        &lt;value&gt;100000&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;mapred.capacity-scheduler.queue.queueA.init-accept-jobs-factor&lt;/name&gt;
+        &lt;value&gt;100&lt;/value&gt;
+    &lt;/property&gt;
+
+    &lt;!-- queueB --&gt;
+    &lt;property&gt;
+        &lt;name&gt;mapred.capacity-scheduler.queue.queueB.capacity&lt;/name&gt;
+        &lt;value&gt;20&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;mapred.capacity-scheduler.queue.queueB.supports-priority&lt;/name&gt;
+        &lt;value&gt;false&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;mapred.capacity-scheduler.queue.queueB.minimum-user-limit-percent&lt;/name&gt;
+        &lt;value&gt;20&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;mapred.capacity-scheduler.queue.queueB.user-limit-factor&lt;/name&gt;
+        &lt;value&gt;1&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;mapred.capacity-scheduler.queue.queueB.maximum-initialized-active-tasks&lt;/name&gt;
+        &lt;value&gt;200000&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;mapred.capacity-scheduler.queue.queueB.maximum-initialized-active-tasks-per-user&lt;/name&gt;
+        &lt;value&gt;100000&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;mapred.capacity-scheduler.queue.queueB.init-accept-jobs-factor&lt;/name&gt;
+        &lt;value&gt;10&lt;/value&gt;
+    &lt;/property&gt;
+
+&lt;/configuration&gt;
+</terminal>
+
+<color4>mapred-queue-acls.xml</color4>
+
+<terminal>
+&lt;?xml version="1.0"?&gt;
+&lt;?xml-stylesheet type="text/xsl" href="configuration.xsl"?&gt;
+
+&lt;!-- This is a template file for queue acls configuration properties --&gt;
+
+&lt;configuration&gt;
+
+  &lt;property&gt;
+    &lt;name&gt;mapred.queue.queueA.acl-submit-job&lt;/name&gt;
+    &lt;value&gt;hadoop&lt;/value&gt;
+  &lt;/property&gt;
+
+  &lt;property&gt;
+    &lt;name&gt;mapred.queue.queueA.acl-administer-jobs&lt;/name&gt;
+    &lt;value&gt;hadoop&lt;/value&gt;
+  &lt;/property&gt;
+
+  &lt;property&gt;
+    &lt;name&gt;mapred.queue.queueB.acl-submit-job&lt;/name&gt;
+    &lt;value&gt;hadoop&lt;/value&gt;
+  &lt;/property&gt;
+
+  &lt;property&gt;
+    &lt;name&gt;mapred.queue.queueB.acl-administer-jobs&lt;/name&gt;
+    &lt;value&gt;hadoop&lt;/value&gt;
+  &lt;/property&gt;
+
+&lt;/configuration&gt;
+</terminal>
