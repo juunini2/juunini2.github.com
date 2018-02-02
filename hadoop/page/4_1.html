@@ -1,1 +1,70 @@
-not ready
+Hadoop 2를 시작합니다!<br>
+아....니지. 저는 <color2>Hadoop 3</color2>을 시작합니다!<br>
+<br>
+2017년 11월에 Hadoop3 안정화 버전이 출시되었습니다.<br>
+책에는 Hadoop2가 나와있지만 이미 3이 나온 이상 언제까지나 2일 순 없습니다.<br>
+그래서 저는 <color3>Hadoop 3</color3>으로 실습을 진행하겠습니다.<br>
+<br>
+실습 환경은<br>
+
+<terminal>
+HDD : 100GB
+메모리 : 6GB
+CPU : 쿼드코어
+</terminal>
+
+이렇게 설정하고 진행하겠습니다.<br>
+독립실행으로 할 것이기 때문에 하나만 만들 것이구요.<br>
+만약 필요하다면 노드를 늘릴 수 있도록 현재 만드는 머신의 이름은 <color2>node1</color2> 이라고 짓겠습니다.<br>
+<br>
+자, 그러면 저는 이 전에 쓰던 하둡 노드들을 전부 삭제해버리고 새로 만들어서 설치하겠습니다.<br>
+<br>
+<blur>(설치 중...)</blur><br>
+<br>
+<terminal>
+<color4>yum install -y net-tools openssh* epel-release R wget gcc-c++ im-chooser && yum groupinstall -y "X Window System" "MATE Desktop" && systemctl set-default graphical.target && systemctl isolate graphical.target</color4>
+</terminal>
+
+한!방!설!치!
+<br>
+아, 그리고 이번에는 고정IP 설정을 할겁니다.<br>
+실습하다가 한번씩 IP가 바뀌는 짜증나는 상황이 발생해서 한번 짚고 넘어갈까 합니다.<br>
+Centos 버전마다 조금씩 하는 방법이 바뀌었는지 인터넷에는 안되는 방법들이 수두룩했는데 결국 찾아냈습니다.<br>
+<br>
+<color4>/etc/sysconfig/network-scripts/ifcfg-ens32</color4>
+
+<terminal>
+TYPE="Ethernet"
+PROXY_METHOD="none"
+BROWSER_ONLY="no"
+BOOTPROTO="none"
+DEFROUTE="yes"
+IPV4_FAILURE_FATAL="no"
+IPV6INIT="no"
+IPV6_AUTOCONF="yes"
+IPV6_DEFROUTE="yes"
+IPV6_FAILURE_FATAL="no"
+IPV6_ADDR_GEN_MODE="stable-privacy"
+NAME="ens32"
+UUID="37bff84e-3c3e-432b-a781-422034bc264f"
+DEVICE="ens32"
+ONBOOT="yes"
+IPADDR="192.168.111.100"
+NETMASK="255.255.255.0"
+GATEWAY="192.168.111.2"
+DNS1="192.168.111.2"
+DNS2="8.8.8.8"
+</terminal>
+
+그 뒤에 <color4>sudo service network restart</color4> 를 입력하면 IP가 고정이 됩니다.<br>
+192.168.<color4>111</color4>.100 에서 <color2>111</color2>은 제가 설정한 부분이기 때문에<br>
+여러분은 다를 수도 있습니다. 잘 모르겠으면 자세한건 검색을 하세요.<br>
+<br>
+고정IP도 설정했고, 이번에는 openjdk 말고 자바를 직접 최신버전으로 다운로드 받았습니다.<br>
+<color2>jdk-9.0.4</color2>를 다운로드 받았고 경로는 <color2>/home/hadoop</color2> 그러니까 유저의 기본 경로에 설정했습니다.<br>
+그리고 환경변수에 추가합니다.<br>
+<br>
+<color2>export PATH=/home/hadoop/jdk-9.0.4/bin:$PATH</color2><br>
+<br>
+CMake도 설치합니다.<br>
+Hadoop2 부터는 <color2>protobuf</color2> 라는게 필요하다는군요. 다운로드 받아서 설치합니다.<br>
