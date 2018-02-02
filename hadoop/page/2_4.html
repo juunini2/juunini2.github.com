@@ -31,7 +31,6 @@
 
             year = <color4>Integer</color4>.<color3>parseInt</color3>(column[<color2>0</color2>]);
             month = <color4>Integer</color4>.<color3>parseInt</color3>(column[<color2>1</color2>]);
-            day = <color4>Integer</color4>.<color3>parseInt</color3>(column[<color2>2</color2>]);
 
             uniqueCarrier = column[<color2>8</color2>];
 
@@ -48,7 +47,7 @@
             }
 
             <color6>if</color6> (!column[<color2>18</color2>].<color3>equals</color3>(<color7>"NA"</color7>)) {
-                distanceTime = <color4>Integer</color4>.<color3>parseInt</color3>(column[<color2>18</color2>]);
+                distance = <color4>Integer</color4>.<color3>parseInt</color3>(column[<color2>18</color2>]);
             } <color6>else</color6> {
                 distanceAvailable = <color2>false</color2>;
             }
