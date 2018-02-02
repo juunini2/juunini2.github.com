@@ -31,6 +31,7 @@
 <color2>mapred.fairscheduler.allocation.file</color2> 속성은 페어 스케줄러에서 사용할 풀의 설정파일 경로입니다.<br>
 <color2>mapred.fairscheduler.pool</color2> 속성은 페어 스케줄러에서 제공하는 속성값입니다.<br>
 <br>
+페어 스케쥴러를 이용하기 위해선 pool 파일을 작성해야 합니다.<br>
 
 <color4>pools.xml</color4>
 <terminal>
@@ -59,6 +60,19 @@
     &lt;fairSharePreemptionTimeout&gt;600&lt;/fairSharePreemptionTimeout&gt;
 &lt;/allocations&gt;
 </terminal>
+
+이렇게 작성하고 저장한 뒤에<br>
+
+<terminal>
+[hadoop@namenode hadoop]$ ./bin/hadoop-daemon.sh stop jobtracker && ./bin/hadoop-daemon.sh start jobtracker
+</terminal>
+
+하고 입력한 뒤에 <color2>http://namenode:50030/scheduler</color2> 로 접속하면 페어 스케쥴러 페이지를 확인할 수 있습니다.<br>
+<br>
+페어 스케쥴러 말고 커패시티 스케쥴러도 있는데, 커패시티 스케쥴러는 풀이 아닌 큐를 이용해 스케줄을 관리합니다.<br>
+큐를 여러개 생성해서 하둡 클러스터의 자원을 공유하게 되는데, 스케줄러는 큐를 모니터링해서 자원을 재분배하는 역할을 합니다.<br>
+그리고, 큐 내에서 실행되는 잡의 우선순위도 설정할 수 있기도 해서 커패시티 스케줄러는 다수의 클라이언트와<br>
+다양한 우선순위 제어가 필요한 잡이 실행되는 클러스터에 적합합니다.<br>
 
 <color4>mapred-site.xml</color4>
 <terminal>
@@ -185,3 +199,95 @@
 
 &lt;/configuration&gt;
 </terminal>
+
+이렇게 설정을 마친 뒤에<br>
+
+<terminal>
+[hadoop@namenode hadoop]$ ./bin/hadoop-daemon.sh stop jobtracker && ./bin/hadoop-daemon.sh start jobtracker
+</terminal>
+
+하고, 다시 <color2>http://namenode:50030/scheduler</color2> 로 접속하면 커패시티 스케쥴러 설정을 보실 수 있습니다.<br>
+스케줄러는 하나만 사용할 수 있어서 아까 설정했던 페어 스케줄러와 커패시티 스케줄러를 동시에 사용할 순 없습니다.<br>
+자신에게 맞는것을 잘 선택해서 사용하시기 바랍니다.<br>
+<br>
+MR유닛 테스트 라는게 있습니다.<br>
+맵리듀스 프로그래밍을 했는데 매퍼, 리듀서, 드라이버 클래스를 따로따로 시험하여 어디에 문제가 있는지 확인해볼 수 있는 방법인데요<br>
+일단 MR유닛 테스트는 Apache Maven을 필요로 합니다.<br>
+그러니 maven을 다운로드 받읍시다. <a href="https://maven.apache.org/download.cgi" target="_new" class="link">https://maven.apache.org/download.cgi</a><br>
+다운로드 받고 압축을 풀어서 <color2>/home/hadoop</color2> 폴더에 넣거나 아니면 <color2>/usr/lib</color2> 폴더에 넣습니다.<br>
+그리고 <color4>/etc/profile</color4> 맨 밑에 추가해주세요.<br>
+
+<terminal>
+export PATH=/home/hadoop/apache-maven-3.5.2/bin:$PATH
+</terminal>
+
+그리고나서 <color2>source /etc/profile</color2> 하고 입력한 뒤에<br>
+<color2>mvn --version</color2> 하고 입력하면 메이븐 버전이 나옵니다.<br>
+자, 준비는 다 됐으니 테스트를 해봅시다.<br>
+<a href="https://github.com/onefoursix/mrunit-example" target="_new" class="link">https://github.com/onefoursix/mrunit-example</a> 여기 이 깃허브의 폴더를 다운로드 받아주세요.<br>
+다운로드 받고 압축을 푼 뒤에 해당 폴더 경로로 터미널로 들어가서<br>
+<color2>mvn clean package</color2> 라고 입력하면 컴파일링을 하는데, 다 끝나고 나서 다시<br>
+<color2>mvn clean package</color2> 하고 입력하면 테스트 결과가 나옵니다.<br>
+
+<terminal>
+[hadoop@NameNode mrunit-example-master]$ mvn clean package
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building mrunit-test 1.1.0
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ mrunit-test ---
+[INFO] Deleting /home/hadoop/Downloads/mrunit-example-master/target
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ mrunit-test ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/hadoop/Downloads/mrunit-example-master/src/main/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ mrunit-test ---
+[INFO] Compiling 3 source files to /home/hadoop/Downloads/mrunit-example-master/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ mrunit-test ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/hadoop/Downloads/mrunit-example-master/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ mrunit-test ---
+[INFO] Compiling 4 source files to /home/hadoop/Downloads/mrunit-example-master/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ mrunit-test ---
+[INFO] Surefire report directory: /home/hadoop/Downloads/mrunit-example-master/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running WordCountMapReduceTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.627 sec
+Running WordCountReducerTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.085 sec
+Running WordCountMapperTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.069 sec
+
+Results :
+
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ mrunit-test ---
+[INFO] Building jar: /home/hadoop/Downloads/mrunit-example-master/mrunit-test-1.1.0.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 4.155 s
+[INFO] Finished at: 2018-02-02T00:17:32-05:00
+[INFO] Final Memory: 24M/144M
+[INFO] ------------------------------------------------------------------------
+</terminal>
+
+이런식으로 나옵니다.<br>
+<color2>src</color2> 폴더 안에 보면 <color2>main</color2>과 <color2>test</color2> 폴더를 확인할 수 있고,<br>
+main 폴더에는 작성했던 맵리듀스 프로그래밍 소스를 넣고, test 폴더에는 해당 과정들을 테스트 할 과정의 소스를 넣습니다.<br>
+그런데, 2014년 6월 이후로 <color4>없데이트</color4> 라서 이젠 지원하지 않는다고 보시면 됩니다.<br>
+mrunit 홈페이지 들어가보시면 2016년 4월 이후로 더 이상 개발을 하지 않겠다는 시뻘건 문구가 맨 위에 보이거든요.<br>
+그래서 자세한 언급은 하지 않고 넘어가도록 하겠습니다.<br>
+<br>
+이제 드디어 하둡2를 진행 할 차례네요.<br>
