@@ -106,7 +106,7 @@ HDFS로 복사가 완료되었습니다.<br>
 
             <color2>Path</color2>[] cacheFiles = <color4>DistributedCache</color4>.<color3>getLocalCacheFiles</color3>(<color4>context</color4>.<color3>getConfiguration</color3>());   <blur><i>// 파일을 읽어서 분산처리 합니다.</i></blur>
 
-            <color6>if</color6> (cacheFile <color2>!= null &&</color2> <color4>cacheFiles</color4>.length <color2>> 0</color2>) {
+            <color6>if</color6> (cacheFiles <color2>!= null &&</color2> <color4>cacheFiles</color4>.length <color2>> 0</color2>) {
 
                 <color2>String</color2> line;
                 <color2>BufferedReader</color2> br = <color6>new</color6> <color3>BufferedReader</color3>(<color6>new</color6> <color3>FileReader</color3>(cacheFiles[<color2>0</color2>].<color3>toString</color3>()));    <blur><i>// 분산처리 된 파일을 한줄씩 읽어옴.</i></blur>
@@ -158,10 +158,10 @@ HDFS로 복사가 완료되었습니다.<br>
 <color2>public</color2> <color2>class</color2> MapSideJoin <color2>extends</color2> <color4>Configured</color4> <color2>implements</color2> <color4>Tool</color4> {
 
     <color2>public</color2> <color2>int</color2> <color3>run</color3>(<color2>String</color2>[] args) <color2>throws</color2> <color2>Exception</color2> {
-        <color2>String</color2>[] otherArgs = <color6>new</color6> <color3>GenericOptionParser</color3>(<color3>getConf</color3>(), args).<color3>getRemainingArgs</color3>();
+        <color2>String</color2>[] otherArgs = <color6>new</color6> <color3>GenericOptionsParser</color3>(<color3>getConf</color3>(), args).<color3>getRemainingArgs</color3>();
 
         <color6>if</color6> (<color4>otherArgs</color4>.length <color2>!= 3</color2>) {    <blur><i>// 배열이 3개가 들어와야 함</i></blur>
-            <color4>System</color4>.<color4>err</color4>.<color3>println</color3>(<color7>"Usage: MapSideJoin [metadata] [in] [out]"</color7>); <blur><i>조인 할 데이터, 데이터, 아웃풋</i></blur>
+            <color4>System</color4>.<color4>err</color4>.<color3>println</color3>(<color7>"Usage: MapSideJoin [metadata] [in] [out]"</color7>); <blur><i>//조인 할 데이터, 데이터, 아웃풋</i></blur>
             <color4>System</color4>.<color3>exit</color3>(<color2>2</color2>);
         }
 
