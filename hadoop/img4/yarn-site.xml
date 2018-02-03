@@ -19,39 +19,22 @@
         <value>mapreduce_shuffle</value>
     </property>
 
-    <property>
-        <name>yarn.nodemanager.aux-services.mapreduce_shuffle.class</name>  <!-- 보조서비스의 클래스 -->
-        <value>org.apache.hadoop.mapred.ShuffleHandler</value>
-    </property>
+    <!-- 얀이 사용할 보조서비스 이름 (yarn.nodemanager.aux-services.mapreduce_shuffle.class) : org.apache.hadoop.mapred.ShuffleHandler -->
 
-    <property>
-        <name>yarn.nodemaneger.local-dirs</name>    <!-- 노드매니저가 필요한 파일을 저장하는 로컬 경로 -->
-        <value>/home/hadoop/data/yarn/nm-local-dir</value>
-    </property>
-
-    <property>
-        <name>yarn.resourcemanager.fs.state-store.uri</name>    <!-- 리소스매니저의 상태 정보를 저장할 로컬 경로 -->
-        <value>/home/hadoop/data/yarn/system/rmstore</value>
-    </property>
+    <!-- 노드매니저가 필요한 파일을 저장하는 로컬 경로 (yarn.nodemanager.local-dirs) : ${hadoop.tmp.dir}/nm-local-dir -->
+    <!-- 리소스매니저의 상태 정보를 저장할 로컬 경로 (yarn.resourcemanager.fs.state-store.uri) : ${hadoop.tmp.dir}/yarn/system/rmstore -->
 
     <property>
         <name>yarn.resourcemanager.hostname</name>  <!-- 리소스매니저의 호스트명 -->
         <value>node1</value>
     </property>
 
-    <property>
-        <name>yarn.web-proxy.address</name> <!-- 얀의 리소스매니저가 실행되는 포트 -->
-        <value>0.0.0.0:8089</value>
-    </property>
+    <!-- 노드매니저 모니터링 주소 (yarn.nodemanager.webapp.address) : ${yarn.nodemanager.hostname}:8042 -->
+    <!-- 리소스매니저 모니터링 주소 (yarn.resourcemanager.webapp.address) : ${yarn.resourcemanager.hostname}:8088 -->
 
     <property>
         <name>yarn.resourcemanager.scheduler.monitor.enable</name>  <!-- 리소스매니저 프리앰션 사용 -->
         <value>true</value>
-    </property>
-
-    <property>
-        <name>yarn.timeline-service.enable</name>   <!-- 리소스매니저 타임라인 사용 안함 -->
-        <value>false</value>
     </property>
 
     <!-- 컨테이너 할당용 메모리 크기 = 서버 메모리 크기 - (얀을 제외한 다른 소프트웨어들이 사용할 메모리 크기) -->
@@ -69,16 +52,6 @@
     <property>
         <name>yarn.scheduler.maximum-allocation-mb</name>   <!-- 리소스매니저가 각 컨테이너를 할당하는 데 필요한 최대 메모리 크기 -->
         <value>4096</value>
-    </property>
-
-    <property>
-        <name>yarn.resourcemanager.scheduler.class</name>   <!-- 페어 스케줄러 사용 -->
-        <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler</value>
-    </property>
-
-    <property>
-        <name>yarn.scheduler.fair.preemption</name> <!-- 페어 스케줄러 프리앰션 사용 -->
-        <value>true</value>
     </property>
 
 </configuration>

@@ -38,29 +38,6 @@
         <value>3072</value>
     </property>
 
-    <!-- 맵 태스크용 최대 힙 메모리 크기 =  mapreduce.map.memory.mb * 0.8-->
-    <property>
-        <name>mapreduce.map.java.opts.max.heap</name>
-        <value>1638</value>
-    </property>
-
-    <!-- 리듀스 태스크용 최대 힙 메모리 크기 =  mapreduce.reduce.memory.mb * 0.8-->
-    <property>
-        <name>mapreduce.reduce.java.opts.max.heap</name>
-        <value>2457</value>
-    </property>
-
-    <!-- JVM 실행 옵션을 이용한 맵리듀스 태스크의 최대 힙 메모리 크기 설정 -->
-    <property>
-        <name>mapreduce.map.java.opts</name>
-        <value>-Xmx1638m</value>
-    </property>
-
-    <property>
-        <name>mapreduce.reduce.java.opts</name>
-        <value>-Xmx2457m</value>
-    </property>
-
     <!-- 맵리듀스 태스크용 CPU 코어 개수 설정 -->
     <property>
         <name>mapreduce.map.cpu.vcores</name>
