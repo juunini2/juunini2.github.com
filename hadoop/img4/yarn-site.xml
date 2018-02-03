@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. See accompanying LICENSE file.
+-->
+<configuration>
+
+    <property>
+        <name>yarn.nodemanager.aux-services</name>  <!-- 보조서비스 설정. 맵리듀스 셔플 -->
+        <value>mapreduce_shuffle</value>
+    </property>
+
+    <property>
+        <name>yarn.nodemanager.aux-services.mapreduce_shuffle.class</name>  <!-- 보조서비스의 클래스 -->
+        <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+    </property>
+
+    <property>
+        <name>yarn.nodemaneger.local-dirs</name>    <!-- 노드매니저가 필요한 파일을 저장하는 로컬 경로 -->
+        <value>/home/hadoop/data/yarn/nm-local-dir</value>
+    </property>
+
+    <property>
+        <name>yarn.resourcemanager.fs.state-store.uri</name>    <!-- 리소스매니저의 상태 정보를 저장할 로컬 경로 -->
+        <value>/home/hadoop/data/yarn/system/rmstore</value>
+    </property>
+
+    <property>
+        <name>yarn.resourcemanager.hostname</name>  <!-- 리소스매니저의 호스트명 -->
+        <value>node1</value>
+    </property>
+
+    <property>
+        <name>yarn.web-proxy.address</name> <!-- 얀의 리소스매니저가 실행되는 포트 -->
+        <value>0.0.0.0:8089</value>
+    </property>
+
+    <property>
+        <name>yarn.resourcemanager.scheduler.monitor.enable</name>  <!-- 리소스매니저 프리앰션 사용 -->
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>yarn.timeline-service.enable</name>   <!-- 리소스매니저 타임라인 사용 안함 -->
+        <value>false</value>
+    </property>
+
+    <!-- 컨테이너 할당용 메모리 크기 = 서버 메모리 크기 - (얀을 제외한 다른 소프트웨어들이 사용할 메모리 크기) -->
+    <property>
+        <name>yarn.nodemanager.resource.memory-mb</name>    <!-- 노드매니저가 컨테이너 할당에 사용할 메모리 크기 -->
+        <value>6144</value>
+    </property>
+
+    <!-- 컨테이너 할당용 CPU 코어 갯수 = 전체 CPU 코어 갯수 - 얀을 제외한 다른 소프트웨어들이 사용할 CPU 코어 갯수.2 * 디스크 갯수 -->
+    <property>
+        <name>yarn.nodemanager.resource.cpu-vcores</name>   <!-- 노드매니저가 컨테이너 할당에 사용할 CPU 코어 갯수 -->
+        <value>2</value>
+    </property>
+
+    <property>
+        <name>yarn.scheduler.maximum-allocation-mb</name>   <!-- 리소스매니저가 각 컨테이너를 할당하는 데 필요한 최대 메모리 크기 -->
+        <value>4096</value>
+    </property>
+
+    <property>
+        <name>yarn.resourcemanager.scheduler.class</name>   <!-- 페어 스케줄러 사용 -->
+        <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler</value>
+    </property>
+
+    <property>
+        <name>yarn.scheduler.fair.preemption</name> <!-- 페어 스케줄러 프리앰션 사용 -->
+        <value>true</value>
+    </property>
+
+</configuration>
