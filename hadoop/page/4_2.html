@@ -1,1 +1,539 @@
-not ready
+음... 저번시간에 Hadoop3 으로 실패를 겪어서 이번엔 2.7.5 버전을 받아와서 해봤습니다.<br>
+결과는 성공적이었습니다.<br>
+
+<terminal>
+<strong>[hadoop@node1 hadoop-2.7.5]$</strong> ./bin/yarn jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.5.jar wordcount conf output
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.apache.hadoop.security.authentication.util.KerberosUtil (file:/home/hadoop/Downloads/hadoop-2.7.5/share/hadoop/common/lib/hadoop-auth-2.7.5.jar) to method sun.security.krb5.Config.getInstance()
+WARNING: Please consider reporting this to the maintainers of org.apache.hadoop.security.authentication.util.KerberosUtil
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+18/02/03 00:40:31 INFO Configuration.deprecation: session.id is deprecated. Instead, use dfs.metrics.session-id
+18/02/03 00:40:31 INFO jvm.JvmMetrics: Initializing JVM Metrics with processName=JobTracker, sessionId=
+18/02/03 00:40:32 INFO input.FileInputFormat: Total input paths to process : 1
+18/02/03 00:40:32 INFO mapreduce.JobSubmitter: number of splits:1
+18/02/03 00:40:32 INFO mapreduce.JobSubmitter: Submitting tokens for job: job_local165020066_0001
+18/02/03 00:40:32 INFO mapreduce.Job: The url to track the job: http://localhost:8080/
+18/02/03 00:40:32 INFO mapreduce.Job: Running job: job_local165020066_0001
+18/02/03 00:40:32 INFO mapred.LocalJobRunner: OutputCommitter set in config null
+18/02/03 00:40:32 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+18/02/03 00:40:32 INFO mapred.LocalJobRunner: OutputCommitter is org.apache.hadoop.mapreduce.lib.output.FileOutputCommitter
+18/02/03 00:40:32 INFO mapred.LocalJobRunner: Waiting for map tasks
+18/02/03 00:40:32 INFO mapred.LocalJobRunner: Starting task: attempt_local165020066_0001_m_000000_0
+18/02/03 00:40:32 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+18/02/03 00:40:33 INFO mapred.Task:  Using ResourceCalculatorProcessTree : [ ]
+18/02/03 00:40:33 INFO mapred.MapTask: Processing split: hdfs://node1:9000/user/hadoop/conf/hadoop-env.sh:0+4293
+18/02/03 00:40:33 INFO mapred.MapTask: (EQUATOR) 0 kvi 26214396(104857584)
+18/02/03 00:40:33 INFO mapred.MapTask: mapreduce.task.io.sort.mb: 100
+18/02/03 00:40:33 INFO mapred.MapTask: soft limit at 83886080
+18/02/03 00:40:33 INFO mapred.MapTask: bufstart = 0; bufvoid = 104857600
+18/02/03 00:40:33 INFO mapred.MapTask: kvstart = 26214396; length = 6553600
+18/02/03 00:40:33 INFO mapred.MapTask: Map output collector class = org.apache.hadoop.mapred.MapTask$MapOutputBuffer
+18/02/03 00:40:33 INFO mapred.LocalJobRunner: 
+18/02/03 00:40:33 INFO mapred.MapTask: Starting flush of map output
+18/02/03 00:40:33 INFO mapred.MapTask: Spilling map output
+18/02/03 00:40:33 INFO mapred.MapTask: bufstart = 0; bufend = 6308; bufvoid = 104857600
+18/02/03 00:40:33 INFO mapred.MapTask: kvstart = 26214396(104857584); kvend = 26212324(104849296); length = 2073/6553600
+18/02/03 00:40:33 INFO mapred.MapTask: Finished spill 0
+18/02/03 00:40:33 INFO mapred.Task: Task:attempt_local165020066_0001_m_000000_0 is done. And is in the process of committing
+18/02/03 00:40:33 INFO mapred.LocalJobRunner: map
+18/02/03 00:40:33 INFO mapred.Task: Task 'attempt_local165020066_0001_m_000000_0' done.
+18/02/03 00:40:33 INFO mapred.Task: Final Counters for attempt_local165020066_0001_m_000000_0: Counters: 23
+	File System Counters
+		FILE: Number of bytes read=295998
+		FILE: Number of bytes written=599193
+		FILE: Number of read operations=0
+		FILE: Number of large read operations=0
+		FILE: Number of write operations=0
+		HDFS: Number of bytes read=4293
+		HDFS: Number of bytes written=0
+		HDFS: Number of read operations=5
+		HDFS: Number of large read operations=0
+		HDFS: Number of write operations=1
+	Map-Reduce Framework
+		Map input records=98
+		Map output records=519
+		Map output bytes=6308
+		Map output materialized bytes=4587
+		Input split bytes=113
+		Combine input records=519
+		Combine output records=268
+		Spilled Records=268
+		Failed Shuffles=0
+		Merged Map outputs=0
+		GC time elapsed (ms)=157
+		Total committed heap usage (bytes)=300941312
+	File Input Format Counters 
+		Bytes Read=4293
+18/02/03 00:40:33 INFO mapred.LocalJobRunner: Finishing task: attempt_local165020066_0001_m_000000_0
+18/02/03 00:40:33 INFO mapred.LocalJobRunner: map task executor complete.
+18/02/03 00:40:33 INFO mapred.LocalJobRunner: Waiting for reduce tasks
+18/02/03 00:40:33 INFO mapred.LocalJobRunner: Starting task: attempt_local165020066_0001_r_000000_0
+18/02/03 00:40:33 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+18/02/03 00:40:33 INFO mapred.Task:  Using ResourceCalculatorProcessTree : [ ]
+18/02/03 00:40:33 INFO mapred.ReduceTask: Using ShuffleConsumerPlugin: org.apache.hadoop.mapreduce.task.reduce.Shuffle@494fcf52
+18/02/03 00:40:33 INFO reduce.MergeManagerImpl: MergerManager: memoryLimit=734003200, maxSingleShuffleLimit=183500800, mergeThreshold=484442144, ioSortFactor=10, memToMemMergeOutputsThreshold=10
+18/02/03 00:40:33 INFO reduce.EventFetcher: attempt_local165020066_0001_r_000000_0 Thread started: EventFetcher for fetching Map Completion Events
+18/02/03 00:40:33 INFO mapreduce.Job: Job job_local165020066_0001 running in uber mode : false
+18/02/03 00:40:33 INFO mapreduce.Job:  map 100% reduce 0%
+18/02/03 00:40:34 INFO reduce.LocalFetcher: localfetcher#1 about to shuffle output of map attempt_local165020066_0001_m_000000_0 decomp: 4583 len: 4587 to MEMORY
+18/02/03 00:40:34 INFO reduce.InMemoryMapOutput: Read 4583 bytes from map-output for attempt_local165020066_0001_m_000000_0
+18/02/03 00:40:34 INFO reduce.MergeManagerImpl: closeInMemoryFile -> map-output of size: 4583, inMemoryMapOutputs.size() -> 1, commitMemory -> 0, usedMemory ->4583
+18/02/03 00:40:34 INFO reduce.EventFetcher: EventFetcher is interrupted.. Returning
+18/02/03 00:40:34 INFO mapred.LocalJobRunner: 1 / 1 copied.
+18/02/03 00:40:34 INFO reduce.MergeManagerImpl: finalMerge called with 1 in-memory map-outputs and 0 on-disk map-outputs
+18/02/03 00:40:34 INFO mapred.Merger: Merging 1 sorted segments
+18/02/03 00:40:34 INFO mapred.Merger: Down to the last merge-pass, with 1 segments left of total size: 4561 bytes
+18/02/03 00:40:34 INFO reduce.MergeManagerImpl: Merged 1 segments, 4583 bytes to disk to satisfy reduce memory limit
+18/02/03 00:40:34 INFO reduce.MergeManagerImpl: Merging 1 files, 4587 bytes from disk
+18/02/03 00:40:34 INFO reduce.MergeManagerImpl: Merging 0 segments, 0 bytes from memory into reduce
+18/02/03 00:40:34 INFO mapred.Merger: Merging 1 sorted segments
+18/02/03 00:40:34 INFO mapred.Merger: Down to the last merge-pass, with 1 segments left of total size: 4561 bytes
+18/02/03 00:40:34 INFO mapred.LocalJobRunner: 1 / 1 copied.
+18/02/03 00:40:34 INFO Configuration.deprecation: mapred.skip.on is deprecated. Instead, use mapreduce.job.skiprecords
+18/02/03 00:40:34 INFO mapred.Task: Task:attempt_local165020066_0001_r_000000_0 is done. And is in the process of committing
+18/02/03 00:40:34 INFO mapred.LocalJobRunner: 1 / 1 copied.
+18/02/03 00:40:34 INFO mapred.Task: Task attempt_local165020066_0001_r_000000_0 is allowed to commit now
+18/02/03 00:40:34 INFO output.FileOutputCommitter: Saved output of task 'attempt_local165020066_0001_r_000000_0' to hdfs://node1:9000/user/hadoop/output/_temporary/0/task_local165020066_0001_r_000000
+18/02/03 00:40:34 INFO mapred.LocalJobRunner: reduce > reduce
+18/02/03 00:40:34 INFO mapred.Task: Task 'attempt_local165020066_0001_r_000000_0' done.
+18/02/03 00:40:34 INFO mapred.Task: Final Counters for attempt_local165020066_0001_r_000000_0: Counters: 29
+	File System Counters
+		FILE: Number of bytes read=305204
+		FILE: Number of bytes written=603780
+		FILE: Number of read operations=0
+		FILE: Number of large read operations=0
+		FILE: Number of write operations=0
+		HDFS: Number of bytes read=4293
+		HDFS: Number of bytes written=3514
+		HDFS: Number of read operations=8
+		HDFS: Number of large read operations=0
+		HDFS: Number of write operations=3
+	Map-Reduce Framework
+		Combine input records=0
+		Combine output records=0
+		Reduce input groups=268
+		Reduce shuffle bytes=4587
+		Reduce input records=268
+		Reduce output records=268
+		Spilled Records=268
+		Shuffled Maps =1
+		Failed Shuffles=0
+		Merged Map outputs=1
+		GC time elapsed (ms)=0
+		Total committed heap usage (bytes)=300941312
+	Shuffle Errors
+		BAD_ID=0
+		CONNECTION=0
+		IO_ERROR=0
+		WRONG_LENGTH=0
+		WRONG_MAP=0
+		WRONG_REDUCE=0
+	File Output Format Counters 
+		Bytes Written=3514
+18/02/03 00:40:34 INFO mapred.LocalJobRunner: Finishing task: attempt_local165020066_0001_r_000000_0
+18/02/03 00:40:34 INFO mapred.LocalJobRunner: reduce task executor complete.
+18/02/03 00:40:34 INFO mapreduce.Job:  map 100% reduce 100%
+18/02/03 00:40:34 INFO mapreduce.Job: Job job_local165020066_0001 completed successfully
+18/02/03 00:40:34 INFO mapreduce.Job: Counters: 35
+	File System Counters
+		FILE: Number of bytes read=601202
+		FILE: Number of bytes written=1202973
+		FILE: Number of read operations=0
+		FILE: Number of large read operations=0
+		FILE: Number of write operations=0
+		HDFS: Number of bytes read=8586
+		HDFS: Number of bytes written=3514
+		HDFS: Number of read operations=13
+		HDFS: Number of large read operations=0
+		HDFS: Number of write operations=4
+	Map-Reduce Framework
+		Map input records=98
+		Map output records=519
+		Map output bytes=6308
+		Map output materialized bytes=4587
+		Input split bytes=113
+		Combine input records=519
+		Combine output records=268
+		Reduce input groups=268
+		Reduce shuffle bytes=4587
+		Reduce input records=268
+		Reduce output records=268
+		Spilled Records=536
+		Shuffled Maps =1
+		Failed Shuffles=0
+		Merged Map outputs=1
+		GC time elapsed (ms)=157
+		Total committed heap usage (bytes)=601882624
+	Shuffle Errors
+		BAD_ID=0
+		CONNECTION=0
+		IO_ERROR=0
+		WRONG_LENGTH=0
+		WRONG_MAP=0
+		WRONG_REDUCE=0
+	File Input Format Counters 
+		Bytes Read=4293
+	File Output Format Counters 
+		Bytes Written=3514
+
+<strong>[hadoop@node1 hadoop-2.7.5]$</strong> ./bin/hdfs dfs -cat output/part-r-00000 | head -10
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.apache.hadoop.security.authentication.util.KerberosUtil (file:/home/hadoop/Downloads/hadoop-2.7.5/share/hadoop/common/lib/hadoop-auth-2.7.5.jar) to method sun.security.krb5.Config.getInstance()
+WARNING: Please consider reporting this to the maintainers of org.apache.hadoop.security.authentication.util.KerberosUtil
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+"$HADOOP_CLASSPATH"	1
+"AS	1
+"License");	1
+#	49
+###	4
+#HADOOP_JAVA_PLATFORM_OPTS="-XX:-UsePerfData	1
+#export	4
+$HADOOP_CLIENT_OPTS"	1
+$HADOOP_DATANODE_OPTS"	1
+$HADOOP_HOME/contrib/capacity-scheduler/*.jar;	1
+</terminal>
+
+음... 왜 Hadoop3으론 안되는걸까요? 그래서 저는 하둡 사이트에 올라와있는 <color2>Single Node Setup</color2> 문서를 참조해 따라해보았습니다.<br>
+<br>
+<color4>pdsh</color4> 라는걸 설치하라고 하는군요?<br>
+<color2>sudo yum install -y pdsh</color2> 하고 입력하니 뭔가 설치하긴 했습니다.<br>
+그리고 <color2>hadoop-env.sh</color2>에 JAVA_HOME에는 Lastest Version을 입력해달라는군요. 저는 최신버전을 받았으니 그대로 했습니다.<br>
+그리고 이 명령어를 입력해보라는군요. <color2>bin/hadoop</color2>
+
+<terminal>
+<strong>[hadoop@node1 hadoop-3.0.0]$</strong> bin/hadoop
+Usage: hadoop [OPTIONS] SUBCOMMAND [SUBCOMMAND OPTIONS]
+ or    hadoop [OPTIONS] CLASSNAME [CLASSNAME OPTIONS]
+  where CLASSNAME is a user-provided Java class
+
+  OPTIONS is none or any of:
+
+--config dir                     Hadoop config directory
+--debug                          turn on shell script debug mode
+--help                           usage information
+buildpaths                       attempt to add class files from build tree
+hostnames list[,of,host,names]   hosts to use in slave mode
+hosts filename                   list of hosts to use in slave mode
+loglevel level                   set the log4j level for this command
+workers                          turn on worker mode
+
+  SUBCOMMAND is one of:
+
+
+    Admin Commands:
+
+daemonlog     get/set the log level for each daemon
+
+    Client Commands:
+
+archive       create a Hadoop archive
+checknative   check native Hadoop and compression libraries availability
+classpath     prints the class path needed to get the Hadoop jar and the required libraries
+conftest      validate configuration XML files
+credential    interact with credential providers
+distch        distributed metadata changer
+distcp        copy file or directories recursively
+dtutil        operations related to delegation tokens
+envvars       display computed Hadoop environment variables
+fs            run a generic filesystem user client
+gridmix       submit a mix of synthetic job, modeling a profiled from production load
+jar &lt;jar&gt;     run a jar file. NOTE: please use "yarn jar" to launch YARN applications, not this command.
+jnipath       prints the java.library.path
+kerbname      show auth_to_local principal conversion
+key           manage keys via the KeyProvider
+rumenfolder   scale a rumen input trace
+rumentrace    convert logs into a rumen trace
+s3guard       manage metadata on S3
+trace         view and modify Hadoop tracing settings
+version       print the version
+
+    Daemon Commands:
+
+kms           run KMS, the Key Management Server
+
+SUBCOMMAND may print help when invoked w/o parameters or with -h.
+</terminal>
+
+...그 밑에는 [그러면 어떻게 쓰는지 방법들이 나올 것이다.] 라고 적혀있었네요 -_-<br>
+그리고 그 밑에는 가이드 3가지가 있습니다.<br>
+
+<terminal>
+Local (Standalone) Mode
+Pseudo-Distributed Mode
+Fully-Distributed Mode
+</terminal>
+
+<color2>Pseudo-Distribute Mode</color2> (가상분산모드)를 따라해보겠습니다.<br>
+먼저 <color2>core-site.xml</color2>에 이렇게 넣으라는군요.<br>
+
+<terminal>
+&lt;configuration&gt;
+    &lt;property&gt;
+        &lt;name&gt;fs.defaultFS&lt;/name&gt;
+        &lt;value&gt;hdfs://localhost:9000&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;
+</terminal>
+
+그 다음 <color2>hdfs-site.xml</color2>에는 이렇게 입력하라고 합니다.<br>
+
+<terminal>
+&lt;configuration&gt;
+    &lt;property&gt;
+        &lt;name&gt;dfs.replication&lt;/name&gt;
+        &lt;value&gt;1&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;
+</terminal>
+
+저는 <color2>localhost:9000</color2> 부분을 <color2>node1:9000</color2>으로 바꿔서 넣을게요.<br>
+그리고 <color2>ssh localhost</color2> 명령어를 넣어서 체크해보라는데요?<br>
+
+<terminal>
+[hadoop@node1 hadoop-3.0.0]$ ssh localhost
+Last login: Sat Feb  3 00:19:49 2018
+[hadoop@node1 ~]$ 
+</terminal>
+
+잘 되는데?<br>
+만약 이렇게 안되면 아래 명령어를 수행하라고 합니다.<br>
+
+<terminal>
+$ ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
+$ cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+$ chmod 0600 ~/.ssh/authorized_keys
+</terminal>
+
+저는 되니깐 스킵하겠습니다.<br>
+<br>
+다음은 실행에 대해 나와있습니다. 두근두근<br>
+<color2>bin/hdfs namenode -format</color2> 이렇게 네임노드 포맷을 하랍니다. 똑같네요.<br>
+하고나서는 <color2>Start NameNode daemon and DataNode daemon:</color2> 음... 그러니깐 네임노드 데몬과 데이터노드 데몬을 실행하라네요.<br>
+<color2>sbin/start-dfs.sh</color2> 이 명령어로요.<br>
+
+<terminal>
+[hadoop@node1 hadoop-3.0.0]$ sbin/start-dfs.sh
+Starting namenodes on [node1]
+Starting datanodes
+Starting secondary namenodes [node1]
+</terminal>
+
+오오! 경고문구가 안뜨고 실행됐어요! 어서 다음 다음!<br>
+<color2>Browse the web interface for the NameNode; by default it is available at: NameNode - http://localhost:9870/</color2><br>
+웹 인터페이스에서 네임노드를 확인할 수 있답니다. http://localhost:9870/ 를 웹 인터페이스에 입력하라는군요. 저것도 되고, http://node1:9870/도 됩니다.<br>
+오옹~ 된다! 전에는 50070포트를 썼는데 이번 버전부터 9870포트로 바꿨다는군요.<br>
+<br>
+<color2>Make the HDFS directories required to execute MapReduce jobs:</color2> HDFS 폴더에서 맵리듀스 잡을 실행시켜야 한다고 합니다.<br>
+
+<terminal>
+$ bin/hdfs dfs -mkdir /user
+$ bin/hdfs dfs -mkdir /user/&lt;username&gt;
+</terminal>
+
+이 명령어를 넣어서요.<br>
+저는 &lt;usrname&gt; 부분에 node1 이라고 넣었습니다.<br>
+<br>
+<color2>Copy the input files into the distributed filesystem:</color2> input 파일들을 분산 파일 시스템으로 복사하랍니다.<br>
+
+<terminal>
+$ bin/hdfs dfs -mkdir input
+$ bin/hdfs dfs -put etc/hadoop/*.xml input
+</terminal>
+
+이렇게요.<br>
+그런데 첫줄 넣으니깐 메시지가 나옵니다.<br>
+<color2>mkdir: `input': No such file or directory</color2><br>
+음.... 어찌 해야하나.... 안되면 다른 방법을 써봐야겠죠?...<br>
+<color2>bin/hdfs dfs -mkdir /user/node1/input</color2> 이렇게 하면 될테니 이런식으로 쭉 진행해보겠습니다.<br>
+이렇게 하니깐 되는군요... 이제 다음 단계로 넘어가보죠.<br>
+<br>
+<color2>Run some of the examples provided:</color2> 제공된 예제를 실행시켜봅시다 라네요.<br>
+
+<terminal>
+$ bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.0.0.jar grep input output 'dfs[a-z.]+'
+</terminal>
+
+이렇게 하래요. 근데 저렇게 하면 안될테니깐 저는<br>
+<color2>bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.0.0.jar grep /user/node1/input output 'dfs[a-z.]+'</color2><br>
+이렇게 넣어보겠습니다.<br>
+
+<terminal>
+[hadoop@node1 hadoop-3.0.0]$ bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.0.0.jar grep /user/node1/input output 'dfs[a-z.]+'
+2018-02-03 01:14:55,251 INFO client.RMProxy: Connecting to ResourceManager at node1/192.168.247.100:8032
+.
+.
+.
+    Shuffle Errors
+		BAD_ID=0
+		CONNECTION=0
+		IO_ERROR=0
+		WRONG_LENGTH=0
+		WRONG_MAP=0
+		WRONG_REDUCE=0
+	File Input Format Counters 
+		Bytes Read=143
+	File Output Format Counters 
+		Bytes Written=29
+
+</terminal>
+
+음... 셔플 에러;;<br>
+<color2>Examine the output files: Copy the output files from the distributed filesystem to the local filesystem and examine them:</color2> 분산 파일 시스템 내에 있는 아웃풋 파일들을 로컬로 복사하래요.<br>
+
+<terminal>
+$ bin/hdfs dfs -get output output
+$ cat output/*
+</terminal>
+
+이렇게 하라네요.<br>
+
+<terminal>
+[hadoop@node1 hadoop-3.0.0]$ bin/hdfs dfs -get output output
+[hadoop@node1 hadoop-3.0.0]$ cat output/*
+1	dfsadmin
+1	dfs.replication
+</terminal>
+
+잘 됐나봅니다.<br>
+또는 이렇게도 확인이 가능하다네요.<br>
+
+<terminal>
+$ bin/hdfs dfs -cat output/*
+</terminal>
+
+저렇게 넣어도 똑같이 나옵니다. 분산파일 내에 있는걸 조회하는 명령어네요.<br>
+<color2>When you’re done, stop the daemons with:</color2> 다 했으면, 데몬을 종료하래요.<br>
+
+<terminal>
+$ sbin/stop-dfs.sh
+</terminal>
+
+<terminal>
+[hadoop@node1 hadoop-3.0.0]$ sbin/stop-dfs.sh
+Stopping namenodes on [node1]
+Stopping datanodes
+Stopping secondary namenodes [node1]
+</terminal>
+
+끄고나서 얀 세팅을 하자는군요.<br>
+<color4>mapred-site.xml</color4>에 이렇게 넣으랍니다.<br>
+
+<terminal>
+&lt;configuration&gt;
+    &lt;property&gt;
+        &lt;name&gt;mapreduce.framework.name&lt;/name&gt;
+        &lt;value&gt;yarn&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;
+</terminal>
+
+<color4>yarn-site.xml</color4>에는 이렇게 넣으라 그러구요.<br>
+
+<terminal>
+&lt;configuration&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;
+        &lt;value&gt;mapreduce_shuffle&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.nodemanager.env-whitelist&lt;/name&gt;
+        &lt;value&gt;JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_MAPRED_HOME&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;
+</terminal>
+
+<color2>Start ResourceManager daemon and NodeManager daemon:</color2> 노드매니저 데몬과 리소스매니저 데몬을 실행하라는군요.<br>
+<color2>sbin/start-yarn.sh</color2> 명렁어를 넣으라니 넣어보겠습니다.<br>
+
+<terminal>
+[hadoop@node1 hadoop-3.0.0]$ sbin/start-yarn.sh
+Starting resourcemanager
+Starting nodemanagers
+</terminal>
+
+<color2>Browse the web interface for the ResourceManager; by default it is available at: ResourceManager - http://localhost:8088/</color2> 저 주소에서 리소스매니저를 확인할 수 있답니다.<br>
+뭐죠? 안되는데요?<br>
+결국 여러 방법을 동원하다가 자바 버전을 낮추어보았습니다.<br>
+원인은 자바 버전에 있었습니다. 현재 자바SE의 최신버전은 9.0.4인데 그보다 전인 JDK1.8.0_162를 사용해서 성공했습니다.<br>
+리소스매니저 페이지를 보여드리겠습니다.<br>
+
+<img src="/hadoop/img4/2_1.jpg" alt="">
+
+그럼 이 전 글에서 실패했었던 예제를 한번 실행시켜보겠습니다.<br>
+
+<terminal>
+[hadoop@node1 hadoop-3.0.0]$ bin/hdfs dfs -cat output/part-r-00000 | head -10
+"	3
+"AS	1
+"License");	1
+"log	1
+#	302
+##	12
+###	26
+#export	1
+$USER	1
+${HADOOP_HOME}/logs	1
+</terminal>
+
+와.... 성공적으로 되었습니다. 그런데 실행했을 때 <color2>Shullfe Errors</color2>는 여전히 나오는군요. 분명<br>
+<color2>yarn.nodemanager.aux-services.mapreduce_shuffle.class</color2> 값을 넣어주지 않아서 인 것 같습니다.<br>
+Hadoop 3 문서를 찾아보면 이 값의 기본값이 <color2>org.apache.hadoop.mapred.ShuffleHandler</color2> 라고 되어있습니다.<br>
+책에는 이걸 수동으로 입력하라고 했는데 Default로 들어있으니 굳이 넣을 필요 없다는 소리입니다. 왜 셔플 에러가 나는걸까요...<br>
+책의 저자는 실행시 나오는 로그 중 딱 이 부분만 첨부했습니다.<br>
+
+<terminal>
+Map-Reduce Framework
+		Map input records=413
+		Map output records=2355
+		Map output bytes=25428
+		Map output materialized bytes=13278
+		Input split bytes=113
+		Combine input records=2355
+		Combine output records=815
+		Reduce input groups=815
+		Reduce shuffle bytes=13278
+		Reduce input records=815
+		Reduce output records=815
+		Spilled Records=1630
+		Shuffled Maps =1
+		Failed Shuffles=0
+		Merged Map outputs=1
+		GC time elapsed (ms)=842
+		CPU time spent (ms)=2630
+		Physical memory (bytes) snapshot=565284864
+		Virtual memory (bytes) snapshot=5191315456
+		Total committed heap usage (bytes)=484966400
+		Peak Map Physical memory (bytes)=287019008
+		Peak Map Virtual memory (bytes)=2587447296
+		Peak Reduce Physical memory (bytes)=278265856
+		Peak Reduce Virtual memory (bytes)=2603868160
+</terminal>
+
+저도 이렇게 떴습니다. 제꺼 붙여넣기 한거니깐요.<br>
+그리고 하둡 2.7.5버전으로 시험삼아 돌려봤을 때도 셔플 에러가 나왔습니다. 저자도 분명 셔플 에러가 났을것이 분명합니다.<br>
+그리고 중요한건 맵리듀스 프레임워크에서 <color2>Reduce shuffle bytes=13278</color2> 이 부분이 있는걸 보면<br>
+셔플을 한다는 소리입니다.<br>
+<br>
+여기까지 실행을 해보았으니 다음 단계는 다음 글에서 진행하도록 하겠습니다.<br>
+<br>
+<a href="/hadoop/page/4_3.html" onclick="
+    event.preventDefault();
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = () => {
+        document.querySelector('main').innerHTML = xhttp.responseText;
+    }
+
+    xhttp.open('GET', '/hadoop/page/4_3.html', true);
+    xhttp.send();
+
+    document.title = 'Hadoop Guide Part. 4 - Step. 3';
+    history.pushState('/hadoop/page/4_3.html' + ' ' + 'Part. 4 - Step. 3', null, '#4_3');
+
+    document.querySelector('side').children[3].classList.add('on');
+    document.querySelector('side').children[3].children[2].classList.remove('on');
+    document.querySelector('side').children[3].children[3].classList.add('on');
+" class="button">다음단계로 가기</a>
