@@ -1,1 +1,284 @@
-not ready
+하둡 빌드에 대해 보겠습니다.<br>
+하둡 사이트에 들어가서 다운로드 받으려고 보면<br>
+
+<img src="/hadoop/img4/3_1.jpg" alt="">
+
+<color2>binary</color2> 파일과 <color2>source</color2> 파일이 있습니다.<br>
+저는 처음에 <color2>binary</color2> 파일을 받아서 설치했는데요, 빌드를 하려면 <color2>source</color2> 파일도 필요하다는군요.<br>
+다운로드 받았습니다. 그리고 메이븐도 필요하다는군요. 메이븐 홈페이지 가서 <color2>bin</color2> 파일을 다운로드 받고 압축을 푼 뒤에 환경변수 설정만 하면 됩니다.<br>
+
+<terminal>
+export MAVEN_HOME=/home/hadoop/apache-maven-3.5.2
+export PATH=$MAVEN_HOME/bin:$PATH
+</terminal>
+
+그리고 <color4>source /etc/profile</color4> 하고 환경변수를 적용시킨 뒤에 <color4>mvn -v</color4> 명령어로 확인해보면<br>
+
+<terminal>
+[hadoop@node1 ~]$ mvn -v
+<strong>Apache Maven 3.5.2 (138edd61fd100ec658bfa2d307c43b76940a5d7d; 2017-10-18T03:58:13-04:00)</strong>
+Maven home: /home/hadoop/apache-maven-3.5.2
+Java version: 1.8.0_162, vendor: Oracle Corporation
+Java home: /home/hadoop/jdk1.8.0_162/jre
+Default locale: ko_KR, platform encoding: UTF-8
+OS name: "linux", version: "3.10.0-693.17.1.el7.x86_64", arch: "amd64", family: "unix"
+</terminal>
+
+이렇게 나오면 된겁니다. 쉽죠?<br>
+JDK와 프로토콜 버퍼와 GCC 컴파일러와 CMake는 미리 설치했으니 이제 빌드를 하면 되겠군요. 아, <color2>openssl-devel</color2>이 필요하답니다.<br>
+<color4>sudo yum install -y openssl*</color4> 설치해줍시다.<br>
+<br>
+자, 이제 진짜로 빌드를 시작하면 되겠군요. Hadoop의 source 파일을 다운로드 받고 압축을 풀어줍니다.<br>
+그리고 source 폴더에 들어가서 아래 명령어를 넣어주세요.<br>
+
+<terminal>
+<color2>[hadoop@node1 hadoop-3.0.0-src]$</color2> mvn package -Pdist,native -DskipTests -Dtar
+</terminal>
+
+음.... 했더니 에러가 납니다.<br>
+네이티브 파일을 옮기려고 빌드하는거라는데... 한번 하둡 폴더에 가서 체크를 해봅니다.<br>
+
+<terminal>
+[hadoop@node1 hadoop-3.0.0]$ bin/hadoop checknative
+2018-02-03 21:23:12,945 INFO bzip2.Bzip2Factory: Successfully loaded & initialized native-bzip2 library system-native
+2018-02-03 21:23:12,949 INFO zlib.ZlibFactory: Successfully loaded & initialized native-zlib library
+2018-02-03 21:23:12,953 WARN erasurecode.ErasureCodeNative: ISA-L support is not available in your platform... using builtin-java codec where applicable
+Native library checking:
+hadoop:  true /home/hadoop/hadoop-3.0.0/lib/native/libhadoop.so.1.0.0
+zlib:    true /lib64/libz.so.1
+zstd  :  false 
+snappy:  true /lib64/libsnappy.so.1
+lz4:     true revision:10301
+bzip2:   true /lib64/libbz2.so.1
+openssl: true /lib64/libcrypto.so
+ISA-L:   false libhadoop was built without ISA-L support
+</terminal>
+
+뭐야 많이 있네? zstd랑 ISA-L 빼고는 다 있습니다?<br>
+이상하다? 난 스내피도 설치 안했는데?<br>
+뭐지? 안해도 되는건가?<br>
+일단 넘어가보겠습니다.<br>
+하이브 설치를 해보죠.<br>
+<br>
+하이브 사이트에 들어가서 bin 파일을 다운로드 받고 압축을 풉니다.<br>
+폴더 내에 <color2>conf</color2> 라는 폴더가 있는데 들어가보면 <color2>hive-env.sh.template</color2>이라는 파일이 있는데 <color2>.template</color2> 부분을 지워서<br>
+<color2>hive-env.sh</color2>로 바꿔주세요. 그리고 내부에 보시면 주석들 중에 <color2>HADOOP_HOME=</color2> 부분이 있는데 주석을 지우고 하둡 폴더를 기재합니다.<br>
+그리고 <color2>hive-site.xml</color2> 파일을 생성합니다.<br>
+<br>
+<a href="https://github.com/juunini/juunini.github.com/tree/master/hadoop/img4/hive-site.xml" target="_new" class="link">hive-site.xml 코드 보러가기</a><br>
+<br>
+하이브에서 업로드 하는 데이터는 HDFS의 <color2>/user/hive/warehouse</color2>에 저장된다고 합니다.<br>
+그리고 하이브에서 실행하는 잡의 여유 공간으로 HDFS의 <color2>/tmp/hive-유저명</color2> 을 사용한다고 합니다.<br>
+만들고나서 실행권한도 설정해줘야 한다는군요.<br>
+
+<terminal>
+bin/hdfs dfs -mkdir /tmp && bin/hdfs dfs -mkdir /tmp/hive && bin/hdfs dfs -mkdir /user/hive && bin/hdfs dfs -mkdir /user/hive/warehouse && bin/hdfs dfs -chmod 777 /tmp && bin/hdfs dfs -chmod 777 /tmp/hive && bin/hdfs dfs -chmod 777 /user/hive/warehouse
+</terminal>
+
+그리고 하이브를 실행하기 전에 메타스토어를 초기화 해야 한다고 합니다.<br>
+뭔말인지 모르겠지만 아무튼 initShema를 이용해 초기화 한다면서 다음 명령어를 따라하라고 합니다.<br>
+
+<terminal>
+<color2>[hadoop@node1 apache-hive-2.3.2-bin]$</color2> bin/schematool -initSchema -dbType derby
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/home/hadoop/apache-hive-2.3.2-bin/lib/log4j-slf4j-impl-2.6.2.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/home/hadoop/hadoop-3.0.0/share/hadoop/common/lib/slf4j-log4j12-1.7.25.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.apache.logging.slf4j.Log4jLoggerFactory]
+Metastore connection URL:	 jdbc:derby:;databaseName=metastore_db;create=true
+Metastore Connection Driver :	 org.apache.derby.jdbc.EmbeddedDriver
+Metastore connection User:	 APP
+Starting metastore schema initialization to 2.3.0
+Initialization script hive-schema-2.3.0.derby.sql
+Initialization script completed
+schemaTool completed
+</terminal>
+
+그 다음은 잘 됐는지 확인하라는군요.<br>
+
+<terminal>
+<color2>[hadoop@node1 apache-hive-2.3.2-bin]$</color2> bin/hive
+which: no hbase in (/home/hadoop/apache-maven-3.5.2/bin:/home/hadoop/jdk1.8.0_162/bin:/home/hadoop/jdk1.8.0_162/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/home/hadoop/.local/bin:/home/hadoop/bin)
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/home/hadoop/apache-hive-2.3.2-bin/lib/log4j-slf4j-impl-2.6.2.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/home/hadoop/hadoop-3.0.0/share/hadoop/common/lib/slf4j-log4j12-1.7.25.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.apache.logging.slf4j.Log4jLoggerFactory]
+
+Logging initialized using configuration in jar:file:/home/hadoop/apache-hive-2.3.2-bin/lib/hive-common-2.3.2.jar!/hive-log4j2.properties Async: true
+Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+<color2>hive></color2> show databases;
+OK
+default
+Time taken: 3.95 seconds, Fetched: 1 row(s)
+</terminal>
+
+잘 되는군요.<br>
+<br>
+하이브QL 이라고 SQL문법과 비슷하게 제공하는 언어라는데, 약간 차이점이 있다고 합니다.<br>
+일반 SQL처럼 입력 저장 후 수정이 자유롭지 못하다고 합니다.<br>
+그 이유가 HDFS에 저장되기 때문인데, HDFS에 저장된 파일은 수정이 안되기 때문에 UPDATE나 DELETE가 불가능하고 덮어쓰기만 가능하다고 합니다.<br>
+그래서 하이브에서는 <color2>INSERT INTO</color2> 대신 <color2>OVERWRITE INTO</color2>를 쓴다는군요.<br>
+<br>
+그리고, 하이브QL에서는 FROM 절에서만 서브쿼리 사용이 가능합니다.<br>
+<br>
+하이브QL의 뷰는 읽기 전용이며 비구체화된 뷰만 지원합니다.<br>
+<br>
+SELECT 문을 사용할 때 HAVING 절을 사용할 수 없습니다.<br>
+<br>
+저장 프로시저(stored procedure)를 지원하지 않습니다. 대신 맵리듀스 스크립트를 실행할 수 있습니다.<br>
+<br>
+여기까지가 다른점이군요. 그럼 항공 운항 지연 데이터를 분석하기 위한 테이블을 생성해보겠습니다.<br>
+아, 참고로 하이브QL에서는 대소문자 구분을 하지 않는다는군요. 가독성을 위해 자유롭게 쓸 수 있겠습니다.<br>
+<br>
+<terminal>
+CREATE TABLE airline_delay(Year INT, Month INT,
+    DayOfMonth INT, DayOfWeek INT,
+    DepTime INT, CRSDepTime INT,
+    ArrTime INT, CRSArrTime INT,
+    UniqueCarrier String, FlightNum INT,
+    TailNum STRING, ActualElapsedTime INT,
+    CRSElapsedTime INT, AirTime INT,
+    ArrDelay INT, DepDelay INT,
+    Origin STRING, Dest STRING,
+    Distance INT, TaxiIn INT,
+    TaxiOut INT, Cancelled INT,
+    CancellationCode STRING
+    COMMENT 'A = carrier, B = weather, C = NAS, D = security',
+    Diverted INT COMMENT '1 = yes, 0 = no',
+    CarrierDelay STRING, WeatherDelay STRING,
+    NASDelay STRING, SecuretyDelay STRING,
+    LateAircraftDelay STRING)
+COMMENT 'The data consists of flight arrival and departure details for all commercial flights within the USA, from October 1987 to April 2008'
+PARTITIONED BY (delayYear INT)
+ROW FORMAT DELIMITED
+    FIELDS TERMINATED BY ','
+    LINES TERMINATED BY '\n'
+    STORED AS TEXTFILE;
+</terminal>
+
+입력하고 확인하면 이런 결과가 나옵니다.
+
+<terminal>
+<color2>hive></color2> CREATE TABLE airline_delay(Year INT, Month INT,
+    >     DayOfMonth INT, DayOfWeek INT,
+    >     DepTime INT, CRSDepTime INT,
+    >     ArrTime INT, CRSArrTime INT,
+    >     UniqueCarrier String, FlightNum INT,
+    >     TailNum STRING, ActualElapsedTime INT,
+    >     CRSElapsedTime INT, AirTime INT,
+    >     ArrDelay INT, DepDelay INT,
+    >     Origin STRING, Dest STRING,
+    >     Distance INT, TaxiIn INT,
+    >     TaxiOut INT, Cancelled INT,
+    >     CancellationCode STRING
+    >     COMMENT 'A = carrier, B = weather, C = NAS, D = security',
+    >     Diverted INT COMMENT '1 = yes, 0 = no',
+    >     CarrierDelay STRING, WeatherDelay STRING,
+    >     NASDelay STRING, SecuretyDelay STRING,
+    >     LateAircraftDelay STRING)
+    > COMMENT 'The data consists of flight arrival and departure details for all commercial flights within the USA, from October 1987 to April 2008'
+    > PARTITIONED BY (delayYear INT)
+    > ROW FORMAT DELIMITED
+    >     FIELDS TERMINATED BY ','
+    >     LINES TERMINATED BY '\n'
+    >     STORED AS TEXTFILE;
+OK
+Time taken: 0.398 seconds
+<color2>hive></color2> SHOW TABLES;
+OK
+airline_delay
+Time taken: 0.035 seconds, Fetched: 1 row(s)
+</terminal>
+
+그리고 아까 하이브는 HDFS의 <color2>/user/hive/warehouse</color2> 폴더를 사용한다고 했었죠?<br>
+
+<terminal>
+<color2>[hadoop@node1 hadoop-3.0.0]$</color2> bin/hdfs dfs -ls /user/hive/warehouse
+Found 1 items
+drwxrwxrwx   - hadoop supergroup          0 2018-02-03 22:28 /user/hive/warehouse/airline_delay
+</terminal>
+
+이렇게 테이블 폴더가 자동으로 생성되어 있습니다.<br>
+<br>
+자, 이제 다시 비행기 연착륙 데이터를 다운로드 받아야겠군요....ㅠㅠ<br>
+이번에는 <color2>/home/hadoop/airline</color2> 폴더를 만들어서 그 안에다가 다운로드 받겠습니다.<br>
+<br>
+<blur>(다운로드 중....)</blur><br>
+<br>
+너무 오래 걸려서 일단 받아진걸로 테스트 해보겠습니다.<br>
+
+<terminal>
+LOAD DATA LOCAL INPATH '/home/hadoop/airline/1990.csv'
+OVERWRITE INTO TABLE airline_delay
+PARTITION (delayYear='1990');
+</terminal>
+
+<terminal>
+<color2>hive></color2> LOAD DATA LOCAL INPATH '/home/hadoop/airline/1990.csv'
+    > OVERWRITE INTO TABLE airline_delay
+    > PARTITION (delayYear='1990');
+Loading data to table default.airline_delay partition (delayyear=1990)
+OK
+Time taken: 2.987 seconds
+</terminal>
+
+요롷게 입력해서 1990년도 데이터를 집어넣습니다.<br>
+아까 말했듯이 <color2>INSERT INTO</color2> 대신 <color2>OVERWRITE INTO</color2> 쓰죠?<br>
+파티션을 설정했으니 어느 파티션에 넣을지 설정 안해주면 에러난답니다.<br>
+입력했으니 확인을 해야지요?<br>
+
+<terminal>
+SELECT Year, Month, DepTime, ArrTime, UniqueCarrier, FlightNum
+FROM airline_delay
+WHERE delayYear = '1990'
+LIMIT 10;
+</terminal>
+
+<terminal>
+<color2>hive></color2> SELECT Year, Month, DepTime, ArrTime, UniqueCarrier, FlightNum
+    > FROM airline_delay
+    > WHERE delayYear = '1990'
+    > LIMIT 10;
+OK
+1990    1    1707    1755    US    29
+1990    1    1706    1807    US    29
+1990    1    1629    1715    US    29
+1990    1    1633    1718    US    29
+1990    1    1630    1726    US    29
+1990    1    1734    1818    US    29
+1990    1    1634    1723    US    29
+1990    1    1745    1833    US    29
+1990    1    1650    1742    US    29
+1990    1    1629    1716    US    29
+Time taken: 0.192 seconds, Fetched: 10 row(s)
+</terminal>
+
+<color2>LIMIT 10;</color2>은 10개만 보자는겁니다.<br>
+
+<terminal>
+
+</terminal>
+
+글이 너무 길어져버렸군요!<br>
+자, 이번 글은 여기까지 하겠습니다.<br>
+<br>
+<a href="/hadoop/page/4_4.html" onclick="
+    event.preventDefault();
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = () => {
+        document.querySelector('main').innerHTML = xhttp.responseText;
+    }
+
+    xhttp.open('GET', '/hadoop/page/4_4.html', true);
+    xhttp.send();
+
+    document.title = 'Hadoop Guide Part. 4 - Step. 4';
+    history.pushState('/hadoop/page/4_4.html' + ' ' + 'Part. 4 - Step. 4', null, '#4_4');
+
+    document.querySelector('side').children[3].classList.add('on');
+    document.querySelector('side').children[3].children[3].classList.remove('on');
+    document.querySelector('side').children[3].children[4].classList.add('on');
+" class="button">다음단계로 가기</a>

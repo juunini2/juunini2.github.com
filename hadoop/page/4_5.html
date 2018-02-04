@@ -1,0 +1,102 @@
+재부팅하니 안켜져서 밀고 다시 설치합니다.<br>
+
+<terminal>
+yum repolist && yum update -y && yum install -y net-tools openssh* openssl* epel-release R wget gcc-c++ pdsh im-chooser httpd mod_ssl && yum groupinstall -y "X Window System" "MATE Desktop" && systemctl mask firewalld && systemctl enable httpd.service && systemctl start httpd && systemctl set-default graphical.target && systemctl isolate graphical.target
+</terminal>
+
+이번엔 진짜 한방설치. 시나몬으로.... 는 써보니 후지니 걍 다시 마테를 쓰기로 했다.<br>
+visudo 설정할 때 root랑 hadoop(유저) 랑 <color2>ALL=(ALL) NOPASSWD: ALL</color2> 하고 설정해주자. sudo 할 때 패스워드 안물어본다.<br>
+protobuf, cmake, maven, jdk1.7.0, visual studio code를 다운로드 받는다. jdk1.7.0은 친절하게 공유해드리겠습니다.<br>
+<br>
+<a href="https://github.com/juunini/juunini.github.com/tree/master/hadoop/img4/jdk-7u80-linux-x64.tar" download class="link">jdk-7u80-linux-x64.tar 다운로드</a><br>
+
+<terminal>
+wget http://www.apache.org/dist/ambari/ambari-2.6.1/apache-ambari-2.6.1-src.tar.gz
+</terminal>
+
+이렇게 해서 필요한걸 전부 다운로드 받습니다.<br>
+메이븐과 자바는 압축을 풀고 환경변수에 등록한 뒤, 나머지는 터미널 4개를 띄웁니다.<br>
+<br>
+<color4>터미널1</color4><br>
+
+<terminal>
+tar -zxvf cmake-3.10.2.tar.gz && rm cmake-3.10.2.tar.gz && cd cmake-3.10.2 && ./bootstrap && make && sudo make install
+</terminal>
+
+<color4>터미널2</color4><br>
+
+<terminal>
+tar -zxvf protobuf-all-3.5.1.tar.gz && rm protobuf-all-3.5.1.tar.gz && cd protobuf-3.5.1 && ./configure && make && sudo make install
+</terminal>
+
+<color4>터미널3</color4><br>
+
+<terminal>
+sudo rpm -Uvh code<blur><i>(tab)</i></blur>
+</terminal>
+
+<color4>터미널4</color4>
+
+<terminal>
+cd && ssh-keygen -t rsa && ssh-copy-id node1
+
+openssl genrsa -des3 -out server.key 2048 && openssl req -new -key server.key -out server.csr && cp server.key server.key.origin && openssl rsa -in server.key.origin -out server.key && openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt && cp server.key /etc/httpd/conf/ && cp server.crt /etc/httpd/conf/ && sudo vi /etc/httpd/conf/httpd.conf
+
+<blur><i>(맨 하단에 추가)</i></blur>
+
+NameVirtualHost *:443
+&lt;VirtualHost *:443&gt;
+SSLEngine on
+SSLCertificateFile /etc/httpd/conf/server.crt
+SSLCertificateKeyFile /etc/httpd/conf/server.key
+SetEnvIf User-Agent ".*MSIE.*" nokeepalive ssl-unclean-shutdown
+CustomLog logs/ssl_request_log "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
+DocumentRoot "/var/www/html"
+&lt;/VirtualHost&gt;
+
+<blur><i>(저장)</i></blur>
+
+sudo service httpd restart
+</terminal>
+
+공개키를 만들어 공유한 뒤 <color2>사설키</color2>도 만드는 작업을 한 것이다.<br>
+이쯤이면 그냥 기본설치로 가고프다. 기본설치하면 다 있단다... ㅠㅠ 에이 이러면서 배우는거지 뭐.<br>
+설치가 끝나고 나면 암바리 압축을 풀고 폴더로 들어간다.<br>
+나는 /home/hadoop/apache 폴더 내에 풀었다.<br>
+
+<terminal>
+mvn versions:set -DnewVersion=2.6.1.0.0 && pushd ambari-metrics && mvn versions:set -DnewVersion=2.6.1.0.0 && popd && sudo wget -nv http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.6.1.0/ambari.repo -O /etc/yum.repos.d/ambari.repo && sudo yum repolist && sudo yum install -y ambari-server
+</terminal>
+
+홈페이지에는 방법이 자세히 안나와있는데 이렇게 하니깐 설치가 되었다.<br>
+그리고 <color2>ambari-server setup</color2> 명령어를 넣으라는데 권한이 없다.<br>
+
+<terminal>
+sudo ambari-server setup
+</terminal>
+
+그냥 디폴트로 계속 엔터를 눌렀습니다.<br>
+그런데 실패했습니다.<br>
+검색해보니 이것도 방법이 공식문서에 나와있군요... -_-...<br>
+
+<terminal>
+sudo -u postgres psql
+CREATE DATABASE ambari;
+CREATE USER ambari WITH PASSWORD 'bigdata';
+GRANT ALL PRIVILEGES ON DATABASE ambari TO ambari;
+\connect ambari;
+CREATE SCHEMA ambari AUTHORIZATION ambari;
+ALTER SCHEMA ambari OWNER TO ambari;
+ALTER ROLE ambari SET search_path to 'ambari', 'public';
+
+psql -U ambari -d ambari
+</terminal>
+
+<terminal>
+ambari-server start
+</terminal>
+
+<terminal>
+sudo yum install -y ambari-agent
+</terminal>
+

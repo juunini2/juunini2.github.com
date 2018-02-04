@@ -1,0 +1,141 @@
+이 전 글에 이어서 계속 하이브를 진행하겠습니다.<br>
+하이브QL은 일반적인 SQL에서 제공하는 것 처럼 <color2>집계함수</color2>를 사용이 가능합니다.<br>
+그런데 이게 좀 충격과 공포인게<br>
+<color4>집계함수를 실행하면 맵리듀스 잡이 실행되어 계산해줍니다.</color4><br>
+<br>
+네? 뭐라구요?<br>
+이거 참.... <color2>하둡 스트리밍</color2> 이후로 새로운 충격이군요.<br>
+그럼 보조 정렬은 왜 있었고, 부분 정렬은 왜 있었고, 전체 정렬은 왜 있었습니까?.... 왜... 왜... 왜?!<br>
+<br>
+뭔소린지 일단 한번 눈으로 직접 봐야겠습니다.<br>
+
+<terminal>
+SELECT COUNT(1)
+FROM airline_delay
+WHERE delayYear = 1990;
+</terminal>
+
+<terminal>
+hive> SELECT COUNT(1)
+    > FROM airline_delay
+    > WHERE delayYear = 1990;
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = hadoop_20180204001803_fd9a0ce5-7e5d-4bce-9c8b-206ab47a26cc
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=&lt;number&gt;
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=&lt;number&gt;
+Starting Job = job_1517721440205_0001, Tracking URL = http://node1:8088/proxy/application_1517721440205_0001/
+Kill Command = /home/hadoop/hadoop-3.0.0/bin/hadoop job  -kill job_1517721440205_0001
+Hadoop job information for Stage-1: number of mappers: 0; number of reducers: 0
+2018-02-04 00:19:21,423 Stage-1 map = 0%,  reduce = 0%
+Ended Job = job_1517721440205_0001 with errors
+Error during job, obtaining debugging information...
+FAILED: Execution Error, return code 2 from org.apache.hadoop.hive.ql.exec.mr.MapRedTask
+MapReduce Jobs Launched: 
+Stage-Stage-1:  HDFS Read: 0 HDFS Write: 0 FAIL
+Total MapReduce CPU Time Spent: 0 msec
+</terminal>
+
+내 거친 코딩과~ 불안한 워닝과~<br>
+하아.... 또 뭘까요... 잘 되는게 없네...<br>
+에러 로그를 모니터링 페이지에서 확인해보니<br>
+<color2>오류: 기본 클래스 org.apache.hadoop.mapreduce.v2.app.MRAppMaster을(를) 찾거나 로드할 수 없습니다.</color2><br>
+라는군요. 음.... 또 찾아봐야겠군.<br>
+
+<terminal>
+<color2>[hadoop@node1 hadoop-3.0.0]$</color2> bin/yarn classpath
+/home/hadoop/hadoop-3.0.0/etc/hadoop:/home/hadoop/hadoop-3.0.0/share/hadoop/common/lib/*:/home/hadoop/hadoop-3.0.0/share/hadoop/common/*:/home/hadoop/hadoop-3.0.0/share/hadoop/hdfs:/home/hadoop/hadoop-3.0.0/share/hadoop/hdfs/lib/*:/home/hadoop/hadoop-3.0.0/share/hadoop/hdfs/*:/home/hadoop/hadoop-3.0.0/share/hadoop/mapreduce/*:/home/hadoop/hadoop-3.0.0/share/hadoop/yarn:/home/hadoop/hadoop-3.0.0/share/hadoop/yarn/lib/*:/home/hadoop/hadoop-3.0.0/share/hadoop/yarn/*
+[hadoop@node1 hadoop-3.0.0]$ bin/mapred classpath
+/home/hadoop/hadoop-3.0.0/etc/hadoop:/home/hadoop/hadoop-3.0.0/share/hadoop/common/lib/*:/home/hadoop/hadoop-3.0.0/share/hadoop/common/*:/home/hadoop/hadoop-3.0.0/share/hadoop/hdfs:/home/hadoop/hadoop-3.0.0/share/hadoop/hdfs/lib/*:/home/hadoop/hadoop-3.0.0/share/hadoop/hdfs/*:/home/hadoop/hadoop-3.0.0/share/hadoop/mapreduce/*:/home/hadoop/hadoop-3.0.0/share/hadoop/yarn:/home/hadoop/hadoop-3.0.0/share/hadoop/yarn/lib/*:/home/hadoop/hadoop-3.0.0/share/hadoop/yarn/*
+</terminal>
+
+이런 힌트를 하나 얻어왔습니다. 이제 어째야 하는걸까요....<br>
+결국 이래저래 시도를 해봤으나 다 실패했습니다.<br>
+일단 넘어가겠습니다.<br>
+<br>
+하이브 내에서 조인도 가능하군요... 제약사항이 있다지만 맵리듀스로 조인을 하는것마저 허무하게 느껴집니다.<br>
+조인 할 테이블을 만들겠습니다.<br>
+
+<terminal>
+CREATE TABLE carrier_code(Code STRING, Description STRING)
+ROW FORMAT DELIMITED
+    FIELDS TERMINATED BY ','
+    LINES TERMINATED BY '\n'
+STORED AS TEXTFILE;
+
+LOAD DATA LOCAL INPATH '/home/hadoop/airline/carriers.csv'
+OVERWRITE INTO TABLE carrier_code;
+
+SELECT * FROM carrier_code LIMIT 10;
+</terminal>
+
+<terminal>
+hive> CREATE TABLE carrier_code(Code STRING, Description STRING)
+    > ROW FORMAT DELIMITED
+    >     FIELDS TERMINATED BY ','
+    >     LINES TERMINATED BY '\n'
+    > STORED AS TEXTFILE;
+OK
+Time taken: 0.065 seconds
+hive> 
+    > LOAD DATA LOCAL INPATH '/home/hadoop/airline/carriers.csv'
+    > OVERWRITE INTO TABLE carrier_code;
+Loading data to table default.carrier_code
+OK
+Time taken: 0.197 seconds
+hive> 
+    > SELECT * FROM carrier_code LIMIT 10;
+OK
+02Q	Titan Airways
+04Q	Tradewind Aviation
+05Q	Comlux Aviation
+06Q	Master Top Linhas Aereas Ltd.
+07Q	Flair Airlines Ltd.
+09Q	Swift Air
+0BQ	DCA
+0CQ	ACM AIR CHARTER GmbH
+0FQ	Maine Aviation Aircraft Charter
+0GQ	Inter Island Airways
+Time taken: 0.099 seconds, Fetched: 10 row(s)
+</terminal>
+
+이렇게 항공사 코드와 이름이 매칭되는 데이터를 입력했습니다.<br>
+
+<terminal>
+SELECT A.YEAR, A.UNIQUECARRIER, B.DESCRIPTION
+FROM AIRLINE_DELAY A
+JOIN CARRIER_CODE B ON (A.UNIQUECARRIER = B.CODE)
+WHERE A.ARRDELAY > 0
+GROUP BY A.YEAR, A.UNIQUECARRIER, B.DESCRIPTION;
+</terminal>
+
+.... 안됩니다.<br>
+해결을 못하겠네요.<br>
+<br>
+저번에 이우관 선생님한테 들었던 ambari를 이용해서 전체적으로 설치해서 훑어본 뒤 다시 시작해야겠습니다.<br>
+<br>
+<a href="/hadoop/page/4_5.html" onclick="
+    event.preventDefault();
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = () => {
+        document.querySelector('main').innerHTML = xhttp.responseText;
+    }
+
+    xhttp.open('GET', '/hadoop/page/4_5.html', true);
+    xhttp.send();
+
+    document.title = 'Hadoop Guide Part. 4 - Step. 5';
+    history.pushState('/hadoop/page/4_5.html' + ' ' + 'Part. 4 - Step. 5', null, '#4_5');
+
+    document.querySelector('side').children[3].classList.add('on');
+    document.querySelector('side').children[3].children[4].classList.remove('on');
+    document.querySelector('side').children[3].children[5].classList.add('on');
+" class="button">다음단계로 가기</a>
