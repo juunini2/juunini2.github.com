@@ -13,6 +13,14 @@ wget http://www.apache.org/dist/ambari/ambari-2.6.1/apache-ambari-2.6.1-src.tar.
 </terminal>
 
 이렇게 해서 필요한걸 전부 다운로드 받습니다.<br>
+
+<terminal>
+export JAVA_HOME=/home/hadoop/jdk1.7.0_80
+export PATH=$JAVA_HOME/bin:$PATH
+
+export MAVEN_HOME=/home/hadoop/apache/apache-maven-3.5.2
+export PATH=$MAVEN_HOME/bin:$PATH
+</terminal>
 메이븐과 자바는 압축을 풀고 환경변수에 등록한 뒤, 나머지는 터미널 4개를 띄웁니다.<br>
 <br>
 <color4>터미널1</color4><br>
@@ -38,7 +46,7 @@ sudo rpm -Uvh code<blur><i>(tab)</i></blur>
 <terminal>
 cd && ssh-keygen -t rsa && ssh-copy-id node1
 
-openssl genrsa -des3 -out server.key 2048 && openssl req -new -key server.key -out server.csr && cp server.key server.key.origin && openssl rsa -in server.key.origin -out server.key && openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt && cp server.key /etc/httpd/conf/ && cp server.crt /etc/httpd/conf/ && sudo vi /etc/httpd/conf/httpd.conf
+openssl genrsa -des3 -out server.key 2048 && openssl req -new -key server.key -out server.csr && sudo cp server.key server.key.origin && openssl rsa -in server.key.origin -out server.key && openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt && sudo cp server.key /etc/httpd/conf/ && sudo cp server.crt /etc/httpd/conf/ && sudo vi /etc/httpd/conf/httpd.conf
 
 <blur><i>(맨 하단에 추가)</i></blur>
 
@@ -55,11 +63,26 @@ DocumentRoot "/var/www/html"
 <blur><i>(저장)</i></blur>
 
 sudo service httpd restart
+
+sudo setenforce 0
+sudo vi /etc/selinux/config
+
+<color2>SELINUX=disabled</color2>
+<blur><i>(위 부분을 변경해주자.)</i></blur>
+
+sudo vi /etc/rc.local
+
+<blur><i>(맨 아래에 추가해주자)</i></blur>
+
+if test -f /sys/kernel/mm/redhat_transparent_hugepage/enabled; then
+   echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled; fi
+if test -f /sys/kernel/mm/redhat_transparent_hugepage/defrag; then
+   echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag; fi
 </terminal>
 
 공개키를 만들어 공유한 뒤 <color2>사설키</color2>도 만드는 작업을 한 것이다.<br>
 이쯤이면 그냥 기본설치로 가고프다. 기본설치하면 다 있단다... ㅠㅠ 에이 이러면서 배우는거지 뭐.<br>
-설치가 끝나고 나면 암바리 압축을 풀고 폴더로 들어간다.<br>
+설치가 끝나고 나면 재부팅 한 뒤, 암바리 압축을 풀고 폴더로 들어간다.<br>
 나는 /home/hadoop/apache 폴더 내에 풀었다.<br>
 
 <terminal>
@@ -98,3 +121,24 @@ ambari-server start
 sudo yum install -y ambari-agent
 </terminal>
 
+asfhasvb;weihaifhj;asdfvibn;aweibnw;egf으아아아아아아아아아아아아아!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 아니야!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!<br>
+<br>
+<a href="/hadoop/page/4_6.html" onclick="
+    event.preventDefault();
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = () => {
+        document.querySelector('main').innerHTML = xhttp.responseText;
+    }
+
+    xhttp.open('GET', '/hadoop/page/4_6.html', true);
+    xhttp.send();
+
+    document.title = 'Hadoop Guide Part. 4 - Step. 6';
+    history.pushState('/hadoop/page/4_6.html' + ' ' + 'Part. 4 - Step. 6', null, '#4_6');
+
+    document.querySelector('side').children[3].classList.add('on');
+    document.querySelector('side').children[3].children[5].classList.remove('on');
+    document.querySelector('side').children[3].children[6].classList.add('on');
+" class="button">다음단계로 가기</a>

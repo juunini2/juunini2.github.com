@@ -1,0 +1,236 @@
+다 필요없어!!!!!!!!!!!!!!!!!!!!<br>
+
+<terminal>
+yum update -y && yum install -y net-tools openssh* openssl* mod_ssl epel-release R wget gcc-c++ pdsh im-chooser && yum groupinstall -y "X Window System" "MATE Desktop" && systemctl mask firewalld && systemctl set-default graphical.target && systemctl isolate graphical.target
+</terminal>
+
+다시 설치해!!!!!!!!!!!!!!!!!<br>
+자바고 뭐고 다 필요없어!!!!!! <br>
+
+<terminal>
+sudo vi /etc/sysconfig/network-scripts/ifcfg-ens32
+<blur>(IP설정 먼저...)</blur>
+service network restart
+sudo vi /etc/hosts
+cd && ssh-keygen -t rsa && ssh-copy-id node1
+sudo setenforce 0 && sudo vi /etc/sysconfig/selinux
+
+<color2>SELINUX=enforcing → SELINUX=disabled</color2>
+
+sudo reboot
+
+sudo wget -nv http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.6.1.0/ambari.repo -O /etc/yum.repos.d/ambari.repo && sudo yum repolist && sudo yum install -y ambari-server ambari-agent
+sudo ambari-server setup && sudo ambari-server start && sudo ambari-agent start
+<blur>(엔터)</blur>
+<blur>(엔터)</blur>
+<blur>(엔터)</blur>
+<blur>(엔터)</blur>
+<blur>(엔터)</blur>
+<blur>(엔터)</blur>
+<blur>(엔터)</blur>
+<blur>(엔터)</blur>
+<blur>(엔터)</blur>
+<blur>(엔터)</blur>
+</terminal>
+
+<terminal>
+
+</terminal>
+
+아마도 40번도 넘게 이 짓을 해서 알아냈나봅니다.<br>
+[엣지 오브 투모로우] 보셨나요? 거기 주인공이 이런 대사를 하죠.<br>
+"그 다음은 몰라. 나도 여기까지만 해봐서."<br>
+그러자 여주인공이 바로 죽여버리려 하는..........<br>
+아... 뭐 이거 하고 또 리셋하는건 아니구....<br>
+<blur><i>(엣지 오브 투모로우의 주인공은 죽으면 전 날로 돌아가서 다시 살아난다.)</i></blur><br>
+
+<img src="/hadoop/img4/6_1.jpg" alt="">
+
+저기 나와있습니다. 포트, 아이디, 비밀번호.<br>
+<color2>node1:8080</color2> 들어가봅니다.<br>
+
+<img src="/hadoop/img4/6_2.jpg" alt="">
+
+<color2>admin, admin</color2> 입력하고 접속합니다.<br>
+
+<img src="/hadoop/img4/6_3.jpg" alt="">
+
+와... 진짜 여기까진 처음입니다. 주인공은 저 대사를 하자마자 기절할 뒤 수혈받고 능력을 잃어서 죽으면 안되는 상태가 되던데....<br>
+가운데 있는 <color2>Launch Install Wizard</color2>를 눌로보죠.<br>
+
+<img src="/hadoop/img4/6_4.jpg" alt="">
+
+클러스터 네임에 node1이라고 쓰겠습니다.<br>
+
+<img src="/hadoop/img4/6_5.jpg" alt="">
+
+<terminal>
+Accumulo    1.7.0
+Ambari Infra    0.1.0
+Ambari Metrics    0.1.0
+Atlas    0.8.0
+Druid    0.10.1
+Falcon    0.10.0
+Flume    1.5.2
+HBase    1.1.2
+HDFS    2.7.3
+Hive    1.2.1000
+Kafka    0.10.1
+Knox    0.12.0
+Log Search    0.5.0
+Mahout    0.9.0
+Oozie    4.2.0
+Pig    0.16.0
+Ranger    0.7.0
+Ranger KMS    0.7.0
+Slider    0.92.0
+SmartSense    1.4.4.2.6.1.0-143
+Spark    1.6.3
+Spark2    2.2.0
+Sqoop    1.4.6
+Storm    1.1.0
+Superset    0.15.0
+Tez    0.7.0
+YARN    2.7.3
+Zeppelin Notebook    0.7.3
+ZooKeeper    3.4.6
+</terminal>
+
+HDF-2.6의 설치정보입니다. Hadoop 2.7.3을 설치하는군요.<br>
+그냥 이 상태로 Next 하겠습니다.<br>
+
+<img src="/hadoop/img4/6_6.jpg" alt="">
+
+Host Name에는 node1<br>
+SSH Private Key는 찾아야겠군요.<br>
+
+<img src="/hadoop/img4/6_7.jpg" alt="">
+
+<key>Ctrl</key> + <key>h</key> 하면 숨김파일, 폴더 다 표시됨.<br>
+
+<img src="/hadoop/img4/6_8.jpg" alt="">
+
+이거 선택하고 넘어가겠습니다.<br>
+....실패군요.<br>
+어떡해야하지... 좀 찾아보겠습니다.<br>
+
+<img src="/hadoop/img4/6_9.jpg" alt="">
+
+이 부분이 원래 <color2>root</color2>라고 적혀있는데, 유저네임인 <color2>hadoop</color2>으로 변경했더니 성공했습니다.<br>
+뭔가 워닝이 뜨는데 그냥 넘어가보겠습니다.<br>
+
+<img src="/hadoop/img4/6_10.jpg" alt="">
+
+설치 리스트가 나옵니다. 넘어갑니다.<br>
+
+<img src="/hadoop/img4/6_11.jpg" alt="">
+
+네임노드와 보조네임노드, 데이터노드 등등.... 뭐 세팅하는 부분이군요.<br>
+싱글노드니 그냥 넘어가겠습니다.<br>
+
+<img src="/hadoop/img4/6_12.jpg" alt="">
+
+데이터노드 세팅이군요. 이것도 싱글노드니 그냥 넘어갑니다.<br>
+
+<img src="/hadoop/img4/6_13.jpg" alt="">
+
+온통 시뻘겋군요. 비슷한 경로가 두번씩 적혀있는걸보아 그게 문제인 것 같습니다. 뒤에꺼만 다 지워줍니다.<br>
+중간중간 눌러보니 패스워드 설정들이 있군요. 1234로 넣어줬습니다.<br>
+
+<img src="/hadoop/img4/6_14.jpg" alt="">
+
+또 뭔 워닝이 뜨는군요. 그냥 넘어갈 수도 있다네요. 넘어가봅니다.<br>
+또 뭐가 나오는군요. HA서버 구성이 안된다나... 싱글노드인데 뭐.. 넘어갑니다.<br>
+
+<img src="/hadoop/img4/6_15.jpg" alt="">
+
+결과 화면이 나오는데 <color2>0 host</color2> 라고 적힌 부분들이 되게 꺼림칙합니다.<br>
+하지만 싱글노드라 관리 할 클러스터가 없기 때문이라 생각하고 넘어가겠습니다.<br>
+
+<img src="/hadoop/img4/6_16.jpg" alt="">
+<img src="/hadoop/img4/6_17.jpg" alt="">
+
+잘 진행되고있는 모양입니다. 기다립시다.<br>
+오래 걸립니다. 29개나 설치한다고 되있으니깐 납득하고 기다립니다.<br>
+
+<img src="/hadoop/img4/6_18.jpg" alt="">
+
+설치되는동안 이렇게 조회도 가능하군요.<br>
+
+<img src="/hadoop/img4/6_19.jpg" alt="">
+
+.....나는 mysql이 싫습니다....<br>
+
+<img src="/hadoop/img4/6_20.jpg" alt="">
+
+이 부분을 눌러서 다시 돌아왔습니다.<br>
+쭈욱 세팅을 하다가<br>
+
+
+<img src="/hadoop/img4/6_21.jpg" alt="">
+
+이런 부분이 있었군요... 클릭해서 들어가봅시다.<br>
+다운로드 받으려니까 귀찮게 회원가입 하랍니다. 합니다.<br>
+아.... 오라클 계정이군요. 살았다.<br>
+그 뒤에도 귀찮은 과정이 있지만 알아서들 하세요.<br>
+압축 푸시고<br>
+
+<terminal>
+[hadoop@node1 ~]$ sudo ambari-server setup --jdbc-db=mysql --jdbc-driver=/home/hadoop/Downloads/mysql-connector-java-5.1.45/mysql-connector-java-5.1.45-bin.jar
+Using python  /usr/bin/python
+Setup ambari-server
+Copying /home/hadoop/Downloads/mysql-connector-java-5.1.45/mysql-connector-java-5.1.45-bin.jar to /var/lib/ambari-server/resources
+If you are updating existing jdbc driver jar for mysql with mysql-connector-java-5.1.45-bin.jar. Please remove the old driver jar, from all hosts. Restarting services that need the driver, will automatically copy the new jar to the hosts.
+JDBC driver was successfully initialized.
+Ambari Server 'setup' completed successfully.
+</terminal>
+
+저 문구, 어디서 특별히 찾아낸게 아니라 워닝 안에 저거 하라고 되있는겁니다.<br>
+자... 이렇게 하고 다시 합니다. 이번엔 잘 됐으면 좋겠습니다...<br>
+아.... 또 실패... 저거 다시 넣고 리트라이 해봅니다.<br>
+하.... 또 실패... 혹시 mysql이 없어서 그런가? 인스톨이라며? 하... 한번 설치한다음에 진행해보겠습니다.<br>
+
+<terminal>
+sudo yum -y install http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm && sudo yum -y install mysql-community-server && sudo systemctl start mysqld && sudo systemctl enable mysqld
+</terminal>
+
+다시 해보겠습니다.<br>
+
+<img src="/hadoop/img4/6_22.jpg" alt="">
+
+어.... 됐다....;;<br>
+
+<img src="/hadoop/img4/6_23.jpg" alt="">
+
+그냥 안넘어가주는군요.... 또 HIVE 문제라니...<br>
+일단 넘어갈 수 있는 워닝 상태니 넘어가겠습니다.<br>
+넘어가는것도 오래 걸리는군요...<br>
+
+<img src="/hadoop/img4/6_24.jpg" alt="">
+
+하도 안되서 새로고침 했더니 이런 화면이 나옵니다.<br>
+
+<img src="/hadoop/img4/6_25.jpg" alt="">
+
+오호... 되긴 됐군요...<br>
+다음 진행은 다음 글에서 계속 하겠습니다.<br>
+<br>
+<a href="/hadoop/page/4_7.html" onclick="
+    event.preventDefault();
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = () => {
+        document.querySelector('main').innerHTML = xhttp.responseText;
+    }
+
+    xhttp.open('GET', '/hadoop/page/4_7.html', true);
+    xhttp.send();
+
+    document.title = 'Hadoop Guide Part. 4 - Step. 7';
+    history.pushState('/hadoop/page/4_7.html' + ' ' + 'Part. 4 - Step. 7', null, '#4_7');
+
+    document.querySelector('side').children[3].classList.add('on');
+    document.querySelector('side').children[3].children[6].classList.remove('on');
+    document.querySelector('side').children[3].children[7].classList.add('on');
+" class="button">다음단계로 가기</a>
