@@ -1,3 +1,5 @@
+<h1><strong><color4>주의</color4> : <color2>Part. 4는 하둡2와 3의 실패예제입니다. 학습 목적으로 오셨다면 참고하지 마세요. Part. 5로 넘어가세요.</color2></strong></h1><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 Hadoop 2를 시작합니다!<br>
 아....니지. 저는 <color2>Hadoop 3</color2>을 시작합니다!<br>
 <br>
@@ -22,7 +24,7 @@ CPU : 쿼드코어
 <blur>(설치 중...)</blur><br>
 <br>
 <terminal>
-<color4>yum install -y net-tools openssh* epel-release R wget gcc-c++ im-chooser && yum groupinstall -y "X Window System" "MATE Desktop" && systemctl set-default graphical.target && systemctl isolate graphical.target</color4>
+<color4>yum repolist && yum update -y && yum install -y net-tools openssh* openssl* epel-release R wget gcc-c++ pdsh im-chooser && yum groupinstall -y "X Window System" "Cinnamon Desktop" && systemctl set-default graphical.target && systemctl isolate graphical.target</color4>
 </terminal>
 
 한!방!설!치!
