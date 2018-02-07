@@ -1,1 +1,166 @@
-not ready
+Centos 7을 최소설치 합니다.<br>
+<br>
+hostname = hadoop<br>
+username = hadoop<br>
+
+<terminal>
+visudo
+<color2>
+root    ALL=(ALL)   NOPASSWD: ALL
+hadoop  ALL=(ALL)   NOPASSWD: ALL
+</color2>
+
+yum update -y && yum install -y epel-release && yum groupinstall -y "X Window System" "MATE Desktop" && systemctl set-default graphical.target && systemctl isolate graphical.target
+</terminal>
+
+다 되고나면 vm tools를 설치하고 재부팅합니다.<br>
+
+<terminal>
+sudo yum install -y net-tools openssh* openssl* mod_ssl wget gcc-c++ pdsh im-chooser ntp && sudo systemctl mask firewalld && sudo reboot
+</terminal>
+
+재부팅됨.<br>
+
+<terminal>
+sudo vi /etc/profile
+<color2>
+umask 022
+</color2>
+
+sudo vi /etc/sysconfig/network-scripts/ifcfg-ens32
+
+sudo vi /etc/sysconfig/network
+<color2>
+NETWORKING=yes
+NETWORKING_IPV6=yes
+HOSTNAME=hadoop
+</color2>
+
+sudo service network restart
+
+sudo vi /etc/hosts
+
+sudo vi /etc/ntp.conf
+<color2>
+server 0.asia.pool.ntp.org
+server 1.asia.pool.ntp.org
+server 2.asia.pool.ntp.org
+server 3.asia.pool.ntp.org
+</color2>
+
+sudo systemctl start ntpd && sudo systemctl enable ntpd
+
+cd && ssh-keygen -t rsa && ssh-copy-id hadoop
+
+sudo setenforce 0 && sudo vi /etc/sysconfig/selinux
+<color2>
+SELINUX=enforcing → SELINUX=disabled
+</color2>
+
+sudo reboot
+</terminal>
+
+재부팅됨.<br>
+
+<terminal>
+wget -c --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.tar.gz && tar -zxvf jdk-8u131-linux-x64.tar.gz && rm jdk-8u131-linux-x64.tar.gz
+
+sudo vi ~/.bash_profile
+<color2>
+export JAVA_HOME=/home/hadoop/jdk1.8.0_131
+export PATH=$JAVA_HOME/bin:$PATH
+</color2>
+
+source ~/.bash_profile
+
+sudo yum install -y python34 python34-devel.x86_64 python-devel.x86_64 python2-pip.noarch python34-pip.noarch && sudo pip install --upgrade pip && sudo pip install requests bs4
+
+mkdir webCrawlling && touch webCrawller.py && touch result.txt
+</terminal>
+
+웹 크롤링을 하기 위한 준비가 끝났습니다. 이제 무엇을 크롤링 할 것인가를 정할 차례입니다.<br>
+저는 itworld 라는 it 전문 웹뉴스 사이트를 크롤링 해보겠습니다.<br>
+<br>
+무엇을 크롤링할지 정했다면, 그 다음은 그곳의 아키텍쳐(구조)를 파악 할 차례입니다.<br>
+<br>
+먼저 크롤링 할 사이트에 들어가서 대상 페이지를 확인합니다. 저는 맨 위에 올라온 기사를 눌러봤습니다.<br>
+상단에 나오는 URL을 확인해보니<br>
+<color2>http://www.itworld.co.kr/news/108148</color2> 이었습니다.<br>
+아마도 올라오는 순서대로 숫자가 올라가는 구조일거라는 예상이 듭니다. 다음 기사를 보았습니다.<br>
+<color2>http://www.itworld.co.kr/news/108147</color2><br>
+제 예상이 맞군요. 이런 순서로 몇개를 크롤링 할건지 결정할 수 있습니다.<br>
+<br>
+그 다음은 HTML문서 아키텍쳐를 파악해야 합니다.<br>
+<br>
+<color6>※주의 : 여기서부터는 DOM(Document Object Model)에 대한 지식이 없다면 이해하기 힘들 수도 있습니다.</color6><br>
+
+<img src="/hadoop/img5/1_1.jpg" alt="">
+
+이런식으로 기사의 제목이나 내용이 어떤 HTML의 tag에 있는지, id나 class를 확인할 수 있습니다.<br>
+이 사이트에서는, 제목은 <color2>h3.node_title</color2> 내용은 <color2>div.node_body</color2> 입니다.<br>
+그렇다면 여기까지 알아낸 정보로 파이썬 웹크롤러 코드를 작성하도록 하겠습니다.<br>
+
+<color4>webCrawller.py</color4>
+
+<terminal>
+import requests
+from bs4 import BeautifulSoup
+import os
+import re
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))   # 현재 파일이 있는 경로
+
+# 연속으로 12번 이상 기계적 트래픽이 발생하면 접속을 차단하는듯.... 한번씩 접속이 오랫동안 끊긴다.
+for i in range(108148, 107708, -1): # 올해 1월부터 지금(2월 7일)까지
+    try:
+        req = requests.get('http://www.itworld.co.kr/news/' + str(i)) # URL 주소를 받아옴
+        html = req.text  # DOM 트리를 텍스트화 시킴
+        soup = BeautifulSoup(html, 'html.parser')    # css Selector로 인식 가능하도록 하는 패키지
+
+        title = soup.select('div.contents_body > h3.node_title') # 제목
+        desc = soup.select('div.contents_body > div.node_body.cb') # 내용
+
+        for t in title:
+            p = re.compile('[\W]') # 특수문자 제거
+            with open(os.path.join(BASE_DIR, 'result.txt'), 'a') as f:  # result.txt 파일을 열어 내용을 추가함
+                f.write(p.sub(' ', t.text)) # 제거된 특수문자를 파일에 추가
+
+        for d in desc:
+            p = re.compile('[\W]') # 특수문자 제거
+            with open(os.path.join(BASE_DIR, 'result.txt'), 'a') as f:  # result.txt 파일을 열어 내용을 추가함
+                f.write(p.sub(' ', d.text)) # 제거된 특수문자를 파일에 추가
+
+        print("doing...")   # 진행상황 표시
+
+    except:
+        print("error")  # 에러 표시
+
+
+print("finish") # 끝
+</terminal>
+
+<terminal>
+python3 webCrawller.py
+</terminal>
+
+실행하면 <color2>doing...</color2> 이 계속 나올겁니다. 혹시나 에러가 나면 <color2>error</color2>라고 나올 것이며 끝나면 <color2>finish</color2> 라는 문구가 출력됩니다.<br>
+기계적 트래픽이 여러번 발생하면 해당 IP에 대한 트래픽 제한을 걸거나 하는 솔루션이 있나봅니다. 12번은 굉장히 빨리 되다가 그 뒤부터는 굉장히 오래 걸립니다.<br>
+<blur><i>(440개나 크롤링 해오면서 욕심인가...)</i></blur>
+
+<img src="/hadoop/img5/1_2.jpg" alt="">
+
+이런식으로 특수문자가 모두 공백으로 바뀌어서 저장되었습니다. 이걸로 뭘 할 수 있을까요?<br>
+WordCount를 통해 itworld 사이트에서는 어떤 단어가 많이 언급되었는지 알 수 있을테고, R로 WordCloud를 만들어도 예쁘게 나올 것 같기도 하군요.<br>
+그런데 겨우 그정도에서 그치면 '분석' 이라고 하긴 좀 부끄러울 것 같습니다.<br>
+그러면 어떻게 해야 할까요?<br>
+<br>
+받아오는 자료의 형태를 다르게 해야합니다.<br>
+위의 소스코드는 단지 제목과 내용만을 받아옵니다.<br>
+기사의 구성요소중에는 날짜도 있고 카테고리도 있습니다. 해시태그도 있구요, 출처도 있네요.<br>
+<br>
+단순히 제목과 내용만의 WordCount라면 많이 등장한 단어만을 알아낼 수 있겠지만,<br>
+해시태그와 카테고리를 분석한다면 어떤 주제가 많이 언급되었는지를 알아낼 수 있을겁니다.<br>
+날짜와 카테고리를 분석하면 날짜별로 어느 카테고리가 자주 언급되었는지 그래프로 나타내볼수도 있겠군요.<br>
+덤으로 날짜가 분석에 들어갔을 때 2~3일간에 한 주제에 대한 토픽이 자주 올라왔다면, 그 쯔음에 생긴 사건사고나 이슈에 대해 알아 볼 필요도 있을겁니다.<br>
+<br>
+맵리듀스를 이용해 통계를 내고 분석을 하는건 다음 글에 이어서 하겠습니다.<br>
