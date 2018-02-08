@@ -166,3 +166,250 @@ iot는 5G가 개발되면 개발될수록 점점 우리 생활을 차지해갈�
 일단 지금은 실습이지만, 나중에 제대로 분석하는것도 한번 보여드리도록 하겠습니다.<br>
 <br>
 이번 글은 여기까지고 다음 글에서는 SNS를 크롤링해서 분석해보도록 하겠습니다.<br>
+<br>
+PS. 아, 까먹고 안한게 있었는데 지금 실험해서 올리도록 하겠습니다.<br>
+콤바이너 클래스를 안썼을 때와 썼을 때 비교 입니다.<br>
+<br>
+안썼을 때<br>
+<terminal>
+[hadoop@hadoop hadoop-3.0.0]$ bin/mapred streaming -input result.txt -output wordcount -mapper /home/hadoop/examples/WordCountMapper.py -reducer /home/hadoop/examples/WordCountReducer.py
+packageJobJar: [] [/home/hadoop/hadoop-3.0.0/share/hadoop/tools/lib/hadoop-streaming-3.0.0.jar] /tmp/streamjob5357208463434533931.jar tmpDir=null
+2018-02-08 05:47:55,191 INFO client.RMProxy: Connecting to ResourceManager at hadoop/192.168.247.100:8032
+2018-02-08 05:47:55,408 INFO client.RMProxy: Connecting to ResourceManager at hadoop/192.168.247.100:8032
+2018-02-08 05:47:55,656 INFO mapreduce.JobResourceUploader: Disabling Erasure Coding for path: /tmp/hadoop-yarn/staging/hadoop/.staging/job_1518077305546_0012
+2018-02-08 05:47:56,241 INFO mapred.FileInputFormat: Total input files to process : 1
+2018-02-08 05:47:56,695 INFO mapreduce.JobSubmitter: number of splits:2
+2018-02-08 05:47:56,725 INFO Configuration.deprecation: yarn.resourcemanager.system-metrics-publisher.enabled is deprecated. Instead, use yarn.system-metrics-publisher.enabled
+2018-02-08 05:47:56,818 INFO mapreduce.JobSubmitter: Submitting tokens for job: job_1518077305546_0012
+2018-02-08 05:47:56,819 INFO mapreduce.JobSubmitter: Executing with tokens: []
+2018-02-08 05:47:56,987 INFO conf.Configuration: resource-types.xml not found
+2018-02-08 05:47:56,987 INFO resource.ResourceUtils: Unable to find 'resource-types.xml'.
+2018-02-08 05:47:57,063 INFO impl.YarnClientImpl: Submitted application application_1518077305546_0012
+2018-02-08 05:47:57,124 INFO mapreduce.Job: The url to track the job: http://hadoop:8088/proxy/application_1518077305546_0012/
+2018-02-08 05:47:57,125 INFO mapreduce.Job: Running job: job_1518077305546_0012
+2018-02-08 05:48:03,245 INFO mapreduce.Job: Job job_1518077305546_0012 running in uber mode : false
+2018-02-08 05:48:03,246 INFO mapreduce.Job:  map 0% reduce 0%
+2018-02-08 05:48:10,341 INFO mapreduce.Job:  map 50% reduce 0%
+2018-02-08 05:48:12,353 INFO mapreduce.Job:  map 100% reduce 0%
+2018-02-08 05:48:14,364 INFO mapreduce.Job:  map 100% reduce 100%
+2018-02-08 05:48:15,376 INFO mapreduce.Job: Job job_1518077305546_0012 completed successfully
+2018-02-08 05:48:15,464 INFO mapreduce.Job: Counters: 53
+	File System Counters
+		FILE: Number of bytes read=245033
+		FILE: Number of bytes written=1115546
+		FILE: Number of read operations=0
+		FILE: Number of large read operations=0
+		FILE: Number of write operations=0
+		HDFS: Number of bytes read=2636340
+		HDFS: Number of bytes written=774
+		HDFS: Number of read operations=11
+		HDFS: Number of large read operations=0
+		HDFS: Number of write operations=2
+	Job Counters 
+		Launched map tasks=2
+		Launched reduce tasks=1
+		Data-local map tasks=2
+		Total time spent by all maps in occupied slots (ms)=12059
+		Total time spent by all reduces in occupied slots (ms)=2320
+		Total time spent by all map tasks (ms)=12059
+		Total time spent by all reduce tasks (ms)=2320
+		Total vcore-milliseconds taken by all map tasks=12059
+		Total vcore-milliseconds taken by all reduce tasks=2320
+		Total megabyte-milliseconds taken by all map tasks=12348416
+		Total megabyte-milliseconds taken by all reduce tasks=2375680
+	Map-Reduce Framework
+		Map input records=1
+		Map output records=19248
+		Map output bytes=206531
+		Map output materialized bytes=245039
+		Input split bytes=186
+		Combine input records=0
+		Combine output records=0
+		Reduce input groups=59
+		Reduce shuffle bytes=245039
+		Reduce input records=19248
+		Reduce output records=59
+		Spilled Records=38496
+		Shuffled Maps =2
+		Failed Shuffles=0
+		Merged Map outputs=2
+		GC time elapsed (ms)=221
+		CPU time spent (ms)=5720
+		Physical memory (bytes) snapshot=923672576
+		Virtual memory (bytes) snapshot=8386424832
+		Total committed heap usage (bytes)=886571008
+		Peak Map Physical memory (bytes)=343457792
+		Peak Map Virtual memory (bytes)=2792112128
+		Peak Reduce Physical memory (bytes)=237580288
+		Peak Reduce Virtual memory (bytes)=2802245632
+	Shuffle Errors
+		BAD_ID=0
+		CONNECTION=0
+		IO_ERROR=0
+		WRONG_LENGTH=0
+		WRONG_MAP=0
+		WRONG_REDUCE=0
+	File Input Format Counters 
+		Bytes Read=2636154
+	File Output Format Counters 
+		Bytes Written=774
+</terminal>
+
+20초<br>
+<br>
+썼을 때<br>
+
+<terminal>
+[hadoop@hadoop hadoop-3.0.0]$ bin/mapred streaming -input result.txt -output wordcount -mapper /home/hadoop/examples/WordCountMapper.py -reducer /home/hadoop/examples/WordCountReducer.py -combiner /home/hadoop/examples/WordCountReducer.py
+packageJobJar: [] [/home/hadoop/hadoop-3.0.0/share/hadoop/tools/lib/hadoop-streaming-3.0.0.jar] /tmp/streamjob3068206367845187530.jar tmpDir=null
+2018-02-08 06:18:47,690 INFO client.RMProxy: Connecting to ResourceManager at hadoop/192.168.247.100:8032
+2018-02-08 06:18:47,914 INFO client.RMProxy: Connecting to ResourceManager at hadoop/192.168.247.100:8032
+2018-02-08 06:18:48,161 INFO mapreduce.JobResourceUploader: Disabling Erasure Coding for path: /tmp/hadoop-yarn/staging/hadoop/.staging/job_1518077305546_0013
+2018-02-08 06:18:48,340 INFO mapred.FileInputFormat: Total input files to process : 1
+2018-02-08 06:18:48,793 INFO mapreduce.JobSubmitter: number of splits:2
+2018-02-08 06:18:48,821 INFO Configuration.deprecation: yarn.resourcemanager.system-metrics-publisher.enabled is deprecated. Instead, use yarn.system-metrics-publisher.enabled
+2018-02-08 06:18:49,342 INFO mapreduce.JobSubmitter: Submitting tokens for job: job_1518077305546_0013
+2018-02-08 06:18:49,343 INFO mapreduce.JobSubmitter: Executing with tokens: []
+2018-02-08 06:18:49,525 INFO conf.Configuration: resource-types.xml not found
+2018-02-08 06:18:49,526 INFO resource.ResourceUtils: Unable to find 'resource-types.xml'.
+2018-02-08 06:18:49,611 INFO impl.YarnClientImpl: Submitted application application_1518077305546_0013
+2018-02-08 06:18:49,701 INFO mapreduce.Job: The url to track the job: http://hadoop:8088/proxy/application_1518077305546_0013/
+2018-02-08 06:18:49,702 INFO mapreduce.Job: Running job: job_1518077305546_0013
+2018-02-08 06:18:54,786 INFO mapreduce.Job: Job job_1518077305546_0013 running in uber mode : false
+2018-02-08 06:18:54,787 INFO mapreduce.Job:  map 0% reduce 0%
+2018-02-08 06:18:59,961 INFO mapreduce.Job:  map 50% reduce 0%
+2018-02-08 06:19:03,020 INFO mapreduce.Job:  map 100% reduce 0%
+2018-02-08 06:19:07,068 INFO mapreduce.Job:  map 100% reduce 100%
+2018-02-08 06:19:07,076 INFO mapreduce.Job: Job job_1518077305546_0013 completed successfully
+2018-02-08 06:19:07,166 INFO mapreduce.Job: Counters: 53
+	File System Counters
+		FILE: Number of bytes read=898
+		FILE: Number of bytes written=628462
+		FILE: Number of read operations=0
+		FILE: Number of large read operations=0
+		FILE: Number of write operations=0
+		HDFS: Number of bytes read=2636340
+		HDFS: Number of bytes written=774
+		HDFS: Number of read operations=11
+		HDFS: Number of large read operations=0
+		HDFS: Number of write operations=2
+	Job Counters 
+		Launched map tasks=2
+		Launched reduce tasks=1
+		Data-local map tasks=2
+		Total time spent by all maps in occupied slots (ms)=9148
+		Total time spent by all reduces in occupied slots (ms)=3694
+		Total time spent by all map tasks (ms)=9148
+		Total time spent by all reduce tasks (ms)=3694
+		Total vcore-milliseconds taken by all map tasks=9148
+		Total vcore-milliseconds taken by all reduce tasks=3694
+		Total megabyte-milliseconds taken by all map tasks=9367552
+		Total megabyte-milliseconds taken by all reduce tasks=3782656
+	Map-Reduce Framework
+		Map input records=1
+		Map output records=19248
+		Map output bytes=206531
+		Map output materialized bytes=904
+		Input split bytes=186
+		Combine input records=19248
+		Combine output records=59
+		Reduce input groups=59
+		Reduce shuffle bytes=904
+		Reduce input records=59
+		Reduce output records=59
+		Spilled Records=118
+		Shuffled Maps =2
+		Failed Shuffles=0
+		Merged Map outputs=2
+		GC time elapsed (ms)=257
+		CPU time spent (ms)=3200
+		Physical memory (bytes) snapshot=974921728
+		Virtual memory (bytes) snapshot=8424353792
+		Total committed heap usage (bytes)=879230976
+		Peak Map Physical memory (bytes)=364969984
+		Peak Map Virtual memory (bytes)=2800832512
+		Peak Reduce Physical memory (bytes)=247816192
+		Peak Reduce Virtual memory (bytes)=2829238272
+	Shuffle Errors
+		BAD_ID=0
+		CONNECTION=0
+		IO_ERROR=0
+		WRONG_LENGTH=0
+		WRONG_MAP=0
+		WRONG_REDUCE=0
+	File Input Format Counters 
+		Bytes Read=2636154
+	File Output Format Counters 
+		Bytes Written=774
+</terminal>
+
+20초<br>
+<br>
+시간은 똑같군요.
+그렇다면 다른걸로 비교해야겠습니다.<br>
+
+<terminal>
+안썼을 때
+
+Map-Reduce Framework
+    Map input records=1
+    Map output records=19248
+    Map output bytes=206531
+    Map output materialized bytes=<color6>245039</color6>
+    Input split bytes=186
+    Combine input records=0
+    Combine output records=0
+    Reduce input groups=59
+    Reduce shuffle bytes=<color6>245039</color6>
+    Reduce input records=<color6>19248</color6>
+    Reduce output records=59
+    Spilled Records=<color6>38496</color6>
+    Shuffled Maps =2
+    Failed Shuffles=0
+    Merged Map outputs=2
+    GC time elapsed (ms)=221
+    CPU time spent (ms)=<color6>5720</color6>
+    Physical memory (bytes) snapshot=923672576
+    Virtual memory (bytes) snapshot=8386424832
+    Total committed heap usage (bytes)=886571008
+    Peak Map Physical memory (bytes)=343457792
+    Peak Map Virtual memory (bytes)=2792112128
+    Peak Reduce Physical memory (bytes)=237580288
+    Peak Reduce Virtual memory (bytes)=2802245632
+
+썼을 때
+
+Map-Reduce Framework
+    Map input records=1
+    Map output records=19248
+    Map output bytes=206531
+    Map output materialized bytes=<color6>904</color6>
+    Input split bytes=186
+    Combine input records=19248
+    Combine output records=59
+    Reduce input groups=59
+    Reduce shuffle bytes=<color6>904</color6>
+    Reduce input records=<color6>59</color6>
+    Reduce output records=59
+    Spilled Records=<color6>118</color6>
+    Shuffled Maps =2
+    Failed Shuffles=0
+    Merged Map outputs=2
+    GC time elapsed (ms)=257
+    CPU time spent (ms)=<color6>3200</color6>
+    Physical memory (bytes) snapshot=974921728
+    Virtual memory (bytes) snapshot=8424353792
+    Total committed heap usage (bytes)=879230976
+    Peak Map Physical memory (bytes)=364969984
+    Peak Map Virtual memory (bytes)=2800832512
+    Peak Reduce Physical memory (bytes)=247816192
+    Peak Reduce Virtual memory (bytes)=2829238272
+</terminal>
+
+매퍼 아웃풋의 순간부터 엄청난 수치 변화가 일어나는군요.<br>
+리듀서의 부담이 확 줄어드는것이 보입니다. 작게는 100배, 크게는 230배까지 리듀서의 부담이 줄어듭니다.<br>
+게다가 우리는 그냥 단지 20초 라는 똑같은 물리적 시간으로만 느꼈지만, CPU의 입장에서는 2520ms라는 큰 차이가 났습니다.(약 2.5초)<br>
+<br>
+자바 소스로 했으면 좀 더 확실하게 시간차도 느꼈을지도 모르지만, 하둡 스트리밍으로 간단히 테스트해도 이정도의 결과를 도출해낼 수 있었습니다.<br>
+하지만, 콤바이너클래스는 어디까지나 메모리의 용량이 충분할 때 사용하는 것이 좋습니다.<br>
+끝~<br>
