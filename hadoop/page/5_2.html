@@ -19,7 +19,7 @@ bin/hdfs namenode -format && sbin/start-dfs.sh && sbin/start-yarn.sh
 <terminal>
 bin/hdfs dfs -mkdir /user && bin/hdfs dfs -mkdir /user/hadoop && bin/hdfs dfs -put /home/hadoop/webCrawlling/result.txt result.txt
 cd
-mkdir examples && cd examples && touch WordCountMapper.py && touch WordCountReducer.py
+mkdir examples && cd examples && touch WordCountMapper.py && touch WordCountReducer.py && sudo chmod -R 777 *.py
 </terminal>
 
 <a href="https://github.com/juunini/juunini.github.com/tree/master/hadoop/img5/WordCountMapper.py" target="_new" class="link">WordCountMapper.py</a><br>
@@ -407,7 +407,7 @@ Map-Reduce Framework
 </terminal>
 
 매퍼 아웃풋의 순간부터 엄청난 수치 변화가 일어나는군요.<br>
-리듀서의 부담이 확 줄어드는것이 보입니다. <color4>작게는 100배, 크게는 230배까지</color4> 리듀서의 부담이 줄어듭니다.<br>
+리듀서의 부담이 확 줄어드는것이 보입니다. <color4>작게는 100배, 크게는 320배까지</color4> 리듀서의 부담이 줄어듭니다.<br>
 게다가 우리는 그냥 단지 20초 라는 똑같은 물리적 시간으로만 느꼈지만, CPU의 입장에서는 <color4>2520ms</color4>라는 큰 차이가 났습니다.(약 2.5초)<br>
 <br>
 자바 소스로 했으면 좀 더 확실하게 시간차도 느꼈을지도 모르지만, 하둡 스트리밍으로 간단히 테스트해도 이정도의 결과를 도출해낼 수 있었습니다.<br>
