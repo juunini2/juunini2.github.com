@@ -34,9 +34,11 @@ function sideClick() {
             history.pushState(path + " " + pageTitle, null, url);    // 파일경로 + 페이지 제목, null, url경로 (히스토리에 추가)
 
             for (let i = 0; i < sideChildren.length; i++) {   // side 내에 모든 자식클래스의 on클래스 제거
+                sideChildren[i].classList.remove("on");
                 sideChildren[i].children[0].classList.remove("on");
             }
 
+            e.target.parentElement.classList.add("on"); // 클릭한 태그에 on클래스 추가
             e.target.classList.add("on"); // 클릭한 태그에 on클래스 추가
 
         }
@@ -55,11 +57,13 @@ function PostState() {
             loadFile("main", path); // main태그에 히스토리에 있는 파일을 불러옴
 
             for (let i = 0; i < sideChildren.length; i++) {
+                sideChildren[i].classList.remove("on"); // 모든 side p태그의 on클래스 제거
                 sideChildren[i].children[0].classList.remove("on"); // 모든 side a태그의 on클래스 제거
             }
 
             for (let i = 0 ; i < sideChildren.length ; i++) {
                 if (location.hash == sideChildren[i].children[0].getAttribute("href")) {
+                    sideChildren[i].classList.add("on");
                     sideChildren[i].children[0].classList.add("on");
                     break;
                 }
@@ -68,6 +72,7 @@ function PostState() {
         } else {    //첫번 째 페이지로 이동시
 
             for (let i = 0; i < sideChildren.length; i++) {
+                sideChildren[i].classList.remove("on"); // 모든 side a태그의 on클래스 제거
                 sideChildren[i].children[0].classList.remove("on"); // 모든 side a태그의 on클래스 제거
             }
 
@@ -90,6 +95,7 @@ function loadPage() {
 
             for (let i = 0; i < sideChildren.length; i++) {
                 if (sideChildren[i].children[0].getAttribute("herf") == url) {  // hash값과 a태그의 href값이 같을 때
+                    sideChildren[i].classList.add("on");
                     sideChildren[i].children[0].classList.add("on");
                     break;
                 }
