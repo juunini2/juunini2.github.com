@@ -26,9 +26,9 @@ side {
       width: 0;
       height: 0;
       border-top: 0.04rem solid transparent;
-      border-right: 0.04rem solid #e6e6e6;
+      border-right: 0.04rem solid #333;
       border-left: 0.04rem solid transparent;
-      border-bottom: 0.04rem solid #e6e6e6; }
+      border-bottom: 0.04rem solid #333; }
     side p.on {
       background: #d1cbb8; }
   side a.on {

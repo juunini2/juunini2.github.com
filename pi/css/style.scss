@@ -40,9 +40,9 @@ side {
             width: 0;
             height: 0;
             border-top: 0.04rem solid transparent;
-            border-right: 0.04rem solid #e6e6e6;
+            border-right: 0.04rem solid $TEXT;
             border-left: 0.04rem solid transparent;
-            border-bottom: 0.04rem solid #e6e6e6;
+            border-bottom: 0.04rem solid $TEXT;
         }
 
         &.on {
