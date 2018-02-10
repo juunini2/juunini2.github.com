@@ -83,7 +83,10 @@ key {
 welcome {
   width: 100%;
   height: 100%;
+  padding: 1rem;
+  padding-left: 2.6rem;
   font-size: 0.3rem;
+  font-weight: 900;
   text-align: center;
   color: #d33682;
   background: #fdf6e3;
