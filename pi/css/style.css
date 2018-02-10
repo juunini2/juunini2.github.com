@@ -57,10 +57,11 @@ main {
     position: fixed;
     top: 0;
     left: 0;
-    padding-left: 2.6rem;
+    padding-left: 2rem;
     height: 0.35rem;
     line-height: 0.35rem;
-    overflow: auto; }
+    overflow: auto;
+    background: #d3cbb7; }
     main tab a {
       display: inline-block;
       padding: 0 0.3rem;
@@ -149,6 +150,8 @@ welcome {
     main .mainImg {
       margin-left: 0.6rem;
       max-width: 60%; }
+    main tab {
+      padding-left: 1rem; }
 
   welcome {
     font-size: 0.3rem; } }

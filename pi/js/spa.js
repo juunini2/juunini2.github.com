@@ -65,7 +65,7 @@ PostState();
 function loadPage() {
     var url = location.hash; // 현재 url주소
     var path = "/pi/page/" + url.substring(2, url.length) + ".html"; // 불러올 파일 경로
-    if (url != "") {
+    if (url != "" && url.search("#/") != -1) {
         var xhttp_1 = new XMLHttpRequest();
         xhttp_1.onreadystatechange = function () {
             document.querySelector("main").innerHTML = xhttp_1.responseText;

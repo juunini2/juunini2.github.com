@@ -86,10 +86,11 @@ main {
         position: fixed;
         top: 0;
         left: 0;
-        padding-left: 2.6rem;
+        padding-left: 2rem;
         height: 0.35rem;
         line-height: 0.35rem;
         overflow: auto;
+        background: $TABBACKGROUND;
 
         a {
             display: inline-block;
@@ -195,6 +196,10 @@ welcome {
         .mainImg {
             margin-left: 0.6rem;
             max-width: 60%;
+        }
+
+        tab {
+            padding-left: 1rem;
         }
     }
 

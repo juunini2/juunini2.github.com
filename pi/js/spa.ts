@@ -87,7 +87,7 @@ function loadPage() {
     let url = location.hash;    // 현재 url주소
     let path = "/pi/page/" + url.substring(2, url.length) + ".html"; // 불러올 파일 경로
 
-    if (url != ""){
+    if (url != "" && url.search("#/") != -1){
         let xhttp = new XMLHttpRequest();
 
         xhttp.onreadystatechange = () => {
@@ -100,7 +100,6 @@ function loadPage() {
                     break;
                 }
             }
-
         }
 
         xhttp.open("GET", path, true);
