@@ -1,0 +1,32 @@
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Source Sans Pro Regular"), local("SourceSansPro-Regular"), url(/fonts/SourceSansPro-Regular.woff2) format("woff2"); }
+html {
+  font-family: "Source Sans Pro", sans-serif;
+  font-size: 100px; }
+
+body {
+  font-size: 0.14rem;
+  line-height: 0.21rem;
+  color: #333;
+  background: #fdf6e3; }
+
+blur {
+  color: #657b83; }
+
+color1 {
+  color: #26a5d9; }
+
+color2 {
+  color: #859900; }
+
+color3 {
+  color: #d33682; }
+
+color4 {
+  color: #b58900; }
+
+colon {
+  color: #2aa198; }

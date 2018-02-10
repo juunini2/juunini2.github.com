@@ -1,0 +1,170 @@
+$BACKGROUND: #fdf6e3;
+$TEXT: #333;
+$PARENTHESES: #657b83;
+$COLON: #2aa198;
+$SYNTAX1: #26a5d9;
+$SYNTAX2: #859900;
+$SYNTAX3: #d33682;
+$SYNTAX4: #b58900;
+
+$TABBACKGROUND: #d3cbb7;
+
+a, button {
+    cursor: pointer;
+}
+
+side {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 2rem;
+    height: 100%;
+    padding-top: 0.34rem;
+    background: #eee8d5;
+    overflow: auto;
+
+    p {
+        max-height: 0.22rem;
+        line-height: 0.22rem;
+        margin-bottom: 0.2rem;
+        padding-left: 0.2rem;
+
+        &:after {
+            content: "";
+            position: absolute;
+            right: 0.1rem;
+            bottom: 0.05rem;
+            display: inline-block;
+            width: 0;
+            height: 0;
+            border-top: 0.04rem solid transparent;
+            border-right: 0.04rem solid #e6e6e6;
+            border-left: 0.04rem solid transparent;
+            border-bottom: 0.04rem solid #e6e6e6;
+        }
+
+        &.on {
+            background: #d1cbb8;
+        }
+    }
+
+    a {
+        margin-left: 0.4rem;
+
+        &.on {
+            color: $COLON;
+        }
+    }
+}
+
+main {
+    padding: 0.6rem;
+    padding-left: 2.6rem;
+    img {
+        display: block;
+        max-width: 100%;
+        margin: 0.2rem 0;
+    }
+}
+
+hello {
+    display: block;
+    text-align: center;
+    font-size: 0.3rem;
+    font-weight: bold;
+    line-height: 0.34rem;
+
+    img {
+        display: inline-block;
+    }
+}
+
+.button{
+    display: inline-block;
+    padding: 0.2rem;
+    font-weight: bold;
+    color: #222223;
+    border: 1px solid #bbb;
+    border-radius: 0.1rem;
+    background: #e6e6e6;
+}
+
+.link {
+    color: $COLON;
+    text-decoration: underline;
+}
+
+terminal {
+    display: block;
+    margin: 0.2rem 0;
+    padding-top: 0;
+    padding: 0.2rem;
+    background: $TABBACKGROUND;
+    border-radius: 5px;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+key {
+    display: inline-block;
+    padding: 0.01rem 0.05rem;
+    background: $TEXT;
+    color: $BACKGROUND;
+}
+
+welcome {
+    width: 100%;
+    height: 100%;
+    font-size: 0.3rem;
+    text-align: center;
+    color: $SYNTAX3;
+    background: $BACKGROUND;
+    animation-name: welcome;
+    animation-duration: 1s;
+    animation-iteration-count: 3;
+
+    a {
+        display: inline-block;
+        img {
+            display: block;
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+    }
+
+    a:nth-child(1) {
+        margin: 0 0.2rem;
+    }
+
+    &.done {
+        color: $SYNTAX1;
+        animation-name: done;
+        animation-duration: 2s;
+    }
+}
+
+@keyframes welcome {
+    0% {color: $SYNTAX3;}
+    50% {color: #d5aed0;}
+    100% {color: $SYNTAX3;}
+}
+
+@keyframes done {
+    0% {opacity: 1;}
+    100% {opacity: 0; display: none;}
+}
+
+@media screen and (max-width: 860px) {
+    side {
+        width: 1rem;
+        a {
+            margin-left: 0.1rem;
+        }
+    }
+
+    main {
+        padding: 0.2rem;
+        padding-left: 1.2rem;
+    }
+
+}

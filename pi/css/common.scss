@@ -1,0 +1,55 @@
+$BACKGROUND: #fdf6e3;
+$TEXT: #333;
+$PARENTHESES: #657b83;
+$COLON: #2aa198;
+$SYNTAX1: #26a5d9;
+$SYNTAX2: #859900;
+$SYNTAX3: #d33682;
+$SYNTAX4: #b58900;
+
+$HTMLFONTSIZE: 100px;
+$BODYFONTSIZE: 0.14rem;
+$FONTFAMILY: 'Source Sans Pro', sans-serif;
+
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Source Sans Pro Regular'), local('SourceSansPro-Regular'), url(/fonts/SourceSansPro-Regular.woff2) format('woff2');
+}
+
+html{
+    font-family: $FONTFAMILY;
+    font-size: $HTMLFONTSIZE;
+}
+
+body{
+    font-size: $BODYFONTSIZE;
+    line-height: $BODYFONTSIZE * 1.5;
+    color: $TEXT;
+    background: $BACKGROUND;
+}
+
+blur{
+    color: $PARENTHESES;
+}
+
+color1{
+    color: $SYNTAX1;
+}
+
+color2{
+    color: $SYNTAX2;
+}
+
+color3{
+    color: $SYNTAX3;
+}
+
+color4{
+    color: $SYNTAX4;
+}
+
+colon{
+    color: $COLON;
+}
