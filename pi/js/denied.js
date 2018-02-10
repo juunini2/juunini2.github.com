@@ -8,4 +8,4 @@ function Denied() {
     }
 }
 
-Denied();
+setTimeout(Denied(), 3000);
