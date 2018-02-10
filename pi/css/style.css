@@ -3,6 +3,7 @@ a, button {
 
 side {
   position: fixed;
+  z-index: 100;
   top: 0;
   left: 0;
   width: 2rem;
@@ -11,6 +12,7 @@ side {
   background: #eee8d5;
   overflow: auto; }
   side p {
+    position: relative;
     max-height: 0.22rem;
     line-height: 0.22rem;
     margin-bottom: 0.2rem;
@@ -51,15 +53,18 @@ main {
     margin-left: 1.3rem;
     display: block;
     max-width: 80%; }
-
-hello {
-  display: block;
-  text-align: center;
-  font-size: 0.3rem;
-  font-weight: bold;
-  line-height: 0.34rem; }
-  hello img {
-    display: inline-block; }
+  main tab {
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-left: 2.6rem;
+    height: 0.35rem;
+    line-height: 0.35rem;
+    overflow: auto; }
+    main tab a {
+      display: inline-block;
+      padding: 0 0.3rem;
+      border-left: #fdf6e3; }
 
 .button {
   display: inline-block;

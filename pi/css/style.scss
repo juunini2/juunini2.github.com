@@ -15,6 +15,7 @@ a, button {
 
 side {
     position: fixed;
+    z-index: 100;
     top: 0;
     left: 0;
     width: 2rem;
@@ -24,6 +25,7 @@ side {
     overflow: auto;
 
     p {
+        position: relative;
         max-height: 0.22rem;
         line-height: 0.22rem;
         margin-bottom: 0.2rem;
@@ -79,17 +81,21 @@ main {
         display: block;
         max-width: 80%;
     }
-}
 
-hello {
-    display: block;
-    text-align: center;
-    font-size: 0.3rem;
-    font-weight: bold;
-    line-height: 0.34rem;
+    tab {
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding-left: 2.6rem;
+        height: 0.35rem;
+        line-height: 0.35rem;
+        overflow: auto;
 
-    img {
-        display: inline-block;
+        a {
+            display: inline-block;
+            padding: 0 0.3rem;
+            border-left: $BACKGROUND;
+        }
     }
 }
 
