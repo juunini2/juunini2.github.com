@@ -81,6 +81,8 @@ key {
   color: #fdf6e3; }
 
 welcome {
+  position: absolute;
+  z-index: 1000;
   width: 100%;
   height: 100%;
   padding: 1rem;
