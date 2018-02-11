@@ -1,7 +1,158 @@
-<div id="gpio">
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-</div>
+라즈베리파이에서 GPIO를 제어하는 원리에 대해 먼저 설명을 할까 합니다.<br>
 
-<div id="gpio2">
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-</div>
+<img src="/pi/img/WebUI_1.jpg" alt="">
+
+라즈베리파이를 켜고 아무것도 하지 않은 채 <color2>gpio readall</color2> 명령어를 입력하면 위와 같이 나옵니다.<br>
+그럼, bash-shell 명령어로 gpio 제어 하는걸 보여드리겠습니다. 빨갛게 표시해둔 <color1>BCM 18</color1>번을 제어할겁니다.<br>
+
+<terminal>
+echo "18" > /sys/class/gpio/export
+echo "out" > /sys/class/gpio/gpio18/direction
+echo "1" > /sys/class/gpio/gpio18/value
+</terminal>
+
+<img src="/pi/img/WebUI_2.jpg" alt="">
+
+보통은 스크래치나 C, Python을 이용해야만 제어할 수 있는줄 아시겠지만, 실제로는 이런식으로 제어를 합니다.<br>
+<br>
+<color3>18번 핀 제어 선언 → direction(in/out) 설정 → 0 또는 1(on/off) 설정</color3><br>
+C나 Python으로 프로그래밍을 하면 bash-shell에 저 명령어를 대신 넣어주는 거죠.<br>
+원리를 알았으니 Web UI를 구현하여 GPIO를 제어하는 방법에 대해 알아보겠습니다.<br>
+<br>
+수업시간에는 Python의 웹 프레임워크인 Flask를 이용한다고 했는데, 웹 UI를 구현하겠다면 훨씬 확장성이 좋은 ECMA Script를 이용하는 쪽이 좋지 않을까 합니다.<br>
+Javascript 프레임워크인 <color1>Node.js</color1>를 설치하겠습니다.<br>
+
+<terminal>
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash - && sudo apt-get install -y nodejs
+</terminal>
+
+작성일인 2018년 2월 11일의 Node.js의 LTS버전은 <color1>8.9.4</color1> 이므로 8.x를 받습니다.<br>
+
+저는 <color2>GPIO_WebUI</color2>라는 폴더를 만들어서 그 안에서 작업하겠습니다.<br>
+
+<terminal>
+npm init
+</terminal>
+
+npm구성을 해주며, package.json을 자동으로 생성해줍니다. 뭔지는 검색해보세요.<br>
+
+<terminal>
+npm install express socket.io pigpio --save
+</terminal>
+
+<color2>pigpio</color2>는 Node.js에서 pi의 gpio를 제어할 수 있게 해주는 패키지입니다.<br>
+<color2>GPIO_WebUI</color2>폴더 내의 <color2>index.js</color2>파일을 생성하겠습니다.<br>
+
+<terminal>
+const app = require('express')();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+const Gpio = require('pigpio').Gpio;
+
+app.get('/', function(req, res) {
+    res.sendFile(__dirname + '/public/index.html');
+});
+
+http.listen(3000, function() { console.log('listening on localhost:3000') });  //3000번 포트 사용
+
+var GPIO = [];
+GPIO.push(new Gpio(17, {mode: Gpio.OUTPUT}));   // pin11, GPIO. 0
+GPIO.push(new Gpio(18, {mode: Gpio.OUTPUT}));   // pin12, GPIO. 1
+GPIO.push(new Gpio(27, {mode: Gpio.OUTPUT}));   // pin13, GPIO. 2
+GPIO.push(new Gpio(22, {mode: Gpio.OUTPUT}));   // pin15, GPIO. 3
+GPIO.push(new Gpio(23, {mode: Gpio.OUTPUT}));   // pin16, GPIO. 4
+GPIO.push(new Gpio(24, {mode: Gpio.OUTPUT}));   // pin18, GPIO. 5
+// 초기화
+for (let i in GPIO) { GPIO[i].digitalWrite(0); }
+
+io.on('connection', function (socket) {
+    console.log('a user connection');   // 페이지에 누군가 접속하면 터미널에 표시함
+    socket.on('GPIO', function(data) {  // 클라이언트에게서 GPIO라는 변수의 값을 읽어옴
+        console.log(data);              // 클라이언트에서 보내는 socket값을 터미널에 출력
+        for (let i in GPIO) {
+            if (data == i + '_0') {
+                GPIO[i].digitalWrite(0);    // 클라이언트에서 0을 보내면 0 적용
+            } else if (data == i + '_1') {
+                GPIO[i].digitalWrite(1);    // 클라이언트에서 1을 보내면 1 적용
+            }
+        }
+    });
+});
+
+process.on('SIGINT', function() {   // Ctrl + c 를 눌러 서버를 종료했을 때
+    for (let i in GPIO) { GPIO[i].digitalWrite(0); }  // 초기화
+    process.exit();
+});
+</terminal>
+
+이걸 <color2>index.js</color2> 내에 추가해주세요.<br>
+index.js 파일 내의 내용들을 이해시키려면 굉장히 많은 노력이 필요할겁니다.<br>
+그건 수업시간에 진행하는 Flask도 마찬가지일테고 분명 자세한 설명 없이 이렇게 된다고 하고 넘어가게 될 것입니다.<br>
+저도 그렇게 하고 넘어 갈 겁니다. Node.js를 이용하지만 Node.js를 이해하는건 보는 사람이 따로 공부해야 되는 내용이라고 생각합니다.<br>
+Node.js의 <color2>pigpio</color2> 부분은 <a href="https://www.w3schools.com/nodejs/nodejs_raspberrypi_gpio_intro.asp" target="_new" class="link">이곳</a>을 참조해주시기 바랍니다.<br>
+<br>
+그럼 이제 클라이언트에서 보여질 뷰를 만들도록 합니다.<br>
+<color2>public</color2>이란 폴더를 생성한 뒤 그 안에 <color2>index.html</color2> 파일을 만들어주세요.<br>
+
+<terminal>
+&lt;!DOCTYPE html>
+&lt;html lang="ko">
+
+&lt;head>
+    &lt;meta charset="UTF-8">
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0">
+    &lt;meta http-equiv="X-UA-Compatible" content="ie=edge">
+    &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js">&lt;/script>
+    &lt;title>GPIO Web UI&lt;/title>
+&lt;/head>
+
+&lt;body>
+    GPIO0 : off&lt;input type="radio" name="GPIO0" value="off" checked> on&lt;input type="radio" name="GPIO0" value="on">&lt;br>
+    GPIO1 : off&lt;input type="radio" name="GPIO1" value="off" checked> on&lt;input type="radio" name="GPIO1" value="on">&lt;br>
+    GPIO2 : off&lt;input type="radio" name="GPIO2" value="off" checked> on&lt;input type="radio" name="GPIO2" value="on">&lt;br>
+    GPIO3 : off&lt;input type="radio" name="GPIO3" value="off" checked> on&lt;input type="radio" name="GPIO3" value="on">&lt;br>
+    GPIO4 : off&lt;input type="radio" name="GPIO4" value="off" checked> on&lt;input type="radio" name="GPIO4" value="on">&lt;br>
+    GPIO5 : off&lt;input type="radio" name="GPIO5" value="off" checked> on&lt;input type="radio" name="GPIO5" value="on">
+
+    &lt;script>
+        var socket = io();
+
+        for (let i = 0 ; i &lt; 6 ; i++) {
+            document.getElementsByName("GPIO" + i)[0].onclick = function() {    // off를 클릭했을 때
+                socket.emit('GPIO', i + '_0');
+            }
+            document.getElementsByName("GPIO" + i)[1].onclick = function () {   // on을 클릭했을 때
+                socket.emit('GPIO', i + '_1');
+            }
+        }
+    &lt;/script>
+&lt;/body>
+
+&lt;/html>
+</terminal>
+
+<terminal>
+sudo node index.js
+</terminal>
+
+그 뒤에 라즈베리파이의 IP:3000 으로 들어가면 볼 수 있습니다. 저의 경우에는 192.168.0.2:3000 입니다.(혹은 라즈베리파이에서 <color1>localhost:3000</color1>)<br>
+<color2>node index.js</color2> 해서 켜도 되지만 왜 굳이 슈퍼유저 권한으로 켜냐면 <color2>pigpio</color2>를 사용하려면 슈퍼유저 권한이 필요합니다.<br>
+실행하고 IP:3000으로 접속하면 이런 화면을 보실겁니다.<br>
+
+<img src="/pi/img/WebUI_3.jpg" alt="">
+
+그리고 터미널을 보면<br>
+
+<img src="/pi/img/WebUI_4.jpg" alt="">
+
+접속했다고 출력됩니다.<br>
+몇개 눌러봅시다.<br>
+저는 GPIO 0 ~ 4까지 on을 눌렀습니다.<br>
+
+<img src="/pi/img/WebUI_5.jpg" alt="">
+
+터미널에 눌렀다는 정보가 표시됩니다. 그럼 GPIO도 잘 작동하고 있는지 확인해봅시다.<br>
+
+<img src="/pi/img/WebUI_6.jpg" alt="">
+
+0 ~ 4번은 1이 되어있고 누르지 않은 5번은 0이 되어있습니다. 잘 작동되는걸 확인했습니다.<br>
