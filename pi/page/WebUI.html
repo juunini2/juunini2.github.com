@@ -44,18 +44,18 @@ npm install express socket.io pigpio --save
 <color2>GPIO_WebUI</color2>폴더 내의 <color2>index.js</color2>파일을 생성하겠습니다.<br>
 
 <terminal>
-const app = require('express')();
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
-const Gpio = require('pigpio').Gpio;
+<strong>const</strong> <color1>app</color1> = require('express')();
+<strong>const</strong> <color1>http</color1> = require('http').Server(app);
+<strong>const</strong> <color1>io</color1> = require('socket.io')(http);
+<strong>const</strong> <color1>Gpio</color1> = require('pigpio').Gpio;
 
 app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/public/index.html');
+    res.sendFile(__dirname <color2>+</color2> '/public/index.html');
 });
 
 http.listen(3000, function() { console.log('listening on localhost:3000') });  //3000번 포트 사용
 
-var GPIO = [];
+<strong>var</strong> <color1>GPIO</color1> = [];
 GPIO.push(new Gpio(17, {mode: Gpio.OUTPUT}));   // pin11, GPIO. 0
 GPIO.push(new Gpio(18, {mode: Gpio.OUTPUT}));   // pin12, GPIO. 1
 GPIO.push(new Gpio(27, {mode: Gpio.OUTPUT}));   // pin13, GPIO. 2
@@ -63,25 +63,25 @@ GPIO.push(new Gpio(22, {mode: Gpio.OUTPUT}));   // pin15, GPIO. 3
 GPIO.push(new Gpio(23, {mode: Gpio.OUTPUT}));   // pin16, GPIO. 4
 GPIO.push(new Gpio(24, {mode: Gpio.OUTPUT}));   // pin18, GPIO. 5
 // 초기화
-for (let i in GPIO) { GPIO[i].digitalWrite(0); }
+<strong>for</strong> (let i in GPIO) { GPIO[i].digitalWrite(0); }
 
-io.on('connection', function (socket) {
-    console.log('a user connection');   // 페이지에 누군가 접속하면 터미널에 표시함
-    socket.on('GPIO', function(data) {  // 클라이언트에게서 GPIO라는 변수의 값을 읽어옴
-        console.log(data);              // 클라이언트에서 보내는 socket값을 터미널에 출력
-        for (let i in GPIO) {
-            if (data == i + '_0') {
-                GPIO[i].digitalWrite(0);    // 클라이언트에서 0을 보내면 0 적용
-            } else if (data == i + '_1') {
-                GPIO[i].digitalWrite(1);    // 클라이언트에서 1을 보내면 1 적용
+<color1>io</color1>.<color1>on</color1>(<colon>'connection'</colon>, <strong>function</strong> (socket) {
+    <color1>console</color1>.<color1>log</color1>(<colon>'a user connection'</colon>);   <blur><i>// 페이지에 누군가 접속하면 터미널에 표시함</i></blur>
+    <color1>socket</color1>.<color1>on</color1>(<colon>'GPIO'</colon>, <strong>function</strong>(data) {  <blur><i>// 클라이언트에게서 GPIO라는 변수의 값을 읽어옴</i></blur>
+        <color1>console</color1>.<color1>log</color1>(data);              <blur><i>// 클라이언트에서 보내는 socket값을 터미널에 출력</i></blur>
+        <strong>for</strong> (<strong>let</strong> i in GPIO) {
+            <strong>if</strong> (data <color2>==</color2> i <color2>+</color2> <colon>'_0'</colon>) {
+                GPIO[i].<color1>digitalWrite</color1>(<color3>0</color3>);    <blur><i>// 클라이언트에서 0을 보내면 0 적용</i></blur>
+            } <strong>else if</strong> (data <color2>==</color2> i <color2>+</color2> <colon>'_1'</colon>) {
+                GPIO[i].<color1>digitalWrite</color1>(<color3>1</color3>);    <blur><i>// 클라이언트에서 1을 보내면 1 적용</i></blur>
             }
         }
     });
 });
 
-process.on('SIGINT', function() {   // Ctrl + c 를 눌러 서버를 종료했을 때
-    for (let i in GPIO) { GPIO[i].digitalWrite(0); }  // 초기화
-    process.exit();
+<color1>process</color1>.<color1>on</color1>(<colon>'SIGINT'</colon>, <strong>function</strong>() {   <blur><i>// Ctrl + c 를 눌러 서버를 종료했을 때</i></blur>
+    <strong>for</strong> (<strong>let</strong> i in GPIO) { GPIO[i].<color1>digitalWrite</color1>(<color3>0</color3>); }  <blur><i>// 초기화</i></blur>
+    <color1>process</color1>.<color1>exit</color1>();
 });
 </terminal>
 
@@ -96,39 +96,39 @@ Node.js의 <color2>pigpio</color2> 부분은 <a href="https://www.w3schools.com/
 
 <terminal>
 &lt;!DOCTYPE html>
-&lt;html lang="ko">
+&lt;<color1>html</color1> <blur>lang</blur>=<colon>"ko"</colon>>
 
-&lt;head>
-    &lt;meta charset="UTF-8">
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0">
-    &lt;meta http-equiv="X-UA-Compatible" content="ie=edge">
-    &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js">&lt;/script>
-    &lt;title>GPIO Web UI&lt;/title>
-&lt;/head>
+&lt;<color1>head</color1>>
+    &lt;<color1>meta</color1> <blur>charset</blur>=<colon>"UTF-8"</colon>>
+    &lt;<color1>meta</color1> <blur>name</blur>=<colon>"viewport"</colon> <blur>content</blur>=<colon>"width=device-width, initial-scale=1.0"</colon>>
+    &lt;<color1>meta</color1> <blur>http-equiv</blur>=<colon>"X-UA-Compatible"</colon> <blur>content</blur>=<colon>"ie=edge"</colon>>
+    &lt;<color1>script</color1> <blur>src</blur>=<colon>"https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"</colon>>&lt;/<color1>script</color1>>
+    &lt;<color1>title</color1>>GPIO Web UI&lt;/<color1>title</color1>>
+&lt;/<color1>head</color1>>
 
-&lt;body>
-    GPIO0 : off&lt;input type="radio" name="GPIO0" value="off" checked> on&lt;input type="radio" name="GPIO0" value="on">&lt;br>
-    GPIO1 : off&lt;input type="radio" name="GPIO1" value="off" checked> on&lt;input type="radio" name="GPIO1" value="on">&lt;br>
-    GPIO2 : off&lt;input type="radio" name="GPIO2" value="off" checked> on&lt;input type="radio" name="GPIO2" value="on">&lt;br>
-    GPIO3 : off&lt;input type="radio" name="GPIO3" value="off" checked> on&lt;input type="radio" name="GPIO3" value="on">&lt;br>
-    GPIO4 : off&lt;input type="radio" name="GPIO4" value="off" checked> on&lt;input type="radio" name="GPIO4" value="on">&lt;br>
-    GPIO5 : off&lt;input type="radio" name="GPIO5" value="off" checked> on&lt;input type="radio" name="GPIO5" value="on">
+&lt;<color1>body</color1>>
+    GPIO0 : off&lt;<color1>input</color1> <blur>type</blur>=<colon>"radio"</colon> <blur>name</blur>=<colon>"GPIO0"</colon> <blur>value</blur>=<colon>"off"</colon> <blur>checked</blur>> on&lt;<color1>input</color1> <blur>type</blur>=<colon>"radio"</colon> <blur>name</blur>=<colon>"GPIO0"</colon> <blur>value</blur>=<colon>"on"</colon>>&lt;br>
+    GPIO1 : off&lt;<color1>input</color1> <blur>type</blur>=<colon>"radio"</colon> <blur>name</blur>=<colon>"GPIO1"</colon> <blur>value</blur>=<colon>"off"</colon> <blur>checked</blur>> on&lt;<color1>input</color1> <blur>type</blur>=<colon>"radio"</colon> <blur>name</blur>=<colon>"GPIO1"</colon> <blur>value</blur>=<colon>"on"</colon>>&lt;br>
+    GPIO2 : off&lt;<color1>input</color1> <blur>type</blur>=<colon>"radio"</colon> <blur>name</blur>=<colon>"GPIO2"</colon> <blur>value</blur>=<colon>"off"</colon> <blur>checked</blur>> on&lt;<color1>input</color1> <blur>type</blur>=<colon>"radio"</colon> <blur>name</blur>=<colon>"GPIO2"</colon> <blur>value</blur>=<colon>"on"</colon>>&lt;br>
+    GPIO3 : off&lt;<color1>input</color1> <blur>type</blur>=<colon>"radio"</colon> <blur>name</blur>=<colon>"GPIO3"</colon> <blur>value</blur>=<colon>"off"</colon> <blur>checked</blur>> on&lt;<color1>input</color1> <blur>type</blur>=<colon>"radio"</colon> <blur>name</blur>=<colon>"GPIO3"</colon> <blur>value</blur>=<colon>"on"</colon>>&lt;br>
+    GPIO4 : off&lt;<color1>input</color1> <blur>type</blur>=<colon>"radio"</colon> <blur>name</blur>=<colon>"GPIO4"</colon> <blur>value</blur>=<colon>"off"</colon> <blur>checked</blur>> on&lt;<color1>input</color1> <blur>type</blur>=<colon>"radio"</colon> <blur>name</blur>=<colon>"GPIO4"</colon> <blur>value</blur>=<colon>"on"</colon>>&lt;br>
+    GPIO5 : off&lt;<color1>input</color1> <blur>type</blur>=<colon>"radio"</colon> <blur>name</blur>=<colon>"GPIO5"</colon> <blur>value</blur>=<colon>"off"</colon> <blur>checked</blur>> on&lt;<color1>input</color1> <blur>type</blur>=<colon>"radio"</colon> <blur>name</blur>=<colon>"GPIO5"</colon> <blur>value</blur>=<colon>"on"</colon>>
 
-    &lt;script>
-        var socket = io();
+    &lt;<color1>script</color1>>
+        <strong>var</strong> <color1>socket</color1> = <color1>io</color1>();
 
-        for (let i = 0 ; i &lt; 6 ; i++) {
-            document.getElementsByName("GPIO" + i)[0].onclick = function() {    // off를 클릭했을 때
-                socket.emit('GPIO', i + '_0');
+        <strong>for</strong> (<strong>let</strong> <color1>i</color1> = <color3>0</color3> ; <color1>i</color1> &lt; <color3>6</color3> ; <color1>i</color1><color2>++</color2>) {
+            document.getElementsByName(<colon>"GPIO"</colon> <color2>+</color2> i)[<color3>0</color3>].<color1>onclick</color1> = <strong>function</strong>() {    // off를 클릭했을 때
+                socket.emit(<colon>'GPIO'</colon>, i <color2>+</color2> <colon>'_0'</colon>);
             }
-            document.getElementsByName("GPIO" + i)[1].onclick = function () {   // on을 클릭했을 때
-                socket.emit('GPIO', i + '_1');
+            document.getElementsByName(<colon>"GPIO"</colon> <color2>+</color2> i)[<color3>1</color3>].<color1>onclick</color1> = <strong>function</strong> () {   // on을 클릭했을 때
+                socket.emit(<colon>'GPIO'</colon>, i <color2>+</color2> <colon>'_1'</colon>);
             }
         }
-    &lt;/script>
-&lt;/body>
+    &lt;/<color1>script</color1>>
+&lt;/<color1>body</color1>>
 
-&lt;/html>
+&lt;/<color1>html</color1>>
 </terminal>
 
 <terminal>
