@@ -40,7 +40,8 @@ main {
   padding-left: 2.6rem; }
   main img {
     display: block;
-    max-width: 100%; }
+    max-width: 100%;
+    margin: 0.2rem 0; }
   main h1 {
     color: #26a5d9;
     font-size: 1rem;
@@ -83,8 +84,8 @@ main {
 terminal {
   display: block;
   margin: 0.2rem 0;
-  padding-top: 0;
   padding: 0.2rem;
+  padding-top: 0;
   background: #d3cbb7;
   border-radius: 5px;
   white-space: pre-wrap;
