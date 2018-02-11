@@ -53,17 +53,17 @@ app.get('/', function(req, res) {
     res.sendFile(__dirname <color2>+</color2> '/public/index.html');
 });
 
-http.listen(3000, function() { console.log('listening on localhost:3000') });  //3000번 포트 사용
+http.listen(3000, function() { console.log('listening on localhost:3000') });  <blur><i>//3000번 포트 사용</i></blur>
 
 <strong>var</strong> <color1>GPIO</color1> = [];
-GPIO.push(new Gpio(17, {mode: Gpio.OUTPUT}));   // pin11, GPIO. 0
-GPIO.push(new Gpio(18, {mode: Gpio.OUTPUT}));   // pin12, GPIO. 1
-GPIO.push(new Gpio(27, {mode: Gpio.OUTPUT}));   // pin13, GPIO. 2
-GPIO.push(new Gpio(22, {mode: Gpio.OUTPUT}));   // pin15, GPIO. 3
-GPIO.push(new Gpio(23, {mode: Gpio.OUTPUT}));   // pin16, GPIO. 4
-GPIO.push(new Gpio(24, {mode: Gpio.OUTPUT}));   // pin18, GPIO. 5
+<color1>GPIO</color1>.<color1>push</color1>(<color4>new</color4> <color2>Gpio</color2>(<color3>17</color3>, {mode: Gpio.OUTPUT}));   <blur><i>// pin11, GPIO. 0</i></blur>
+<color1>GPIO</color1>.<color1>push</color1>(<color4>new</color4> <color2>Gpio</color2>(<color3>18</color3>, {mode: Gpio.OUTPUT}));   <blur><i>// pin12, GPIO. 1</i></blur>
+<color1>GPIO</color1>.<color1>push</color1>(<color4>new</color4> <color2>Gpio</color2>(<color3>27</color3>, {mode: Gpio.OUTPUT}));   <blur><i>// pin13, GPIO. 2</i></blur>
+<color1>GPIO</color1>.<color1>push</color1>(<color4>new</color4> <color2>Gpio</color2>(<color3>22</color3>, {mode: Gpio.OUTPUT}));   <blur><i>// pin15, GPIO. 3</i></blur>
+<color1>GPIO</color1>.<color1>push</color1>(<color4>new</color4> <color2>Gpio</color2>(<color3>23</color3>, {mode: Gpio.OUTPUT}));   <blur><i>// pin16, GPIO. 4</i></blur>
+<color1>GPIO</color1>.<color1>push</color1>(<color4>new</color4> <color2>Gpio</color2>(<color3>24</color3>, {mode: Gpio.OUTPUT}));   <blur><i>// pin18, GPIO. 5</i></blur>
 // 초기화
-<strong>for</strong> (let i in GPIO) { GPIO[i].digitalWrite(0); }
+<strong>for</strong> (let i in GPIO) { GPIO[i].<color1>digitalWrite</color1>(<color3>0</color3>); }
 
 <color1>io</color1>.<color1>on</color1>(<colon>'connection'</colon>, <strong>function</strong> (socket) {
     <color1>console</color1>.<color1>log</color1>(<colon>'a user connection'</colon>);   <blur><i>// 페이지에 누군가 접속하면 터미널에 표시함</i></blur>
