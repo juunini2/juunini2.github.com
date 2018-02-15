@@ -1,1 +1,226 @@
-not ready
+페이스북 크롤링을 해보려 했으나, 연이은 가입 거부로 포기했습니다.<br>
+제플린 구동을 해보려 합니다.<br>
+<br>
+왠지 이래저래 꼬여서 뭔가 안되는 바람에<br>
+밀고 다시 설치했습니다.<br>
+
+<terminal>
+hostname = hadoop
+username = hadoop
+
+
+
+visudo
+
+root    ALL=(ALL)   NOPASSWD: ALL
+hadoop  ALL=(ALL)   NOPASSWD: ALL
+
+
+yum update -y && yum install -y epel-release && yum groupinstall -y "X Window System" "MATE Desktop" && systemctl set-default graphical.target && systemctl isolate graphical.target
+
+sudo yum install -y net-tools openssh* openssl* mod_ssl wget gcc-c++ pdsh im-chooser ntp && sudo systemctl mask firewalld && sudo vi /etc/ntp.conf
+
+server 0.asia.pool.ntp.org
+server 1.asia.pool.ntp.org
+server 2.asia.pool.ntp.org
+server 3.asia.pool.ntp.org
+
+
+
+sudo systemctl start ntpd && sudo systemctl enable ntpd
+
+
+
+sudo vi /etc/profile
+
+umask 022
+
+
+sudo vi /etc/sysconfig/network-scripts/ifcfg-ens32
+
+IPADDR="192.168.247.100"
+NETMASK="255.255.255.0"
+GATEWAY="192.168.247.2"
+DNS1="192.168.247.2"
+
+
+
+
+sudo vi /etc/sysconfig/network
+
+NETWORKING=yes
+NETWORKING_IPV6=yes
+HOSTNAME=hadoop
+
+
+
+
+sudo service network restart
+
+
+
+
+sudo vi /etc/hosts
+
+192.168.247.100 hadoop
+
+
+
+cd && ssh-keygen -t rsa && ssh-copy-id hadoop
+
+
+
+sudo setenforce 0 && sudo vi /etc/sysconfig/selinux
+
+SELINUX=enforcing → SELINUX=disabled
+
+
+
+sudo reboot
+</terminal>
+
+재부팅 후 터미널을 여러개 켠다.<br>
+
+<terminal>
+wget -c --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.tar.gz && tar -zxvf jdk-8u131-linux-x64.tar.gz && rm jdk-8u131-linux-x64.tar.gz
+</terminal>
+
+<terminal>
+sudo yum install -y python34 python34-devel.x86_64 python-devel.x86_64 python2-pip.noarch python34-pip.noarch
+</terminal>
+<!--
+<terminal>
+wget https://github.com/google/protobuf/releases/download/v3.5.1/protobuf-all-3.5.1.tar.gz && tar -zxvf protobuf-all-3.5.1.tar.gz && rm protobuf-all-3.5.1.tar.gz && cd protobuf-3.5.1 && ./configure && make && sudo make install && cd && rm -r protobuf-3.5.1
+</terminal>
+
+<terminal>
+wget http://mirror.apache-kr.org/hadoop/common/hadoop-3.0.0/hadoop-3.0.0.tar.gz && tar -zxvf hadoop-3.0.0.tar.gz && rm hadoop-3.0.0.tar.gz
+</terminal>
+
+<terminal>
+wget http://apache.tt.co.kr/spark/spark-2.2.1/spark-2.2.1-bin-hadoop2.7.tgz && tar -zxvf spark-2.2.1-bin-hadoop2.7.tgz && rm spark-2.2.1-bin-hadoop2.7.tgz
+</terminal>
+
+<terminal>
+wget http://mirror.navercorp.com/apache/hive/hive-2.3.2/apache-hive-2.3.2-bin.tar.gz && tar -zxvf apache-hive-2.3.2-bin.tar.gz && rm apache-hive-2.3.2-bin.tar.gz
+</terminal>
+
+<terminal>
+wget http://apache.tt.co.kr/hbase/stable/hbase-1.2.6-bin.tar.gz && tar -zxvf hbase-1.2.6-bin.tar.gz && rm hbase-1.2.6-bin.tar.gz
+</terminal>
+-->
+<terminal>
+wget http://mirror.apache-kr.org/zeppelin/zeppelin-0.7.3/zeppelin-0.7.3-bin-all.tgz && tar -zxvf zeppelin-0.7.3-bin-all.tgz && rm zeppelin-0.7.3-bin-all.tgz
+</terminal>
+
+제플린이 설치되면 폴더 이름이 너무 길다. zeppelin으로 바꿔주자.<br>
+zeppelin/conf 내에 <color2>shiro.ini.template → shiro.ini</color2> 로 변경해주고, <color2>admin = password1, admin → admin = 1234, admin</color2> 뭐... 1234는 편의상 한거고, 패스워드는 알아서들...<br>
+한번 잘 되는가 실행해보자.<br>
+
+<terminal>
+bin/zeppelin-daemon start
+</terminal>
+
+그리고 <color2>localhost:8080</color2> 으로 접속하면 제플린 화면이 나온다.<br>
+
+<img src="/hadoop/img5/3_1.jpg" alt="">
+
+저기 있는 로그인 버튼을 눌러 <color2>user / 1234</color2> 를 입력해서 로그인한다.<br>
+그리고 터미널에서<br>
+
+<terminal>
+cd && cd Downloads && wget http://archive.ics.uci.edu/ml/machine-learning-databases/00222/bank.zip && unzip bank.zip -d ./bank && rm bank.zip
+</terminal>
+
+그 뒤에<br>
+
+<img src="/hadoop/img5/3_2.jpg" alt="">
+
+저걸 눌러서 bank 라고 새로 만든다.<br>
+나는 이미 해봤으니 밑에 bank가 있지만... 뭐 아무튼 아파치 제플린 사이트에 나온 예제를 실행시켜보려 한다.<br>
+
+<terminal>
+val bankText = sc.textFile("/home/hadoop/Downloads/bank/bank-full.csv")
+
+case class Bank(age:Integer, job:String, marital : String, education : String, balance : Integer)
+
+// split each line, filter out header (starts with "age"), and map it into Bank case class
+val bank = bankText.map(s=>s.split(";")).filter(s=>s(0)!="\"age\"").map(
+    s=>Bank(s(0).toInt, 
+            s(1).replaceAll("\"", ""),
+            s(2).replaceAll("\"", ""),
+            s(3).replaceAll("\"", ""),
+            s(5).replaceAll("\"", "").toInt
+        )
+)
+
+// convert to DataFrame and create temporal table
+bank.toDF().registerTempTable
+</terminal>
+
+이걸 붙여넣는다.<br>
+
+<img src="/hadoop/img5/3_3.jpg" alt="">
+
+그리고 저 재생버튼같은걸 누르면 실행이 되는데 뭐 아무것도 안나온다.<br>
+아래에 이걸 또 붙여넣고 실행해본다.<br>
+
+<terminal>
+%sql select age, count(1) from bank where age < ${maxAge=30} group by age order by age
+</terminal>
+
+<terminal>
+%sql select age, count(1) from bank where age < ${maxAge=30} group by age order by age
+</terminal>
+
+<terminal>
+%sql select age, count(1) from bank where marital="${marital=single,single|divorced|married}" group by age order by age
+</terminal>
+
+이렇게 넣고 재생을 누르면 테이블이 생성된다. 근데 여기서 중요한게,<br>
+
+<img src="/hadoop/img5/3_3.jpg" alt="">
+
+저 버튼들을 한번씩 눌러보면 알 수 있는데, 막대그래프, 파이 차트, (색 있는/색 없는)라인 차트, 점선 차트를 보여주는 기능이 있다.<br>
+궁금하면 한번씩들 눌러보라, 그리고 제플린으로 스파크를 실행할 수 있는데, 예제를 보여주겠다.<br>
+Downloads폴더에 input.txt 라는 파일을 만들고 안에는 뭐 아무렇게나 내용을 넣도록 하자. 본인은 이렇게 넣겠다.<br>
+
+<terminal>
+a a a a a
+b b b b
+c c c
+d d
+e
+</terminal>
+
+그리고 제플린에 새 프로젝트를 만들고 안에 이렇게 내용을 넣자.<br>
+
+<terminal>
+%pyspark
+text_file = sc.textFile("/home/hadoop/Downloads/input.txt")
+counts = text_file.flatMap(lambda line: line.split(" ")) \
+             .map(lambda word: (word, 1)) \
+             .reduceByKey(lambda a, b: a + b)
+counts.saveAsTextFile("/home/hadoop/Downloads/wordcount")
+</terminal>
+
+그리고 Downloads 폴더에 가면 wordcount라는 폴더가 생겨있는데, part-00000과 part-00001 이렇게 2개가 생겨있다.<br>
+각각 열어보면<br>
+
+<terminal>
+(u'a', 5)
+(u'c', 3)
+(u'e', 1)
+</terminal>
+
+<terminal>
+(u'b', 4)
+(u'd', 2)
+</terminal>
+
+이렇게 분산되어 저장되어있다.<br>
+음... 그럼 스파크가 필요 없는거 아닌가... 깊은 고민도 든다.<br>
+일단 조금 더 찾아본 뒤에 생각해 볼 일인듯 하다.<br>
+조금 더 연구해본 뒤에 Hadoop, Spark, HBase, HIVE, zeppelin을 병행하는 방법을 올리던가.... 아니면 그냥 제플린을 쓰던가... 음...<br>
+일단 제플린의 실행과 제플린으로 스파크를 실행시켜보기는 성공했으니 여기까지 해도록 하겠다.<br>
+아니 근데 스파크로 워드카운트 했더니 괄호로 묶이고 앞에 u는 뭐고 왜 싱글콜론으로 감싸서 나오고... 하아... 찾아볼게 많구나...<br>
