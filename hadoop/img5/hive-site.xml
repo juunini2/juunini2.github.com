@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="test/xsl" href="configuration.xsl"?>
+
+<configuration>
+    <property>
+        <name>hive.metastore.warehouse.dir</name>
+        <value>/user/hive/warehouse/</value>
+    </property>
+
+    <property>
+        <name>hive.cli.print.header</name>
+        <value>true</value>
+    </property>
+</configuration>

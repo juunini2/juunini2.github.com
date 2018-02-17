@@ -55,7 +55,7 @@ export JAVA_HOME=/home/hadoop/jdk1.8.0_131
 
 # Location of Hadoop.  By default, Hadoop will attempt to determine
 # this location based upon its execution path.
-# export HADOOP_HOME=
+export HADOOP_HOME=/home/hadoop/hadoop
 
 # Location of Hadoop's configuration information.  i.e., where this
 # file is living. If this is not defined, Hadoop will attempt to
@@ -208,7 +208,7 @@ esac
 # export HADOOP_STOP_TIMEOUT=5
 
 # Where pid files are stored.  /tmp by default.
-export HADOOP_PID_DIR=/home/hadoop/hadoop-3.0.0/pids
+export HADOOP_PID_DIR=/home/hadoop/hadoop/pids
 
 # Default log4j setting for interactive commands
 # Java property: hadoop.root.logger
