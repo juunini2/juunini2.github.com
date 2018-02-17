@@ -1,0 +1,159 @@
+<terminal>
+wget https://github.com/google/protobuf/releases/download/v3.5.1/protobuf-all-3.5.1.tar.gz && tar -zxvf protobuf-all-3.5.1.tar.gz && rm protobuf-all-3.5.1.tar.gz && cd protobuf-3.5.1 && ./configure && make && sudo make install && cd && rm -r protobuf-3.5.1
+</terminal>
+
+<terminal>
+wget http://mirror.apache-kr.org/hadoop/common/hadoop-3.0.0/hadoop-3.0.0.tar.gz && tar -zxvf hadoop-3.0.0.tar.gz && rm hadoop-3.0.0.tar.gz && mv hadoop-3.0.0 hadoop
+</terminal>
+
+<terminal>
+wget http://apache.tt.co.kr/spark/spark-2.2.1/spark-2.2.1-bin-hadoop2.7.tgz && tar -zxvf spark-2.2.1-bin-hadoop2.7.tgz && rm spark-2.2.1-bin-hadoop2.7.tgz && mv spark-2.2.1-bin-hadoop2.7 spark
+</terminal>
+
+<terminal>
+wget http://mirror.navercorp.com/apache/hive/hive-2.3.2/apache-hive-2.3.2-bin.tar.gz && tar -zxvf apache-hive-2.3.2-bin.tar.gz && rm apache-hive-2.3.2-bin.tar.gz && mv apache-hive-2.3.2-bin hive
+</terminal>
+
+<terminal>
+wget http://apache.tt.co.kr/hbase/stable/hbase-1.2.6-bin.tar.gz && tar -zxvf hbase-1.2.6-bin.tar.gz && rm hbase-1.2.6-bin.tar.gz && mv hbase-1.2.6 hbase
+</terminal>
+
+설치 후 설정 파일들은 <a href="https://github.com/juunini/juunini.github.com/tree/master/hadoop/img5/" target="_new" class="link">여기</a><br>에 넣어두었다. 알아서 찾아서 쓰길 바란다.<br>
+
+<!-- <terminal>
+wget http://archive.apache.org/dist/mesos/1.5.0/mesos-1.5.0.tar.gz && tar -zxvf mesos-1.5.0.tar.gz && rm mesos-1.5.0.tar.gz && mv mesos-1.5.0 mesos
+
+sudo yum install -y tar wget git && sudo wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
+sudo bash -c 'cat > /etc/yum.repos.d/wandisco-svn.repo &lt;&lt;EOF
+
+[WANdiscoSVN]
+name=WANdisco SVN Repo 1.9
+enabled=1
+baseurl=http://opensource.wandisco.com/centos/7/svn-1.9/RPMS/\$basearch/
+gpgcheck=1
+gpgkey=http://opensource.wandisco.com/RPM-GPG-KEY-WANdisco
+EOF'
+
+sudo yum groupinstall -y "Development Tools" && sudo yum install -y apache-maven python-devel python-six python-virtualenv java-1.8.0-openjdk-devel zlib-devel libcurl-devel openssl-devel cyrus-sasl-devel cyrus-sasl-md5 apr-devel subversion-devel apr-util-devel && cd mesos && ./bootstrap && mkdir build && cd build && ../configure && make && sudo make install
+
+sudo bin/mesos-master.sh --ip=192.168.247.100 --work_dir=/home/hadoop/mesos-work
+sudo bin/mesos-agent.sh --master=192.168.247.100:5050 --work_dir=/home/hadoop/mesos-work
+</terminal> -->
+
+<terminal>    
+sudo yum install -y R R-devel libcurl-devel openssl-devel
+sudo R -e "install.packages('devtools', repos = 'http://cran.us.r-project.org')" && sudo R -e "install.packages('knitr', repos = 'http://cran.us.r-project.org')" && sudo R -e "install.packages('ggplot2', repos = 'http://cran.us.r-project.org')" && sudo R -e "install.packages(c('devtools','mplot', 'googleVis'), repos = 'http://cran.us.r-project.org'); require(devtools); install_github('ramnathv/rCharts')"
+</terminal>
+
+제플린의 기본 예제들을 실행시켜보기위해 이것저것 준비했다.<br>
+
+<terminal>
+sudo vi ~/.bashrc
+
+
+
+export JAVA_HOME=/home/hadoop/jdk1.8.0_131
+export PATH=$JAVA_HOME/bin:$PATH
+
+alias start-namenode="/home/hadoop/hadoop/bin/hdfs --daemon start namenode"
+alias start-datanode="/home/hadoop/hadoop/bin/hdfs --daemon start datanode"
+alias start-nodemanager="/home/hadoop/hadoop/bin/yarn --daemon start nodemanager"
+alias start-resourcemanager="/home/hadoop/hadoop/bin/yarn --daemon start resourcemanager"
+
+alias stop-namenode="/home/hadoop/hadoop/bin/hdfs --daemon stop namenode"
+alias stop-datanode="/home/hadoop/hadoop/bin/hdfs --daemon stop datanode"
+alias stop-nodemanager="/home/hadoop/hadoop/bin/yarn --daemon stop nodemanager"
+alias stop-resourcemanager="/home/hadoop/hadoop/bin/yarn --daemon stop resourcemanager"
+
+alias start-spark="/home/hadoop/spark/sbin/start-all.sh"
+alias stop-spark="/home/hadoop/spark/sbin/stop-all.sh"
+
+alias start-hbase="/home/hadoop/hbase/bin/start-hbase.sh"
+alias stop-hbase="/home/hadoop/hbase/bin/stop-hbase.sh"
+
+alias start-zeppelin="/home/hadoop/zeppelin/bin/zeppelin-daemon.sh start"
+alias stop-zeppelin="/home/hadoop/zeppelin/bin/zeppelin-daemon.sh stop"
+alias restart-zeppelin="/home/hadoop/zeppelin/bin/zeppelin-daemon.sh restart"
+
+alias start-all="start-namenode;start-datanode;start-nodemanager;start-resourcemanager;start-spark;start-hbase;start-zeppelin"
+alias stop-all="stop-namenode;stop-datanode;stop-nodemanager;stop-resourcemanager;stop-spark;stop-hbase;stop-zeppelin"
+</terminal>
+
+이렇게 등록해두고 어디서든지 <color2>start-all</color2> 또는 <color2>stop-all</color2> 하고 입력하면 하둡 관련된 전체가 꺼지고 켜진다.<br>
+
+<terminal>
+/home/hadoop/hadoop/bin/hdfs namenode -format && start-namenode && start-datanode
+cd hadoop && bin/hdfs dfs -mkdir /hbase && bin/hdfs dfs -mkdir spark_log && bin/hdfs dfs -mkdir /tmp && bin/hdfs dfs -mkdir /tmp/hive && bin/hdfs dfs -mkdir /user && bin/hdfs dfs -mkdir /user/hadoop && bin/hdfs dfs -mkdir /user/hive && bin/hdfs dfs -mkdir /user/hive/warehouse && bin/hdfs dfs -chmod 777 /tmp && bin/hdfs dfs -chmod 777 /tmp/hive && bin/hdfs dfs -chmod 777 /user/hive/warehouse
+/home/hadoop/hive/bin/schematool -initSchema -dbType derby
+</terminal>
+
+하둡을 켜고 하이브 설치를 준비 한 뒤 하이브를 설치했다.<br>
+
+<terminal>
+sudo pip2 install matplotlib
+sudo yum install -y tkinter
+</terminal>
+
+첫번 째 예제는 아무 설정 없이도 잘 돌아갔는데 두번 째 예제인 python , pyspark 예제는 위의 패키지가 필요했다.<br>
+트킨터를 설치한 이유는 트킨터가 없다는 경고가 떴는데, 결국 스파크 2.0 이상 버전에서는 제플린이 호환이 되지 않는다는 메시지를 보고야 말았다.<br>
+
+<terminal>
+wget http://apache.tt.co.kr/spark/spark-1.6.3/spark-1.6.3-bin-hadoop2.6.tgz && tar -zxvf spark-1.6.3-bin-hadoop2.6.tgz && rm spark-1.6.3-bin-hadoop2.6.tgz && mv spark-1.6.3-bin-hadoop2.6 spark1
+</terminal>
+
+제플린의 환경변수를 잘 읽어보니 스파크 1.2 이하에서만 작동한다고 한다... 그냥 깔끔하게 포기하고 제플린을 재설치 했다.<br>
+그리고 제플린의 환경변수에서 스파크에 대한 부분을 다 지워버렸다. 혹시나 작동이 안되진 않을까 싶어서...<br>
+그래도 안되더라. 아... 혈압오른다. pyspark 부분만 제외하고 다시 주석을 지우고 설정값을 넣어줬다.<br>
+<br>
+첫번째 예제인 스파크 예제가 안돌아가서 짜증났었다. 그런데 다시 해주니 돌아간다. 아....<br>
+두번째 예제인 pyspark도 잘 넘어가졌다.<br>
+<br>
+세번째 예제인 sparkR에서 문제가 생겼다. sparkR에서 googleVis 를 못읽어온단다. 아.... 결국 spark1을 켜고 다시 링크시켰더니 되었다.<br>
+제플린은 스파크1이랑만 호환이 된다는 사실을 알았다.<br>
+<br>
+네번째인 flink 예제에 왔다. 음... 안되면 flink를 설치해야 될 것 같다.<br>
+왠지 익숙한게 보인다. dataexpo에서 비행기 연착륙 데이터를 받아온다.<br>
+한참 걸린다 한 10분은 걸리는 것 같다.<br>
+<br>
+인터프리터 정보를 보니 flink는 기본적으로 들어있진 않고 호스트 네임과 포트만 설정되어있다. 아마도 설치해야 하나보다.<br>
+
+<terminal>
+wget http://apache.mirror.cdnetworks.com/flink/flink-1.4.1/flink-1.4.1-bin-hadoop28-scala_2.11.tgz && tar -zxvf flink-1.4.1-bin-hadoop28-scala_2.11.tgz && rm flink-1.4.1-bin-hadoop28-scala_2.11.tgz && mv flink-1.4.1 flink
+</terminal>
+
+공식 홈페이지에는 <color2>./bin/start-local.sh</color2> 이렇게 실행시키고, <color2>./bin/stop-local.sh</color2> 이렇게 끄라고 한다.<br>
+그래서 <color2>.bashrc</color2>에도 추가해뒀다.<br>
+8081은 스파크에서 쓰는 포트라서 스파크를 끄고 flink를 켰다.<br>
+
+<terminal>
+Warning: this file is deprecated and will be removed in 1.5
+</terminal>
+
+1.5 버전에서는 없어질거니까 이제 쓰지 말라고 한다. 한번 다른 명령어를 찾아봐야겠다.<br>
+
+<terminal>
+[hadoop@hadoop flink]$ bin/flink-daemon.sh
+Unknown daemon ''. Usage: flink-daemon.sh (start|stop|stop-all) (jobmanager|taskmanager|zookeeper|historyserver) [args].
+</terminal>
+
+아마도 <color2>bin/flink-daemon.sh start jobmanager && bin/flink-daemon.sh start taskmanager</color2> 이렇게 켜야하나보다.<br>
+음... 에러가 나는데 어디서 무슨 에러가 나는지도 안알려준다. 못쓸 것 같다. 과감하게 패스해야겠다.<br>
+<br>
+그 다음은 머하웃 예제다. 뭔지도 모르겠다. 일단 설치해봐야지.<br>
+
+<terminal>
+wget http://mirror.stjschools.org/public/apache/mahout/0.13.0/apache-mahout-distribution-0.13.0.tar.gz && tar -zxvf apache-mahout-distribution-0.13.0.tar.gz && rm apache-mahout-distribution-0.13.0.tar.gz && mv apache-mahout-distribution-0.13.0 mahout
+</terminal>
+
+음... 설치했는데 어떻게 연동하는지 전혀 모르겠다.<br>
+스킵해야겠다.<br>
+<br>
+그 다음은 pig에 대해 나오는데 따로 설치 안해도 잘 돌아간다.(약간 느리다.)<br>
+쭉 예제들을 봤는데 제플린의 기능을 대략 알아볼 수 있었다.<br>
+나는 아마도 스파크나 맵리듀스로 다 처리 한 다음 제플린의 sparkR 기능만 이용할 것 같지만...<br>
+뭐가 어찌됐든 자기한테 맞는 방법을 쓰면 되는거다. 나는 sparkR이 마음에 들었다.<br>
+사실 sparkR이 아니라 그냥 R을 써도 googleVis 쓸 수 있다.(이 경우엔 실행하면 웹브라우저로 나온다.)<br>
+<br>
+음... 제플린 생각보다 별로인가... 능숙해지면 좋으려나... 아직은 잘 모르겠다. 아무튼 제플린 사용기는 여기까지. 편리한건 맞긴 한데 느린게 흠이다. 거기서 코드 짜기도 힘들고.<br>
+그래도 프로젝트의 진행과정을 '시각적'으로 모아둘 수 있다는 사실은 굉장히 유용하다.<br>
+아마 제플린과 스파크1, 2를 같이 쓰려면 포트를 바꾸든지 뭔 수를 내야겠다.<br>
