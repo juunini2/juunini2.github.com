@@ -1,0 +1,138 @@
+머신러닝 툴은 많다.<br>
+우선 우리가 잘 알고있는 Mahout,<br>
+Apache Spark MLlib, Apache Singa(들어가보면 싱가가 아니라 심바인가 싶다.), H2O, Caffe2, Cloudera Oryx, Google TensorFlow, Google Deeplearn.js, Amazon AML, Microsoft Azure ML, Microsoft DMTK, Microsoft CNTK, Samsung VELES, 등등등...<br>
+<br>
+더 많다. 그냥 많다.<br>
+근데 어떻게 쓰는지 알고싶어서 검색하면 죄다 이론만 써놓는다. 어떻게 쓰는지 설명도 없다. 개새끼들<br>
+저렇게 올려놓은 인간들 중에 100명 중 99명은 아마 해보라 그러면 말만 주저리 주저리 하고 실제론 못할거다.<br>
+한국인의 고질적 문제다. <color4>"기술만 알고 이론을 모르면 기술쟁이 되는거야."</color4><br>
+<br>
+아빠였던 사람이 맨날 했던 말이고, 저게 틀렸다는걸 몸으로 열심히 표현하며 보여줬었다.<br>
+젊을 때 공부 잘했고 맨날 1등이었고 어쩌고 저쩌고 인생은 성적순이니 지랄지랄 했었는데<br>
+경영학과 나왔다고 지 사업하면 잘할거라더니 열심히 처 말아먹었다. 한두개면 말을 안한다 존나 많이 처말아먹었다. 빚쟁이새끼.<br>
+<br>
+결국 지가 말했던 <color4>"밑바닥 인생"</color4>으로 살고있다. 내가 저 말 쓸때마다 취소하랬다. 인류에 대한 실례라고. 근데, "왜? 내가 틀린말 했냐?" 이런다. 시발새끼.<br>
+<br>
+아무튼 난 굉장히 분노 상태다. 사용법을 제대로 가이드 해주는 곳이 없다. 아, <color2>텐서플로우</color2>는 그래도 좀 나온다.<br>
+하지만, <color2>Spark MLlib</color2>을 어떤 방법으로 검색해도 사용법을 잘 가르쳐 주는 곳이 없다.<br>
+이론만 주구장창 설명한다. 이제 나도 그런거 그냥 퍼와다가 열심히 이론설명 할 수 있게 됐을 정도다.<br>
+<br>
+나의 인생 경험상.... '기술'을 '실무'라는 단어로 대체해서 말해보겠다.<br>
+'실무'를 잘 하는 사람은 어디 가서도 말아먹진 않는다. 적어도 중간은 한다.<br>
+근데, '실무'를 1도 모르면서 '이론'만 잘 아는 사람은 뭘 직접 해도 99.999% 말아먹는다.<br>
+그리고, '실무'를 잘 하는 사람은 조금만 의지만 있다면 '이론'도 금방 익힌다.<br>
+하지만 '이론'을 잘 아는 사람은 '조금의 의지'가지고는 전혀 '실무'를 익히지 못한다. 쓸모없다고 생각하기 떄문이다. <color4>(기술쟁이 라고 무시하며)</color4><br>
+<br>
+아, 당신은 여기서 반박할거다. 그럼 CEO나 높으신 분들중에는 실무는 하나도 모르는데 이론만 아는 사람들이 많이 않냐고.<br>
+그래, 맞다. 근데 그 사람들은 그쪽에 신경쓰지 실무는 부하직원을 시키지 않는가? 이런곳에 '협업'이란 말을 쓰기 싫지만 일종의 협업이다.<br>
+그냥 저런 사람들만 모아놓으면 아무것도 못한다. 사실이다.<br>
+<br>
+나의 광기어린 주절거림은 이까지만 하겠다.<br>
+<br>
+우선, 검색해서 가장 쉽게 접할 수 있는 <color2>TensorFlow</color2>를 사용해볼까 한다.<br>
+텐서플로우는 구글에서 개발했으며, 파이썬 패키지이다.<br>
+설치법도 쉽다.<br>
+<terminal>
+sudo pip install tensorflow
+sudo pip3 install tensorflow
+</terminal> 
+
+나는 파이썬3을 선호하므로 파이썬3으로 진행하겠다.<br>
+(혹시나 파이썬2를 사용해야 하는 상황에 대비하기 위해 둘 다 받았지만)<br>
+터미널에서 파이썬을 들어간 뒤 아래를 입력하는 예제가 있다.<br>
+
+<terminal>
+import tensorflow as tf
+hello = tf.constant('Hello, TensorFlow!')
+sess = tf.Session()
+print(sess.run(hello))
+</terminal>
+
+파이썬3으로 실행하면 <color2>b'Hello, TensorFlow!'</color2> 파이썬2로 실행하면 <color2>Hello, TensorFlow!</color2><br>
+음..... 사소한 차이일 뿐이다. 신경쓰지 말자. 난 파이썬3 쓸거다.<br>
+<br>
+다음 머신러닝 예제를 보면 왠지 익숙한 아이리스가 나온다.(R에서 봤으니)<br>
+
+<terminal>
+sudo pip install pandas && sudo pip3 install pandas
+git clone https://github.com/tensorflow/models
+python3 models/samples/core/get_started/premade_estimator.py
+</terminal>
+
+실행시키면 결과가 나온다.<br>
+<br>
+Python2<br>
+<terminal>
+INFO:tensorflow:step = 1, loss = 193.9374
+INFO:tensorflow:global_step/sec: 652.257
+INFO:tensorflow:step = 101, loss = 24.661476 (0.153 sec)
+INFO:tensorflow:global_step/sec: 848.249
+INFO:tensorflow:step = 201, loss = 13.721504 (0.118 sec)
+INFO:tensorflow:global_step/sec: 916.599
+INFO:tensorflow:step = 301, loss = 9.579466 (0.109 sec)
+INFO:tensorflow:global_step/sec: 842.264
+INFO:tensorflow:step = 401, loss = 7.97945 (0.119 sec)
+INFO:tensorflow:global_step/sec: 913.052
+INFO:tensorflow:step = 501, loss = 8.890149 (0.110 sec)
+INFO:tensorflow:global_step/sec: 930.75
+INFO:tensorflow:step = 601, loss = 7.020859 (0.107 sec)
+INFO:tensorflow:global_step/sec: 940.604
+INFO:tensorflow:step = 701, loss = 6.5297384 (0.106 sec)
+INFO:tensorflow:global_step/sec: 883.7
+INFO:tensorflow:step = 801, loss = 8.248445 (0.113 sec)
+INFO:tensorflow:global_step/sec: 898.19
+INFO:tensorflow:step = 901, loss = 6.235448 (0.112 sec)
+INFO:tensorflow:Saving checkpoints for 1000 into /tmp/tmpcdzyzmsi/model.ckpt.
+INFO:tensorflow:Loss for final step: 5.4024763.
+INFO:tensorflow:Starting evaluation at 2018-02-17-11:12:54
+INFO:tensorflow:Restoring parameters from /tmp/tmpcdzyzmsi/model.ckpt-1000
+INFO:tensorflow:Finished evaluation at 2018-02-17-11:12:54
+INFO:tensorflow:Saving dict for global step 1000: accuracy = 0.93333334, average_loss = 0.064893074, global_step = 1000, loss = 1.9467922
+
+Test set accuracy: 0.933
+
+INFO:tensorflow:Restoring parameters from /tmp/tmpcdzyzmsi/model.ckpt-1000
+
+Prediction is "Setosa" (99.7%), expected "Setosa"
+
+Prediction is "Versicolor" (99.4%), expected "Versicolor"
+
+Prediction is "Virginica" (97.6%), expected "Virginica"
+</terminal>
+
+
+실행할 때 마다 약간의 수치 차이를 보이긴 하는데 1000번 돌려서 나오는 예상치이다보니 조금씩 다를 순 있겠다 싶다. 하지만 그래봤자 큰 차이는 안난다. 1% 내외정도.<br>
+저게 무슨뜻인지 이해하려면 <color2>models/samples/core/get_started/premade_estimator.py</color2>의 소스를 확인해봐야 할 것이다.<br>
+<br>
+<color2>import argparse</color2>를 하는데, 실행할 때 마다 CLI에 표시하며 에러 여부를 확인할 수 있는거란다.<br>
+아마도 INFO 부분인듯 하다.<br>
+그리고 <color2>import iris_data</color2>가 있는데 같은 폴더 내에 <color2>iris_data.py</color2>가 있다.<br>
+iris_data.py 파일을 보면 저 안에서 말하는 함수들이 여기서 정의됐다는 사실을 알 수 있다.<br>
+아, 왠지 이 부분이 반복 횟수인 것 같아서 수정해봤다.<br>
+
+<terminal>
+parser.add_argument('--batch_size', default=100, type=int, help='batch size')
+parser.add_argument('--train_steps', default=10000, type=int,
+                    help='number of training steps')
+</terminal>
+
+이렇게 수정했더니 결과가 전부 100%가 나왔다.<br>
+
+<terminal>
+Prediction is "Setosa" (100.0%), expected "Setosa"
+
+Prediction is "Versicolor" (100.0%), expected "Versicolor"
+
+Prediction is "Virginica" (100.0%), expected "Virginica"
+</terminal>
+
+처음에는 실험 횟수가 1000번이었다면 이번엔 10000번으로 올려서 더 근사치에 다다른 것이라는 뜻이다.<br>
+하지만 무작정 많이 한다고 좋은 것 같지도 않다. 몇번 실험으로 적당한 횟수로 빠르게 값을 찾아내는게 더 좋을 것이란거다.<br>
+10000번 돌리면 1000번 돌리는것보다 시간이 10배나 드니까 말이다.<br>
+소스코드만 계속 뜯어보다가는 하루가 다 가겠다 싶어서 뭔가 하나 해보는게 좋지 않을까 하는 생각이 들었다.<br>
+그래도 여기까지 알아낼 수 있는건 공식홈페이지에 가이드가 친절하게 나와있기 때문이다.<br>
+<br>
+Spark MLlib이나 Mahout은 공식홈페이지에 가이드따위 없다.<br>
+Apache Singa(심바라고 하고싶은데 저작권 때문일까...), Deeplearn.js 이 둘은 가이드가 열심히 쓰여있다.<br>
+Spark MLlib이나 Mahout에 대해 굉장히 오기가 생기지만 쓸데없는 오기인 것 같아 그냥 포기하기로 했다.<br>
+그 사이에 텐서플로우를 능숙하게 쓸 수 있게 된다면 그게 훨씬 더 이득이지 싶다.<br>
