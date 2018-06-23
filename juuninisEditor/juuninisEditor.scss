@@ -1,0 +1,336 @@
+@mixin dropdown($left) {
+    width: 60px;
+    left: #{$left};
+    &:after {
+        content: '\f0d7';
+        margin-left: 5px;
+        font-family: Font Awesome\ 5 Free;
+    }
+    .fa { display: inline; }
+}
+
+@mixin afterclear() {
+    &:after {
+        content: '';
+        display: block;
+        clear: both;
+    }
+}
+
+@mixin input() {
+    input {
+        display: block;
+        width: 100%;
+        height: 40px;
+        padding: 0 10px;
+        margin-bottom: 10px;
+        border: none;
+        border-bottom: 3px solid #bbb;
+        &:focus {
+            border-bottom: 3px solid #2276d2;
+            outline: none;
+        }
+        transition: border-color 0.5s;
+    }
+}
+
+@mixin button() {
+    button {
+        display: block;
+        width: 80px;
+        height: 40px;
+        margin-left: auto;
+        color: #2276d2;
+        background: none;
+        border: none;
+        border-radius: 4px;
+        transition: background 0.5s;
+        &:focus { outline: none; }
+        &:hover { background: #ebebeb; }
+    }
+}
+
+juuninis-editor {
+    position: relative;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    * { box-sizing: border-box; }
+    * {
+        word-break: keep-all;
+        word-wrap: break-word;
+    }
+    
+    functions { // 기능 버튼 영역
+        position: relative;
+        display: block;
+        height: 40px;
+        margin-bottom: 20px;
+        button {
+            position: absolute;
+            display: block;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            border: none;
+            background: none;
+            &:focus { outline: none; }
+            &:hover { background: #ebebeb; }
+            cursor: pointer;
+        }
+    
+        #Bold { left: 0; }
+        #Italic { left: 40px; }
+        #Underline { left: 80px; }
+        #StrikeThrough { left: 120px; }
+        #Size { @include dropdown(160px); border-left: 1px solid #ddd; }
+        #Color { @include dropdown(220px); }
+        #Left { left: 280px; border-left: 1px solid #ddd; }
+        #Center { left: 320px; }
+        #Right { left: 360px; }
+        #Horizon { left: 400px; border-left: 1px solid #ddd; }
+        #CodeBlock { @include dropdown(440px); }
+        #Link { @include dropdown(500px); }
+        #Image { @include dropdown(560px); }
+    }
+    
+    description {   // 버튼의 설명이 나오는 영역
+        position: absolute;
+        display: none;
+        &.on { display: block; }
+        padding: 10px;
+        font-size: 12px;
+        background-color: #fff;
+        border: 1px solid #bbb;
+        border-radius: 4px;
+        white-space: nowrap;
+        &:after {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            margin-left: -4px;
+            display: block;
+            width: 8px;
+            height: 8px;
+            background-color: #fff;
+            border-top: 1px solid #bbb;
+            border-right: 1px solid #bbb;
+            transform: rotate(-45deg);
+        }
+    }
+    
+    sizes, colors, codes, anchor, insert-image {    // 팝업 영역 공통 설정
+        position: absolute;
+        z-index: 10;
+        display: none;
+        background: #fff;
+        border: 1px solid #bbb;
+        &.on { display: block; }
+        &:before {
+            content: '';
+            position: absolute;
+            top: -7px;
+            left: 50%;
+            margin-left: -5px;
+            display: block;
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            border-top: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            transform: rotate(-45deg);
+        }
+    }
+    
+    sizes {
+        button {
+            display: block;
+            width: 300px;
+            height: 60px;
+            &:nth-child(7) { height: 80px; }
+            &:nth-child(n + 8) { height: 120px; }
+            text-align: left;
+            padding: 0 30px;
+            background: none;
+            border: none;
+            border-bottom: 1px solid #bbb;
+            &:last-child { border-bottom: none; }
+            &:focus { outline: none; }
+            &:hover { background: #ebebeb; }
+            cursor: pointer;
+        }
+    }
+    
+    colors {
+        width: 387px;
+        padding: 20px;
+        background: #555;
+        &:before { background: #555; }
+    
+        tab {   // 글자색/배경색 선택
+            display: block;
+            margin-bottom: 10px;
+            @include afterclear();
+    
+            button {
+                display: block;
+                float: left;
+                width: 50%;
+                height: 40px;
+                font-size: 16px;
+                background: #fff;
+                &.on {
+                    color: #fff;
+                    background: #2276d2;
+                }
+                border: none;
+                &:focus { outline: none; }
+                cursor: pointer;
+            }
+        }
+        
+        color-picker {  // 색상 리스트
+            display: block;
+            @include afterclear();
+            button {
+                display: block;
+                float: left;
+                width: 30px;
+                height: 30px;
+                margin-left: 5px;
+                margin-bottom: 5px;
+                @for $i from 0 to 14 { &:nth-child(#{$i * 10 + 1}) { margin-left: 0; } }
+                @for $i from 11 to 21 { &:nth-child(#{$i}) { margin-top: 20px; } }
+                @for $i from 61 to 71 { &:nth-child(#{$i}) { margin-top: 20px; } }
+                border: 4px solid #ddd;
+                cursor: pointer;
+            }
+        }
+    }
+    
+    codes { // 코드블록 리스트
+    
+        button {
+            display: block;
+            width: 160px;
+            height: 40px;
+            background: none;
+            border: none;
+            border-bottom: 1px solid #bbb;
+            &:last-child { border-bottom: none; }
+            &:focus { outline: none; }
+            &:hover { background: #ebebeb; }
+            cursor: pointer;
+        }
+    }
+    
+    anchor {
+        width: 300px;
+        padding: 20px;
+    
+        @include input();
+        @include button();
+    }
+
+    insert-image {
+        width: 440px;
+        tab {
+            display: block;
+            border-bottom: 1px solid #bbb;
+            @include afterclear();
+
+            button {
+                display: block;
+                float: left;
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+                background: none;
+                border: none;
+                &:focus { outline: none; }
+                &:hover { background: #ebebeb; }
+                &:last-child { border-right: 1px solid #ddd; }
+                &.on {
+                    color: #fff;
+                    background: #2276d2;
+                    border: none;
+                }
+            }
+        }
+
+        upload {
+            display: none;
+            &.on { display: block; }
+            padding: 20px;
+            input { display: none; }
+            label {
+                display: block;
+                height: 160px;
+                padding: 20px;
+                line-height: 40px;
+                text-align: center;
+                background: #ebebeb;
+                border-radius: 4px;
+                cursor: pointer;
+                .fa {
+                    font-size: 36px;
+                }
+                strong {
+                    display: block;
+                    font-size: 24px;
+                }
+            }
+        }
+
+        insert-link {
+            display: none;
+            &.on { display: block; }
+            padding: 20px;
+            @include input();
+            @include button();
+        }
+    }
+    
+    editor {
+        position: relative;
+        z-index: 2;
+        display: block;
+        height: 600px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        &:focus { outline: none; }
+        code {
+            padding: 0 20px !important;
+            background: transparent !important;
+            color: transparent !important;
+            caret-color: #abb2bf !important;
+            white-space: pre-wrap;
+            &:first-child { padding-top: 20px !important; }
+            &:last-child {padding-bottom: 20px !important; }
+        }
+    }
+    
+    mirror {
+        position: absolute;
+        top: 60px;
+        left: 0;
+        z-index: 1;
+        display: block;
+        width: 100%;
+        height: 600px;
+        padding: 20px;
+        color: transparent;
+        border: 1px solid #ddd;
+        pre {
+            overflow: hidden;
+            border-radius: 4px;
+        }
+        code {
+            padding: 0 20px !important;
+            white-space: pre-wrap;
+            &:first-child { padding-top: 20px !important; }
+            &:last-child {padding-bottom: 20px !important; }
+        }
+    }
+}
