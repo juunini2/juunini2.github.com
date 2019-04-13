@@ -130,7 +130,7 @@ function loadPage() {
     var thisLocation = window.location.href; // 현재 url주소
     var location_ = thisLocation.substring(thisLocation.length - 3, thisLocation.length); // 현재 url주소에서 #뒤의 값
     var path = "/hadoop/page/" + location_ + ".html"; // 불러올 파일 경로
-    if (thisLocation === "http://localhost:3000/#" + location_ || thisLocation === "https://juunini.github.io/hadoop/#" + location_) {
+    if (thisLocation === "http://localhost:3000/#" + location_ || thisLocation === "https://juunini2.github.io/hadoop/#" + location_) {
         var xhttp_1 = new XMLHttpRequest();
         xhttp_1.onreadystatechange = function () {
             document.querySelector("main").innerHTML = xhttp_1.responseText;
